@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class SinglePlayerGame {
-    private final Player player;
+    private final User player;
     private final StudyDeck studySet;
     private final List<StudyCard> questions;
     private int score;
@@ -20,7 +20,7 @@ public class SinglePlayerGame {
     private final int fixedTimePerQuestion;
 
     // Constructor
-    public SinglePlayerGame(Player player, StudyDeck studySet, int timerPerQuestion, boolean shuffleEnabled) {
+    public SinglePlayerGame(User player, StudyDeck studySet, int timerPerQuestion, boolean shuffleEnabled) {
         this.player = player;
         this.studySet = studySet;
         this.questions = studySet.getCards();
@@ -41,7 +41,7 @@ public class SinglePlayerGame {
     public int getCorrectAnswers() { return correctAnswers; }
     public double getAverageResponseTime() { return averageResponseTime; }
     public StudyDeck getStudySet() { return studySet; }
-    public Player getPlayer() { return player; }
+    public User getPlayer() { return player; }
 
     // Optional  setters
     public void setScore(int score) {

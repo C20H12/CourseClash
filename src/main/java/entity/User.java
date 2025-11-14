@@ -3,7 +3,7 @@
 
 package entity;
 
-public class Player {
+public class User {
 
     private final String userName;
     private final String password;
@@ -17,7 +17,7 @@ public class Player {
      * @param userName the player's username
      */
 
-    public Player(String userName, String password) {
+    public User(String userName, String password) {
         this.userName = userName;
         this.password = password;
         // Assuming new players start at level 1 with 0 experience points and no questions answered

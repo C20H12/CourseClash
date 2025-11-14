@@ -4,11 +4,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class FontLoader {
     public static void registerFonts() {
         try {
-            Font Helvetica = Font.createFont(Font.TRUETYPE_FONT, new File("resources/font/Helvetica.ttf"));
+            InputStream is = FontLoader.class.getResourceAsStream("/font/Helvetica.ttf");
+            Font Helvetica = Font.createFont(Font.TRUETYPE_FONT, is);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(Helvetica);
         } catch (IOException | FontFormatException e) {

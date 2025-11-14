@@ -5,18 +5,18 @@ package entity;
 import java.util.List;
 
 public class MultiPlayerGame {
-    private final Player playerA;
-    private final Player playerB;
+    private final User playerA;
+    private final User playerB;
     private final List<MultipleChoiceQuestion> questions;
 
     private int currentQuestionIndex;
-    private Player currentTurn;
+    private User currentTurn;
     private boolean isFinished;
 
     private int scoreA;
     private int scoreB;
 
-    public MultiPlayerGame(Player playerA, Player playerB, List<MultipleChoiceQuestion> questions) {
+    public MultiPlayerGame(User playerA, User playerB, List<MultipleChoiceQuestion> questions) {
         this.playerA = playerA;
         this.playerB = playerB;
         this.questions = questions;
@@ -28,11 +28,11 @@ public class MultiPlayerGame {
     }
 
 
-    public Player getPlayerA() {
+    public User getPlayerA() {
         return playerA;
     }
 
-    public Player getPlayerB() {
+    public User getPlayerB() {
         return playerB;
     }
 
@@ -48,11 +48,11 @@ public class MultiPlayerGame {
         this.currentQuestionIndex = index;
     }
 
-    public Player getCurrentTurn() {
+    public User getCurrentTurn() {
         return currentTurn;
     }
 
-    public void setCurrentTurn(Player currentTurn) {
+    public void setCurrentTurn(User currentTurn) {
         this.currentTurn = currentTurn;
     }
 
