@@ -7,7 +7,7 @@ import java.util.List;
 public class MultiPlayerGame {
     private final User playerA;
     private final User playerB;
-    private final List<MultipleChoiceQuestion> questions;
+    private final StudyDeck deck;
 
     private int currentQuestionIndex;
     private User currentTurn;
@@ -16,10 +16,10 @@ public class MultiPlayerGame {
     private int scoreA;
     private int scoreB;
 
-    public MultiPlayerGame(User playerA, User playerB, List<MultipleChoiceQuestion> questions) {
+    public MultiPlayerGame(User playerA, User playerB, StudyDeck deck) {
         this.playerA = playerA;
         this.playerB = playerB;
-        this.questions = questions;
+        this.deck = deck;
         this.currentQuestionIndex = 0;
         this.currentTurn = playerA;
         this.isFinished = false;
@@ -36,10 +36,6 @@ public class MultiPlayerGame {
         return playerB;
     }
 
-    public List<MultipleChoiceQuestion> getQuestions() {
-        return questions;
-    }
-
     public int getCurrentQuestionIndex() {
         return currentQuestionIndex;
     }
@@ -47,6 +43,8 @@ public class MultiPlayerGame {
     public void setCurrentQuestionIndex(int index) {
         this.currentQuestionIndex = index;
     }
+
+    public StudyDeck getDeck() {return deck;}
 
     public User getCurrentTurn() {
         return currentTurn;
