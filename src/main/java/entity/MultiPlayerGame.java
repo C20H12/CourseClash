@@ -2,7 +2,7 @@
 //Mahir
 package entity;
 
-import java.util.List;
+import entity.DeckManagement.StudyDeck;
 
 public class MultiPlayerGame {
     private final User playerA;
