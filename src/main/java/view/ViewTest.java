@@ -1,7 +1,6 @@
 // src/main/UI/MainView.java
 package view;
 import utility.FontLoader;
-
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
