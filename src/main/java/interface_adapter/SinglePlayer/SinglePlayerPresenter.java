@@ -1,0 +1,52 @@
+// Huzaifa - converts OutputData to view model
+// generated sample code from GPT to be worked on
+package interface_adapter.SinglePlayer;
+
+import use_case.SinglePlayer.SinglePlayerOutputBoundary;
+import use_case.SinglePlayer.SinglePlayerOutputData;
+
+/**
+ * Presenter for the Single Player Game use case.
+ * Converts OutputData from the interactor into state updates in the ViewModel.
+ */
+public class SinglePlayerPresenter implements SinglePlayerOutputBoundary {
+
+    private final SinglePlayerViewModel viewModel;
+
+    public SinglePlayerPresenter(SinglePlayerViewModel viewModel) {
+        this.viewModel = viewModel;
+    }
+
+    @Override
+    public void presentQuestion(SinglePlayerOutputData data) {
+        SinglePlayerState state = viewModel.getState();
+        state.setQuestionText(data.getQuestionText());
+        state.setOptions(data.getOptions());
+        state.setCurrentIndex(data.getCurrentIndex());
+        state.setTotal(data.getTotal());
+        state.setScore(data.getScore());
+        state.setAccuracy(data.getAccuracy());
+        state.setAvgResponseTime(data.getAvgResponseTime());
+        state.setGameOver(data.isGameOver());
+        state.setMessage(data.getMessage());
+        state.setError(null); // clear previous errors when loading next question
+        viewModel.firePropertyChange();
+    }
+    @Override
+    public void presentResults(SinglePlayerOutputData data) {
+        SinglePlayerState state = viewModel.getState();
+        state.setScore(data.getScore());
+        state.setAccuracy(data.getAccuracy());
+        state.setAvgResponseTime(data.getAvgResponseTime());
+        state.setMessage(data.getMessage());
+        state.setGameOver(true);
+        viewModel.firePropertyChange();
+    }
+    @Override
+    public void presentError(String message) {
+        SinglePlayerState state = viewModel.getState();
+        state.setError(message);
+        state.setMessage(message);
+        viewModel.firePropertyChange();
+    }
+}

@@ -49,10 +49,18 @@ public class SinglePlayerGame {
     public void setCorrectAnswers(int correctAnswers) {
         if (correctAnswers >= 0 && correctAnswers <= totalQuestions)
             this.correctAnswers = correctAnswers;}
-    public void setAverageResponseTime(double averageResponseTime) {
-        if (averageResponseTime >= 0) this.averageResponseTime = averageResponseTime;}
+    public void setAverageResponseTime(double t) { if (t >= 0) this.averageResponseTime = t; }
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
 
+    public void endGame() {
+        this.endTime = java.time.LocalDateTime.now();
+        long durationSeconds = java.time.Duration.between(startTime, endTime).toSeconds();
+        if (totalQuestions > 0) {
+            this.averageResponseTime = (double) durationSeconds / totalQuestions;
+        } else {
+            this.averageResponseTime = 0.0;
+        }
+    }
 }

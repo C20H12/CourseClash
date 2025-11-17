@@ -1,4 +1,9 @@
+// Huzaifa - interface
 package use_case.SinglePlayer;
 
-public class SinglePlayerAccessInterface {
+import entity.StudyDeck;
+
+public interface SinglePlayerAccessInterface {
+    StudyDeck loadDeck(String deckName);
+    void saveSinglePlayerResult(String username, String deckName, int score, double accuracy, double avgTime);
 }
