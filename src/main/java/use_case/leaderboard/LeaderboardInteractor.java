@@ -10,9 +10,9 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
     private final LeaderboardUserDataAccessInterface userDataAccessObject;
     private final LeaderboardOutputBoundary leaderboardPresenter;
 
-    public LeaderboardInteractor(LeaderboardUserDataAccessInterface userDataAccessObject, LeaderboardOutputBoundary leaderboardPresenter) {
-        this.userDataAccessObject = userDataAccessObject;
-        this.leaderboardPresenter = leaderboardPresenter;
+    public LeaderboardInteractor(LeaderboardUserDataAccessInterface userDataAccessInterface, LeaderboardOutputBoundary leaderboardOutputBoundary) {
+        this.userDataAccessObject = userDataAccessInterface;
+        this.leaderboardPresenter = leaderboardOutputBoundary;
     }
 
     @Override
