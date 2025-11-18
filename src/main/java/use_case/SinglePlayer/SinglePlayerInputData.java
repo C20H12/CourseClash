@@ -2,7 +2,7 @@
 package use_case.SinglePlayer;
 
 import entity.User;
-import entity.StudyDeck;
+import entity.DeckManagement.StudyDeck;
 
 public class SinglePlayerInputData {
     private final User player;
