@@ -1,6 +1,7 @@
 package use_case.registration.login;
 
 import entity.User;
+import use_case.DataAccessException;
 
 /**
  * The Login Interactor.
@@ -16,7 +17,7 @@ public class LoginInteractor implements LoginInputBoundary {
     }
 
     @Override
-    public void execute(LoginInputData loginInputData) {
+    public void execute(LoginInputData loginInputData) throws DataAccessException {
         final String username = loginInputData.getUsername();
         final String password = loginInputData.getPassword();
 
