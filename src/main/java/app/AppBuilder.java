@@ -2,6 +2,9 @@ package app;
 
 import entity.UserFactory;
 import interface_adapter.*;
+import interface_adapter.leaderboard.LeaderboardController;
+import interface_adapter.leaderboard.LeaderboardPresenter;
+import interface_adapter.leaderboard.LeaderboardViewModel;
 import interface_adapter.main_screen.MainScreenViewModel;
 import interface_adapter.studyset.studyset_browse.BrowseStudySetViewModel;
 import interface_adapter.registration.login.*;
@@ -9,10 +12,14 @@ import interface_adapter.registration.signup.SignupController;
 import interface_adapter.registration.signup.SignupPresenter;
 import interface_adapter.registration.signup.SignupViewModel;
 import interface_adapter.user_session.UserSession;
+import use_case.leaderboard.LeaderboardInputBoundary;
+import use_case.leaderboard.LeaderboardInteractor;
+import use_case.leaderboard.LeaderboardOutputBoundary;
 import use_case.registration.login.*;
 import use_case.registration.signup.SignupInputBoundary;
 import use_case.registration.signup.SignupInteractor;
 import use_case.registration.signup.SignupOutputBoundary;
+import view.leaderboard.LeaderboardView;
 import view.main_screen.MainScreenView;
 import view.registration.*;
 import view.study_set.BrowseStudySetView;
@@ -45,10 +52,13 @@ public class AppBuilder {
     private SignupViewModel signupViewModel;
     private LoginViewModel loginViewModel;
     private MainScreenViewModel mainScreenViewModel;
+    private BrowseStudySetViewModel browseStudySetViewModel;
+    private LeaderboardViewModel leaderboardViewModel;
     private LoginView loginView;
     private MainScreenView mainScreenView;
     private BrowseStudySetViewModel browseStudySetViewModel;
     private BrowseStudySetView browseStudySetView;
+    private LeaderboardView leaderboardView;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
@@ -85,6 +95,14 @@ public class AppBuilder {
         return this;
     }
 
+    public AppBuilder addLeaderboardView() {
+        leaderboardViewModel = new LeaderboardViewModel();
+
+        leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel);
+        cardPanel.add(leaderboardView, leaderboardView.getViewName());
+        return this;
+    }
+
     public AppBuilder addSignupUseCase() {
         final SignupUserDataAccessObject signupDAO = new SignupUserDataAccessObject();
         final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(viewManagerModel,
@@ -104,6 +122,17 @@ public class AppBuilder {
                 loginDAO, loginOutputBoundary);
         LoginController loginController = new LoginController(loginInteractor);
         loginView.setLoginController(loginController);
+        return this;
+    }
+
+    public AppBuilder addLeaderboardUseCase() {
+        final LeaderboardOutputBoundary leaderboardOutputBoundary = new LeaderboardPresenter(leaderboardViewModel,
+                viewManagerModel);
+        final LeaderboardInputBoundary leaderboardInteractor = new LeaderboardInteractor(
+                userDataAccessObject, leaderboardOutputBoundary);
+
+        LeaderboardController leaderboardController = new LeaderboardController(leaderboardInteractor);
+        leaderboardView.setLeaderboardController(leaderboardController);
         return this;
     }
 
