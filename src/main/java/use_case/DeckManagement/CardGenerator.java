@@ -1,4 +1,4 @@
 package use_case.DeckManagement;
 
-public class DeckGeneration {
+public class CardGenerator {
 }
