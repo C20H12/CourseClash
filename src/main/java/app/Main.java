@@ -8,8 +8,10 @@ public class Main {
         AppBuilder appBuilder = new AppBuilder();
         JFrame application = appBuilder
                 .addLoginView()
+                .addSignupView()
                 .addMainScreenView()
                 .addLoginUseCase()
+                .addSignupUseCase()
                 .build();
         application.setLocationRelativeTo(null);
         application.setVisible(true);

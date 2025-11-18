@@ -3,6 +3,7 @@ package view.registration;
 import interface_adapter.registration.login.LoginController;
 import interface_adapter.registration.login.LoginState;
 import interface_adapter.registration.login.LoginViewModel;
+import use_case.DataAccessException;
 import view.Component.LabelTextPanel;
 
 import javax.swing.*;
@@ -16,7 +17,6 @@ import java.beans.PropertyChangeListener;
 
 public class LoginView extends JPanel implements ActionListener, PropertyChangeListener {
     private final String viewName = "log in";
-    private final LoginViewModel loginViewModel;
 
     private final JTextField usernameInputField = new JTextField(15);
     private final JLabel usernameErrorField = new JLabel();
@@ -29,8 +29,7 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
     private LoginController loginController = null;
 
     public LoginView(LoginViewModel loginViewModel) {
-        this.loginViewModel = loginViewModel;
-        this.loginViewModel.addPropertyChangeListener(this);
+        loginViewModel.addPropertyChangeListener(this);
 
         final JLabel title = new JLabel("Login Screen");
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -51,10 +50,14 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
                     if (evt.getSource().equals(login)) {
                         final LoginState currentState = loginViewModel.getState();
 
-                        loginController.execute(
-                                currentState.getUsername(),
-                                currentState.getPassword()
-                        );
+                        try {
+                            loginController.execute(
+                                    currentState.getUsername(),
+                                    currentState.getPassword()
+                            );
+                        } catch (DataAccessException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
         );

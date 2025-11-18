@@ -1,7 +1,9 @@
 package view.main_screen;
 
+import interface_adapter.ViewManagerModel;
 import interface_adapter.main_screen.MainScreenViewModel;
-import interface_adapter.registration.login.LoginViewModel;
+import interface_adapter.studyset.studyset_browse.BrowseStudySetViewModel;
+import view.ViewManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,9 +15,16 @@ import java.beans.PropertyChangeListener;
 public class MainScreenView extends JPanel implements ActionListener, PropertyChangeListener {
     private final String viewName = "main screen";
     private final MainScreenViewModel mainScreenViewModel;
+    private final ViewManagerModel viewManagerModel;
+    private final BrowseStudySetViewModel browseStudySetViewModel;
 
-    public MainScreenView(MainScreenViewModel mainScreenViewModel) {
+    public MainScreenView(MainScreenViewModel mainScreenViewModel,
+                          ViewManagerModel viewManagerModel,
+                          BrowseStudySetViewModel browseStudySetViewModel) {
         this.mainScreenViewModel = mainScreenViewModel;
+        this.viewManagerModel = viewManagerModel;
+        this.browseStudySetViewModel = browseStudySetViewModel;
+        this.mainScreenViewModel.addPropertyChangeListener(this);
 
         // Set panel layout (this is now the root of this panel)
         this.setLayout(new BorderLayout(10, 10));
@@ -56,9 +65,9 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
                 button.setFont(new Font("Helvetica", Font.BOLD, 48));
                 button.setBackground(Color.GRAY);
                 button.setForeground(Color.WHITE);
-                button.addActionListener(e -> {
-                    System.out.println(button.getText() + " button clicked");
-                });
+                if ("Manage Study Set".equals(button.getText())) {
+                    button.addActionListener(e -> switchToBrowseStudySet());
+                }
 
                 c.gridx = col;
                 c.gridy = row;
@@ -82,5 +91,10 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
 
+    }
+
+    private void switchToBrowseStudySet() {
+        viewManagerModel.setState(browseStudySetViewModel.getViewName());
+        viewManagerModel.firePropertyChange();
     }
 }

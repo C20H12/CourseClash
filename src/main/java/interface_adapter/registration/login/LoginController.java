@@ -1,5 +1,6 @@
 package interface_adapter.registration.login;
 
+import use_case.DataAccessException;
 import use_case.registration.login.LoginInputBoundary;
 import use_case.registration.login.LoginInputData;
 
@@ -19,7 +20,7 @@ public class LoginController {
      * @param username the username of the user logging in
      * @param password the password of the user logging in
      */
-    public void execute(String username, String password) {
+    public void execute(String username, String password) throws DataAccessException {
         final LoginInputData loginInputData = new LoginInputData(
                 username, password);
 
