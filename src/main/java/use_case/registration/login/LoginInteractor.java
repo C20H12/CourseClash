@@ -1,3 +1,8 @@
+/**
+ * File: LoginInteractor.java
+ * Description: The interactor for login actions.
+ * Author: Albert and Daniel
+ */
 package use_case.registration.login;
 
 import entity.User;
