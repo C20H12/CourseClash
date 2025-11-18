@@ -10,7 +10,8 @@ public class LeaderboardInputData {
     private User user = null;
     private LeaderboardType leaderboardType = null;
 
-    public LeaderboardInputData(User user) {
+    public LeaderboardInputData(User user, LeaderboardType leaderboardType) {
+        this.leaderboardType = leaderboardType;
         this.user = user;
     }
 
