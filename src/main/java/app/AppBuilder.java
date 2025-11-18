@@ -56,7 +56,6 @@ public class AppBuilder {
     private LeaderboardViewModel leaderboardViewModel;
     private LoginView loginView;
     private MainScreenView mainScreenView;
-    private BrowseStudySetViewModel browseStudySetViewModel;
     private BrowseStudySetView browseStudySetView;
     private LeaderboardView leaderboardView;
 
