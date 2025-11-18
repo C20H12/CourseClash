@@ -3,21 +3,20 @@ package use_case.leaderboard;
 import entity.User;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class LeaderboardOutputData {
-    private ArrayList<User> top5Users;
+    private ArrayList<User> topUsers;
     private User currentUser;
     private int currentUserRank;
     private LeaderboardType leaderboardType;
-    public LeaderboardOutputData(ArrayList<User> top5Users, User currentUser, int currentUserRank, LeaderboardType leaderboardType) {
-        this.top5Users = top5Users;
+    public LeaderboardOutputData(ArrayList<User> topUsers, User currentUser, int currentUserRank, LeaderboardType leaderboardType) {
+        this.topUsers = topUsers;
         this.currentUser = currentUser;
         this.currentUserRank = currentUserRank;
         this.leaderboardType = leaderboardType;
     }
-    public ArrayList<User> getTop5Users() {
-        return top5Users;
+    public ArrayList<User> getTopUsers() {
+        return topUsers;
     }
     public User getCurrentUser() {
         return currentUser;
