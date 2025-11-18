@@ -1,15 +1,15 @@
+/**
+ * File: LoginUserDataAccessObject.java
+ * Description: The implemented DAO for login actions.
+ * Author: Daniel
+ */
 package data_access;
-
 import entity.User;
-
 import org.json.JSONObject;
-
 import use_case.DataAccessException;
 import use_case.registration.login.LoginUserDataAccessInterface;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import static data_access.StaticMethods.makeApiRequest;
 
 
