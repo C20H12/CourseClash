@@ -14,16 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SysFileHandler {
-
-    // Declarations
     private final String STORAGE_DIRECTORY = System.getProperty("user.home") + "/.CourseClash/local_storage";
 
-    // Make directories if there's none existin
+    // Init directories if none present
     public SysFileHandler() {
         new File(STORAGE_DIRECTORY).mkdirs();
     }
 
-    // Deck saving functionality
+    // Method to save deck
     public void saveDeck(StudyDeck deck) {
         String fileName = STORAGE_DIRECTORY + deck.title.replace(" ", "_") + ".json";
 
@@ -34,28 +32,47 @@ public class SysFileHandler {
         }
     }
 
-    // Helper method <- gonna transfer to DeckToJsonWorker...
-    private String decktoJson(StudyDeck deck) {
+    // TODO transfer to DeckToJsonWorker when testing's done
+    // Method to convert deck object to json file
+    private String deckToJson(StudyDeck deck) {
         StringBuilder json = new StringBuilder();
 
+        // Construct boilerplate
         json.append("{\n");
         json.append("  \"title\": \"").append(escapeJsonString(deck.title)).append("\",\n");
         json.append("  \"description\": \"").append(escapeJsonString(deck.description)).append("\",\n");
         json.append("  \"id\": ").append(deck.id).append(",\n");
         json.append("  \"deck\": [\n");
 
-        // serializing each card in deck loop
+        // Serialize each card
         for (int i = 0; i < deck.deck.size(); i++) {
             StudyCard card = deck.deck.get(i);
             json.append("    {\n");
             json.append("      \"question\": \"").append(escapeJsonString(card.getQuestion())).append("\",\n");
             json.append("      \"answer\": [\n");
 
-            // serializing every single answer
+            // Serialize each answer
             for (int j = 0; j < card.answer.size(); j++) {
-                System.out.println("TODO"); // TODO
+                json.append("        \"").append(escapeJsonString(card.answer.get(j))).append("\"");
+
+                // Append commas to non final answer entries
+                if (j < card.answer.size() - 1) {
+                    json.append(",");
+                }
+                json.append("\n");
             }
+            json.append("      ]\n");
+            json.append("    }");
+
+            // Append commas to non final card entries
+            if (i < deck.deck.size() - 1) {
+                json.append(",");
             }
+            json.append("\n");
+        }
+        json.append("  ]\n");
+        json.append("}");
+        return json.toString();
     }
 
     public List<StudyDeck> loadAllDecks(){
@@ -66,6 +83,7 @@ public class SysFileHandler {
         File folder = new File(STORAGE_DIRECTORY);
 
         // for loop throygh all files in directory
+        throw new UnsupportedOperationException("Method not yet implemented");
     }
 
     //escape special characters
