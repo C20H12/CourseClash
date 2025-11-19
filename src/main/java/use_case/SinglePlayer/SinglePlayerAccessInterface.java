@@ -1,6 +1,6 @@
 package use_case.SinglePlayer;
 
-import entity.StudyDeck;
+import entity.DeckManagement.StudyDeck;
 import use_case.DataAccessException;
 
 /**

@@ -89,16 +89,16 @@ public class AppBuilder {
         return this;
     }
 
-    public AppBuilder addSignupUseCase() {
-        final data_access.SignupUserDataAccessObject signupDAO = new data_access.SignupUserDataAccessObject();
-        final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(viewManagerModel,
-                signupViewModel, loginViewModel);
-        final SignupInputBoundary userSignupInteractor = new SignupInteractor(
-                signupDAO, signupOutputBoundary, userFactory);
-        SignupController controller = new SignupController(userSignupInteractor);
-        signupView.setSignupController(controller);
-        return this;
-    }
+//    public AppBuilder addSignupUseCase() {
+//        final data_access.SignupUserDataAccessObject signupDAO = new data_access.SignupUserDataAccessObject();
+//        final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(viewManagerModel,
+//                signupViewModel, loginViewModel);
+//        final SignupInputBoundary userSignupInteractor = new SignupInteractor(
+//                signupDAO, signupOutputBoundary, userFactory);
+//        SignupController controller = new SignupController(userSignupInteractor);
+//        signupView.setSignupController(controller);
+//        return this;
+//    }
 
     public AppBuilder addLoginUseCase() {
         final LoginUserDataAccessObject loginDAO = new LoginUserDataAccessObject();

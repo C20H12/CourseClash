@@ -1,7 +1,7 @@
 // Huzaifa – called by the view; builds InputData, calls interactor
 package interface_adapter.SinglePlayer;
 
-import entity.StudyDeck;
+import entity.DeckManagement.StudyDeck;
 import use_case.DataAccessException;
 import use_case.SinglePlayer.SinglePlayerInputBoundary;
 import use_case.SinglePlayer.SinglePlayerInputData;

@@ -12,7 +12,7 @@ public class Main {
                 .addMainScreenView()
                 //.addSinglePlayerView()
                 .addLoginUseCase()
-                .addSignupUseCase()
+                //.addSignupUseCase()
                 //.addSinglePlayerUseCase()
                 .build();
         application.setLocationRelativeTo(null);
