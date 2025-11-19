@@ -5,6 +5,8 @@ import entity.User;
 import entity.SinglePlayerGame;
 import entity.StudyCard;
 import entity.StudyDeck;
+import use_case.DataAccessException;
+
 import java.util.List;
 
 public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
@@ -51,7 +53,7 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
     }
 
     @Override
-    public void submitAnswer(String answer) {
+    public void submitAnswer(String answer) throws DataAccessException {
         if (game == null) {
             presenter.presentError("Game not started.");
             return;
@@ -98,7 +100,7 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
         }
     }
     @Override
-    public void endGame() {
+    public void endGame() throws DataAccessException {
         if (game == null) {
             presenter.presentError("Nothing to end.");
             return;
