@@ -5,10 +5,22 @@ package entity.DeckManagement;
 import java.util.ArrayList;
 
 public class StudyCard {
-    public String question;
-    public ArrayList<String> answer;
+    private final String question;
+    private final ArrayList<String> answers;
 
-    public String getQuestion() {return question;}
+    // Defensive copying from Clean Architecture
+    public StudyCard(String question, ArrayList<String> answers) {
+        this.question = question;
+        this.answers = new ArrayList<>(answers);
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public ArrayList<String> getAnswers() {
+        return new ArrayList<>(answers);
+    }
 }
 
-// TODO add getters and setters, they somehow got removed during the merge
+// TODO raise issue: deploy quick patches to fix naming discrepancies w/ methods.
