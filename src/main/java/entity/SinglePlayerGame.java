@@ -1,6 +1,9 @@
 // HUZAIFA - Entity for Single Player
 package entity;
 
+import entity.DeckManagement.StudyCard;
+import entity.DeckManagement.StudyDeck;
+
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;

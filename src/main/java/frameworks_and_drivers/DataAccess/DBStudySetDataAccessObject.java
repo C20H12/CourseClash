@@ -2,17 +2,17 @@
 /// Description: Implement Study Set Data Access Interface
 /// Wrote by Daniel
 
-package data_access;
+package frameworks_and_drivers.DataAccess;
 import java.util.HashMap;
 
-import entity.StudyDeck;
+import entity.DeckManagement.StudyDeck;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import use_case.DataAccessException;
 import use_case.StudySet.StudySetDataAccessInterface;
 
-import static data_access.StaticMethods.makeApiRequest;
+import static frameworks_and_drivers.DataAccess.StaticMethods.makeApiRequest;
 
 
 // Example: https://github.com/CSC207-2025F-UofT/NoteApplication/blob/main/src/main/java/data_access/DBNoteDataAccessObject.java#L15
