@@ -114,8 +114,6 @@ public class AppBuilder {
     }
 
     public AppBuilder addSignupUseCase() {
-        final frameworks_and_drivers.DataAccess.SignupUserDataAccessObject signupDAO =
-                new frameworks_and_drivers.DataAccess.SignupUserDataAccessObject();
         final frameworks_and_drivers.DataAccess.SignupUserDataAccessObject signupDAO = new frameworks_and_drivers.DataAccess.SignupUserDataAccessObject();
         final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(viewManagerModel,
                 signupViewModel, loginViewModel);
