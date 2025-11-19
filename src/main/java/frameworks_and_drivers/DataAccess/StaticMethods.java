@@ -83,7 +83,7 @@ public class StaticMethods {
             if (statusCode == SUCCESS_CODE) {
                 return responseJSON;
             } else if (statusCode == API_KEY_ERROR) {
-                throw new DataAccessException("Key Error: " +
+                throw new DataAccessException("API Key Error: " +
                         responseJSON.optString(ERROR_MESSAGE, "Unknown key error"));
             } else if (statusCode == BAD_REQUEST) {
                 throw new DataAccessException("Bad Request: " +

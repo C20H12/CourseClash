@@ -1,6 +1,6 @@
-// Core entity for individual study cards
+// Entity for Study Cards
 // Archie
-package entity.DeckManagement;
+package entity;
 
 import java.util.ArrayList;
 

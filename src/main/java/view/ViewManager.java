@@ -31,7 +31,7 @@ public class ViewManager implements PropertyChangeListener {
             final String viewModelName = (String) evt.getNewValue();
             SwingUtilities.invokeLater(() -> {
                 cardLayout.show(views, viewModelName);
-                if ("log in".equals(viewModelName)) {
+                if ("log in".equals(viewModelName) || "sign up".equals(viewModelName)) {
                     frame.setSize(300, 200);
                     frame.setLocationRelativeTo(null);
                 } else {

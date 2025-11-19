@@ -14,7 +14,9 @@ public class StudyDeck {
     public List<StudyCard> getCards() {
         return deck;
     }
-
+    public String getTitle() {
+        return this.title;
+    }
 }
 
 // todos:

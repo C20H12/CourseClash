@@ -8,9 +8,9 @@ import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
-public class BrowseStudySetView extends JFrame {
+public class BrowseStudySetViewTest extends JFrame {
 
-    public BrowseStudySetView() {
+    public BrowseStudySetViewTest() {
         // ---------- Initialize ----------
         FontLoader.registerFonts(); // from global Font file
         setTitle("Study Sets Overview");
@@ -173,6 +173,6 @@ public class BrowseStudySetView extends JFrame {
 
     // ---------- Run for Testing ----------
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(BrowseStudySetView::new);
+        SwingUtilities.invokeLater(BrowseStudySetViewTest::new);
     }
 }
