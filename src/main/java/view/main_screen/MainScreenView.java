@@ -1,9 +1,11 @@
 package view.main_screen;
 
 import interface_adapter.ViewManagerModel;
+import interface_adapter.leaderboard.LeaderboardViewModel;
 import interface_adapter.main_screen.MainScreenViewModel;
 import interface_adapter.studyset.studyset_browse.BrowseStudySetViewModel;
 import view.ViewManager;
+import view.leaderboard.LeaderboardView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,13 +19,15 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
     private final MainScreenViewModel mainScreenViewModel;
     private final ViewManagerModel viewManagerModel;
     private final BrowseStudySetViewModel browseStudySetViewModel;
+    private final LeaderboardViewModel leaderboardViewModel;
 
     public MainScreenView(MainScreenViewModel mainScreenViewModel,
                           ViewManagerModel viewManagerModel,
-                          BrowseStudySetViewModel browseStudySetViewModel) {
+                          BrowseStudySetViewModel browseStudySetViewModel, LeaderboardViewModel leaderboardViewModel) {
         this.mainScreenViewModel = mainScreenViewModel;
         this.viewManagerModel = viewManagerModel;
         this.browseStudySetViewModel = browseStudySetViewModel;
+        this.leaderboardViewModel = leaderboardViewModel;
         this.mainScreenViewModel.addPropertyChangeListener(this);
 
         // Set panel layout (this is now the root of this panel)
@@ -68,6 +72,9 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
                 if ("Manage Study Set".equals(button.getText())) {
                     button.addActionListener(e -> switchToBrowseStudySet());
                 }
+                if ("Leaderboard".equals(button.getText())) {
+                    button.addActionListener(e -> switchToLeaderboard());
+                }
 
                 c.gridx = col;
                 c.gridy = row;
@@ -78,6 +85,8 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
 
         this.add(buttonPanel, BorderLayout.CENTER);
     }
+
+
 
     public String getViewName() {
         return viewName;
@@ -95,6 +104,10 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
 
     private void switchToBrowseStudySet() {
         viewManagerModel.setState(browseStudySetViewModel.getViewName());
+        viewManagerModel.firePropertyChange();
+    }
+    private void switchToLeaderboard() {
+        viewManagerModel.setState(leaderboardViewModel.getViewName());
         viewManagerModel.firePropertyChange();
     }
 }

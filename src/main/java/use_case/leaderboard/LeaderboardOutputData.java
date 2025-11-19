@@ -3,29 +3,26 @@ package use_case.leaderboard;
 import entity.User;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 public class LeaderboardOutputData {
-    private ArrayList<User> top5Users;
+    private Map<LeaderboardType, ArrayList<User>> topUsers;
     private User currentUser;
-    private int currentUserRank;
-    private LeaderboardType leaderboardType;
-    public LeaderboardOutputData(ArrayList<User> top5Users, User currentUser, int currentUserRank, LeaderboardType leaderboardType) {
-        this.top5Users = top5Users;
+    private Map<LeaderboardType, Integer> currentUserRank;
+
+    public LeaderboardOutputData(Map<LeaderboardType, ArrayList<User>> topUsers, User currentUser,
+                                 Map<LeaderboardType, Integer> currentUserRank) {
+        this.topUsers = topUsers;
         this.currentUser = currentUser;
         this.currentUserRank = currentUserRank;
-        this.leaderboardType = leaderboardType;
     }
-    public ArrayList<User> getTop5Users() {
-        return top5Users;
+    public Map<LeaderboardType, ArrayList<User>> getTopUsers() {
+        return topUsers;
     }
     public User getCurrentUser() {
         return currentUser;
     }
-    public int getCurrentUserRank() {
+    public Map<LeaderboardType, Integer> getCurrentUserRank() {
         return currentUserRank;
-    }
-    public  LeaderboardType getLeaderboardType() {
-        return leaderboardType;
     }
 }
