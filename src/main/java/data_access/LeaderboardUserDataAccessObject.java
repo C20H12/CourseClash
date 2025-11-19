@@ -6,9 +6,9 @@ import org.json.JSONObject;
 import use_case.DataAccessException;
 import use_case.leaderboard.LeaderboardType;
 import use_case.leaderboard.LeaderboardUserDataAccessInterface;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.*;
+
 import static data_access.StaticMethods.makeApiRequest;
 
 public class LeaderboardUserDataAccessObject implements LeaderboardUserDataAccessInterface {
@@ -20,7 +20,7 @@ public class LeaderboardUserDataAccessObject implements LeaderboardUserDataAcces
 
     @Override
     public Map<LeaderboardType, ArrayList<User>> getTopUsers(int topN) throws DataAccessException {
-        final String method = "/get-top-user";
+        final String method = "/api/get-top-user";
         HashMap<String, String> params = new HashMap<>();
         params.put("top-n", String.valueOf(topN));
         Map<LeaderboardType, ArrayList<User>> result = new HashMap<>();
@@ -41,32 +41,25 @@ public class LeaderboardUserDataAccessObject implements LeaderboardUserDataAcces
                 t.setQuestionsAnswered(cu.optInt("answered", 0));
                 result.get(x).add(t);
             }
-            // TODO: asce or desc order?
+            if (ascOrder) {
+                Collections.reverse(result.get(x));
+            }
         }
-
-
-        // TODO: WHAT SHOULD THE MAP LOOK LIKE
-        // Everything has to be sorted, i made it to be an arraylist so it has a clear order.
-        // Its a Map, key should be enums in
-        // LEVEL,
-        // EXPERIENCE_POINTS,
-        // QUESTIONS_ANSWERED,
-        // QUESTIONS_CORRECT
-        // and value should be an arraylist of users sorted by that criteria.
-        // length should be equal to topN
+        return result;
     }
 
 
-
     @Override
-    public Map<LeaderboardType, Integer> getUserRank(User user) {
-        return null;
-        // TODO: WHAT SHOULD THE MAP LOOK LIKE
-        // key should be enums in
-        // LEVEL,
-        // EXPERIENCE_POINTS,
-        // QUESTIONS_ANSWERED,
-        // QUESTIONS_CORRECT
-        // value should be the rank of the user in that criteria.
+    public Map<LeaderboardType, Integer> getUserRank(User user) throws DataAccessException {
+        final String method = "/api/get-user-rank";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("username", user.getUserName());
+        JSONObject response = makeApiRequest("GET", method, params, apiKey);
+        Map<LeaderboardType, Integer> result = new HashMap<>();
+        result.put(LeaderboardType.LEVEL, response.getInt("level-rank"));
+        result.put(LeaderboardType.EXPERIENCE_POINTS, response.getInt("points-rank"));
+        result.put(LeaderboardType.QUESTIONS_ANSWERED, response.getInt("answered-rank"));
+        result.put(LeaderboardType.QUESTIONS_CORRECT, response.getInt("correct-rank"));
+        return result;
     }
 }
