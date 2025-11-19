@@ -18,10 +18,9 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
     @Override
     public void execute(LeaderboardInputData inputData) {
         User currentUser = inputData.getUser();
-        LeaderboardType leaderboardType = inputData.getLeaderboardType();
-        ArrayList<User> topUsers = userDataAccessObject.getTopUsers(5, leaderboardType);
+        ArrayList<User> topUsers = userDataAccessObject.getTopUsers(5);
         int rank = userDataAccessObject.getUserRank(currentUser);
-        LeaderboardOutputData outputData = new LeaderboardOutputData(topUsers, currentUser, rank, leaderboardType);
+        LeaderboardOutputData outputData = new LeaderboardOutputData(topUsers, currentUser, rank);
         leaderboardPresenter.presentLeaderboard(outputData);
     }
 }

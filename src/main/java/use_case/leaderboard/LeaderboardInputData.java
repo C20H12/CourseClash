@@ -8,18 +8,14 @@ import entity.User;
 
 public class LeaderboardInputData {
     private User user = null;
-    private LeaderboardType leaderboardType = null;
+    // private LeaderboardType leaderboardType = null;
+    // I am making the use case to return all leaderboard types at once.
 
-    public LeaderboardInputData(User user, LeaderboardType leaderboardType) {
-        this.leaderboardType = leaderboardType;
+    public LeaderboardInputData(User user) {
         this.user = user;
     }
 
     public User getUser() {
         return this.user;
-    }
-
-    public LeaderboardType getLeaderboardType() {
-        return this.leaderboardType;
     }
 }

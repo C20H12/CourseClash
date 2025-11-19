@@ -80,12 +80,17 @@ public class AppBuilder {
     public AppBuilder addMainScreenView() {
         mainScreenViewModel = new MainScreenViewModel();
         browseStudySetViewModel = new BrowseStudySetViewModel();
+        leaderboardViewModel = new LeaderboardViewModel();
 
-        mainScreenView = new MainScreenView(mainScreenViewModel, viewManagerModel, browseStudySetViewModel);
+        mainScreenView = new MainScreenView(mainScreenViewModel, viewManagerModel, browseStudySetViewModel,
+                leaderboardViewModel);
         cardPanel.add(mainScreenView, mainScreenView.getViewName());
 
         browseStudySetView = new BrowseStudySetView(browseStudySetViewModel, mainScreenViewModel, viewManagerModel);
         cardPanel.add(browseStudySetView, browseStudySetView.getViewName());
+
+        leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel, mainScreenViewModel);
+        cardPanel.add(leaderboardView, leaderboardView.getViewName());
         return this;
     }
 
@@ -97,7 +102,7 @@ public class AppBuilder {
     public AppBuilder addLeaderboardView() {
         leaderboardViewModel = new LeaderboardViewModel();
 
-        leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel);
+        leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel, mainScreenViewModel);
         cardPanel.add(leaderboardView, leaderboardView.getViewName());
         return this;
     }
@@ -125,6 +130,7 @@ public class AppBuilder {
     }
 
     public AppBuilder addLeaderboardUseCase() {
+        final LeaderboardUserDataAccessObject userDataAccessObject = new LeaderboardUserDataAccessObject();
         final LeaderboardOutputBoundary leaderboardOutputBoundary = new LeaderboardPresenter(leaderboardViewModel,
                 viewManagerModel);
         final LeaderboardInputBoundary leaderboardInteractor = new LeaderboardInteractor(
