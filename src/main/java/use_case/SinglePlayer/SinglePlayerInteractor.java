@@ -3,8 +3,8 @@ package use_case.SinglePlayer;
 
 import entity.User;
 import entity.SinglePlayerGame;
-import entity.StudyCard;
-import entity.StudyDeck;
+import entity.DeckManagement.StudyCard;
+import entity.DeckManagement.StudyDeck;
 import use_case.DataAccessException;
 
 import java.util.List;
@@ -28,14 +28,14 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
     public void startGame(SinglePlayerInputData in) {
         final User player = in.getPlayer();
         final StudyDeck deck = in.getDeck();
-        if (deck == null || deck.getCards() == null || deck.getCards().isEmpty()) {
+        if (deck == null || deck.getDeck() == null || deck.getDeck().isEmpty()) {
             presenter.presentError("Selected deck is empty.");
             return;
         }
 
         this.game = new SinglePlayerGame(player, deck, in.getTimerPerQuestion(), in.isShuffle());
         this.idx = 0;
-        this.cards = deck.getCards();
+        this.cards = deck.getDeck();
 
         final int limit = Math.min(in.getNumQuestions(), cards.size());
         if (limit < cards.size()) {
@@ -43,9 +43,10 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
         }
 
         // First question
+        // TODO don't forget to
         final StudyCard first = cards.get(0);
         presenter.presentQuestion(new SinglePlayerOutputData(
-                first.getQuestion(), first.getOptions(),
+                first.getQuestion(), first.getAnswers(),
                 1, cards.size(),
                 0, 0.0, 0.0, false,
                 "Game started"
@@ -59,7 +60,8 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
             return;
         }
         final StudyCard current = cards.get(idx);
-        final boolean correct = current.getAnswer().equalsIgnoreCase(answer);
+
+        final boolean correct = current.getAnswers().equals(answer);
         if (correct) {
             game.incrementScoreCorrect();
         } else {
@@ -89,7 +91,7 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
         } else {
             final StudyCard next = cards.get(idx);
             presenter.presentQuestion(new SinglePlayerOutputData(
-                    next.getQuestion(), next.getOptions(),
+                    next.getQuestion(), next.getAnswers(),
                     idx + 1, cards.size(),
                     game.getScore(),
                     game.getCorrectAnswers() * 100.0 / cards.size(),
