@@ -5,6 +5,7 @@ import use_case.registration.login.LoginOutputBoundary;
 import use_case.registration.login.LoginUserDataAccessInterface;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class LeaderboardInteractor implements LeaderboardInputBoundary {
     private final LeaderboardUserDataAccessInterface userDataAccessObject;
@@ -18,8 +19,8 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
     @Override
     public void execute(LeaderboardInputData inputData) {
         User currentUser = inputData.getUser();
-        ArrayList<User> topUsers = userDataAccessObject.getTopUsers(5);
-        int rank = userDataAccessObject.getUserRank(currentUser);
+        Map<LeaderboardType, ArrayList<User>> topUsers = userDataAccessObject.getTopUsers(5);
+        Map<LeaderboardType, Integer> rank = userDataAccessObject.getUserRank(currentUser);
         LeaderboardOutputData outputData = new LeaderboardOutputData(topUsers, currentUser, rank);
         leaderboardPresenter.presentLeaderboard(outputData);
     }

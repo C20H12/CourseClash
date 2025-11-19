@@ -8,7 +8,6 @@ import use_case.leaderboard.LeaderboardType;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
@@ -34,10 +33,10 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
         this.mainScreenViewModel = mainScreenViewModel; // because back button goes to main screen
 
         setLayout(new BorderLayout());
-        levelLeaderboardPanel = createLeaderboardPanel("Level Leaderboard");
-        experiencePointsLeaderboardPanel = createLeaderboardPanel("Experience Points Leaderboard");
-        questionsAnsweredLeaderboardPanel = createLeaderboardPanel("Questions Answered Leaderboard");
-        questionsCorrectLeaderboardPanel = createLeaderboardPanel("Questions Correct Leaderboard");
+        levelLeaderboardPanel = createLeaderboardPanel(LeaderboardType.LEVEL);
+        experiencePointsLeaderboardPanel = createLeaderboardPanel(LeaderboardType.EXPERIENCE_POINTS);
+        questionsAnsweredLeaderboardPanel = createLeaderboardPanel(LeaderboardType.QUESTIONS_ANSWERED);
+        questionsCorrectLeaderboardPanel = createLeaderboardPanel(LeaderboardType.QUESTIONS_CORRECT);
 
         // adding tabs for different leaderboards
         tabbedPane.addTab("levelLeaderboard", levelLeaderboardPanel);
@@ -46,9 +45,6 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
         tabbedPane.addTab("questionsCorrectLeaderboard", questionsCorrectLeaderboardPanel);
 
         add(tabbedPane, BorderLayout.CENTER);
-
-        // ---------- Leaderboard Table ----------
-
 
         // ---------- Bottom Buttons ----------
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
@@ -65,15 +61,17 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
         setupTabListener();
     }
 
+    // ---------- Leaderboard Panels ----------
     private JPanel createLeaderboardPanel(LeaderboardType leaderboardType) {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(50,50,50,50));
-        DefaultTableModel leaderboardTableModel = new DefaultTableModel(6,6);
-        leaderboardTableModel.addColumn()
+        String[] header = { "Rank", "Username", "Level",
+                "Experience Points", "Questions Answered", "Questions Correct" };
+        DefaultTableModel leaderboardTableModel = new DefaultTableModel(header, 0); // 0 = start with no data
         JTable leaderboardTable = new JTable(leaderboardTableModel);
-        panel.add(leaderboardTable, BorderLayout.CENTER);
-
+        JScrollPane leaderboardTableScrollPane = new JScrollPane(leaderboardTable);
+        panel.add(leaderboardTableScrollPane, BorderLayout.CENTER);
         return panel;
     }
 

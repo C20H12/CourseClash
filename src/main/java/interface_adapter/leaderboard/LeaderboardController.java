@@ -12,7 +12,7 @@ public class LeaderboardController {
     }
 
     public void loadLeaderboard(User user, LeaderboardType leaderboardType) {
-        LeaderboardInputData inputData = new LeaderboardInputData(user, leaderboardType);
+        LeaderboardInputData inputData = new LeaderboardInputData(user);
         leaderboardInputBoundary.execute(inputData);
     }
 }
