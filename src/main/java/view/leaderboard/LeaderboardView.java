@@ -11,6 +11,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 
 public class LeaderboardView extends JPanel implements ActionListener, PropertyChangeListener {
     private final String viewName = "leaderboard";
@@ -69,6 +70,12 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
         String[] header = { "Rank", "Username", "Level",
                 "Experience Points", "Questions Answered", "Questions Correct" };
         DefaultTableModel leaderboardTableModel = new DefaultTableModel(header, 0); // 0 = start with no data
+        // get the leaderboard
+        ArrayList<Object> leaderboardAsArray = leaderboardViewModel.getLeaderboardByType(leaderboardType);
+            for (Object rowObj : leaderboardAsArray) {
+                Object[] row = (Object[]) rowObj;
+                leaderboardTableModel.addRow(row);
+            }
         JTable leaderboardTable = new JTable(leaderboardTableModel);
         JScrollPane leaderboardTableScrollPane = new JScrollPane(leaderboardTable);
         panel.add(leaderboardTableScrollPane, BorderLayout.CENTER);
