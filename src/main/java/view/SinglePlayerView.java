@@ -125,7 +125,6 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
     public String getViewName() {
         return viewName;
     }
-
     public void setController(SinglePlayerController controller) {
         this.controller = controller;
     }
@@ -172,7 +171,7 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
         scoreLabel.setText(String.valueOf(state.getScore()));
 
         // Timer – real timer logic can update this later
-        // For now we leave whatever is already there.
+
 
         // Question text
         questionTextArea.setText(state.getQuestionText());
@@ -202,7 +201,7 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
             submitButton.setEnabled(true);
         }
 
-        // Optionally handle errors from state.getError() if you want a popup
+        // Optionally handle errors from state.getError() if we want a popup
         if (state.getError() != null && !state.getError().isEmpty()) {
             JOptionPane.showMessageDialog(this, state.getError(),
                     "Error", JOptionPane.ERROR_MESSAGE);
