@@ -23,22 +23,8 @@ public class LeaderboardViewModel extends ViewModel<LeaderboardState> {
     public void setState(LeaderboardState state) {
         if (state == null) return;
 
-        LeaderboardType type = state.getLeaderboardType();
-        currentType = type;
-
-        List<User> topUsers = state.getTopUsers();
-        if (topUsers == null) {
-            topUsersByType.put(type, new ArrayList<>(topUsers));
-        } else {
-            topUsersByType.remove(type);
-        }
-
-        Integer myRank = state.getMyRank();
-        if (myRank != null) {
-            myRankByType.put(type, myRank);
-        } else {
-            myRankByType.remove(type);
-        }
+        Map<LeaderboardType, ArrayList<User>> leaderboard = state.getLeaderboard();
+        Map<LeaderboardType, Integer> myRank = state.getMyRank();
     }
 
     public List<User> getTopUsers(LeaderboardType type) {

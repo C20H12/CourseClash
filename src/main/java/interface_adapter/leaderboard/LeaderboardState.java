@@ -5,42 +5,36 @@ import use_case.leaderboard.LeaderboardType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class LeaderboardState {
-    private LeaderboardType leaderboardType;
-    private ArrayList<User> topUsers;
+    private Map<LeaderboardType, ArrayList<User>> leaderboard;
     private User currentUser;
-    private Integer myRank;
+    private Map<LeaderboardType, Integer> myRank;
 
     public LeaderboardState() {
-        this.leaderboardType = LeaderboardType.LEVEL;
-        this.topUsers = new ArrayList<>();
+        this.leaderboard = null;
         this.myRank = null;
         this.currentUser = null;
     }
-    public LeaderboardType getLeaderboardType() {
-        return leaderboardType;
-    }
-    public List<User> getTopUsers() {
-        return topUsers;
+
+    public Map<LeaderboardType, ArrayList<User>> getLeaderboard() {
+        return leaderboard;
     }
     public User getCurrentUser() {
         return currentUser;
     }
-    public Integer getMyRank() {
+    public Map<LeaderboardType, Integer> getMyRank() {
         return myRank;
     }
 
-    public void setLeaderboardType(LeaderboardType leaderboardType) {
-        this.leaderboardType = leaderboardType;
-    }
-    public void setTopUsers(ArrayList<User> topUsers) {
-        this.topUsers = topUsers;
+    public void setLeaderboard(Map<LeaderboardType, ArrayList<User>> topUsers) {
+        this.leaderboard = topUsers;
     }
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
     }
-    public void setMyRank(Integer myRank) {
+    public void setMyRank(Map<LeaderboardType, Integer> myRank) {
         this.myRank = myRank;
     }
 }
