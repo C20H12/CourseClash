@@ -126,9 +126,9 @@ public class AppBuilder {
 
         return application;
     }
-    public AppBuilder addSinglePlayerView() {
-        SinglePlayerViewModel spViewModel = new SinglePlayerViewModel();
-        SinglePlayerPresenter spPresenter = new SinglePlayerPresenter(spViewModel);
+   // public AppBuilder addSinglePlayerView() {
+        //SinglePlayerViewModel spViewModel = new SinglePlayerViewModel();
+       // SinglePlayerPresenter spPresenter = new SinglePlayerPresenter(spViewModel);
 //        // Create gateway (your studydeck DAO)
 //        // TODO: Need to complete SinglePlayerDataAccessObject File
 //        SinglePlayerDataAccessObject spGateway = new SinglePlayerDataAccessObject();
@@ -143,6 +143,6 @@ public class AppBuilder {
 //        cardPanel.add(spView, spView.getViewName());
 //
 //        return this;
-    }
+    //}
 
 }
