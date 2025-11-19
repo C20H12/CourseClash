@@ -1,7 +1,6 @@
 // Orchestrates high-level local storage operations for StudyDecks.
 // Uses SysFileHandler
-// Implements DeckDataAccessInterface
-// Interfaces with the use case layer components like DeckManager, DeckBookmarker, etc.
+// Interacts with the use case layer components like DeckManager, DeckBookmarker, etc.
 // Archie
 package frameworks_and_drivers.DataAccess.DeckManagement;
 
