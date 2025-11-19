@@ -14,15 +14,31 @@ public class LeaderboardViewModel extends ViewModel<LeaderboardState> {
     private final Map<LeaderboardType, ArrayList<User>> topUsersByType = new HashMap<>();
     private final Map<LeaderboardType, Integer> myRankByType = new HashMap<>();
     private LeaderboardType currentType;
+    private User currentUser;
 
     public LeaderboardViewModel() {
         super("leaderboard");
     }
 
-    public void setData(LeaderboardType type, ArrayList<User> users, int myRank) {
-        topUsersByType.put(type, users);
-        myRankByType.put(type, myRank);
+    public void setState(LeaderboardState state) {
+        if (state == null) return;
+
+        LeaderboardType type = state.getLeaderboardType();
         currentType = type;
+
+        List<User> topUsers = state.getTopUsers();
+        if (topUsers == null) {
+            topUsersByType.put(type, new ArrayList<>(topUsers));
+        } else {
+            topUsersByType.remove(type);
+        }
+
+        Integer myRank = state.getMyRank();
+        if (myRank != null) {
+            myRankByType.put(type, myRank);
+        } else {
+            myRankByType.remove(type);
+        }
     }
 
     public List<User> getTopUsers(LeaderboardType type) {
@@ -35,5 +51,9 @@ public class LeaderboardViewModel extends ViewModel<LeaderboardState> {
 
     public LeaderboardType getCurrentType() {
         return currentType;
+    }
+
+    public User getCurrentUser() {
+        return this.currentUser;
     }
 }

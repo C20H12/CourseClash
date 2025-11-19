@@ -16,6 +16,7 @@ public class LeaderboardState {
         this.leaderboardType = LeaderboardType.LEVEL;
         this.topUsers = new ArrayList<>();
         this.myRank = null;
+        this.currentUser = null;
     }
     public LeaderboardType getLeaderboardType() {
         return leaderboardType;

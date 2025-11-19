@@ -3,8 +3,12 @@ package view.leaderboard;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.leaderboard.LeaderboardController;
 import interface_adapter.leaderboard.LeaderboardViewModel;
+import interface_adapter.main_screen.MainScreenViewModel;
+import use_case.leaderboard.LeaderboardType;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
@@ -13,28 +17,101 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
     private final String viewName = "leaderboard";
     private final LeaderboardViewModel leaderboardViewModel;
     private final ViewManagerModel viewManagerModel;
+    private final MainScreenViewModel mainScreenViewModel;
     private LeaderboardController leaderboardController = null;
 
     // Panels for leaderboards
     private final JTabbedPane tabbedPane = new JTabbedPane();
-    private final JPanel levelLeaderboardPanel = new JPanel();
-    private final JPanel experiencePointsLeaderboardPanel = new JPanel();
-    private final JPanel questionsAnsweredLeaderboardPanel = new JPanel();
-    private final JPanel questionsCorrectLeaderboardPanel = new JPanel();
+    private JPanel levelLeaderboardPanel = new JPanel();
+    private JPanel experiencePointsLeaderboardPanel = new JPanel();
+    private JPanel questionsAnsweredLeaderboardPanel = new JPanel();
+    private JPanel questionsCorrectLeaderboardPanel = new JPanel();
 
-    public LeaderboardView(LeaderboardViewModel leaderboardViewModel, ViewManagerModel viewManagerModel) {
+    public LeaderboardView(LeaderboardViewModel leaderboardViewModel, ViewManagerModel viewManagerModel, MainScreenViewModel mainScreenViewModel) {
         // Initialize leaderboard view components here
         this.leaderboardViewModel = leaderboardViewModel;
         this.viewManagerModel = viewManagerModel;
+        this.mainScreenViewModel = mainScreenViewModel; // because back button goes to main screen
 
         setLayout(new BorderLayout());
+        levelLeaderboardPanel = createLeaderboardPanel("Level Leaderboard");
+        experiencePointsLeaderboardPanel = createLeaderboardPanel("Experience Points Leaderboard");
+        questionsAnsweredLeaderboardPanel = createLeaderboardPanel("Questions Answered Leaderboard");
+        questionsCorrectLeaderboardPanel = createLeaderboardPanel("Questions Correct Leaderboard");
 
         // adding tabs for different leaderboards
         tabbedPane.addTab("levelLeaderboard", levelLeaderboardPanel);
         tabbedPane.addTab("experiencePointsLeaderboard", experiencePointsLeaderboardPanel);
         tabbedPane.addTab("questionsAnsweredLeaderboard", questionsAnsweredLeaderboardPanel);
         tabbedPane.addTab("questionsCorrectLeaderboard", questionsCorrectLeaderboardPanel);
+
+        add(tabbedPane, BorderLayout.CENTER);
+
+        // ---------- Leaderboard Table ----------
+
+
+        // ---------- Bottom Buttons ----------
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
+        buttonPanel.setBackground(new Color(245, 245, 245));
+
+        JButton backButton = createStyledButton("Back");
+        buttonPanel.add(backButton);
+        backButton.addActionListener(e -> {
+            switchToMainScreen();
+        });
+        add(buttonPanel, BorderLayout.SOUTH);
+
+        leaderboardViewModel.addPropertyChangeListener(this);
+        setupTabListener();
     }
+
+    private JPanel createLeaderboardPanel(LeaderboardType leaderboardType) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(50,50,50,50));
+        DefaultTableModel leaderboardTableModel = new DefaultTableModel(6,6);
+        leaderboardTableModel.addColumn()
+        JTable leaderboardTable = new JTable(leaderboardTableModel);
+        panel.add(leaderboardTable, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    // ---------- Styled Buttons ----------
+    private JButton createStyledButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Helvetica", Font.BOLD, 18));
+        button.setBackground(new Color(70, 130, 180)); // blue accent
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        button.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
+        return button;
+    }
+
+    private void switchToMainScreen() {
+        viewManagerModel.setState(mainScreenViewModel.getViewName());
+        viewManagerModel.firePropertyChange();
+    }
+
+    private void setupTabListener() {
+        tabbedPane.addChangeListener(e -> {
+            LeaderboardType type;
+
+            int index = tabbedPane.getSelectedIndex();
+            switch (index) {
+                case 1 -> type = LeaderboardType.EXPERIENCE_POINTS;
+                case 2 -> type = LeaderboardType.QUESTIONS_ANSWERED;
+                case 3 -> type = LeaderboardType.QUESTIONS_CORRECT;
+                default -> type = LeaderboardType.LEVEL;
+            }
+
+            createLeaderboardPanel(type);
+        });
+    }
+
+
+
 
     public String getViewName() {
         return viewName;
