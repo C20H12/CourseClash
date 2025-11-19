@@ -80,7 +80,7 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
             ));
             gateway.saveSinglePlayerResult(
                     game.getPlayer().getUserName(),
-                    game.getStudySet().title,
+                    game.getStudyDeck().title,
                     game.getScore(),
                     game.getCorrectAnswers() * 100.0 / cards.size(),
                     game.getAverageResponseTime()

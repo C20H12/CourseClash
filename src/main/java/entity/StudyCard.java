@@ -1,14 +1,29 @@
 // Entity for Study Cards
-// Archie
+// Archie + Huzaifa - updated
 package entity;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class StudyCard {
-    public String question;
-    public ArrayList<String> answer;
 
-    public String getQuestion() {return question;}
+    private final String question;
+    private final List<String> options;
+    private final String answer;
+
+    public StudyCard(String question, List<String> options, String answer) {
+        this.question = question;
+        this.options = options;
+        this.answer = answer;
+    }
+    public String getQuestion() {
+        return question;
+    }
+    public List<String> getOptions() {
+        return options;
+    }
+    public String getAnswer() {
+        return answer;
+    }
 }
 
 //todos:

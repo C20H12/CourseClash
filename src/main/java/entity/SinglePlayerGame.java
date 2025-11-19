@@ -63,4 +63,7 @@ public class SinglePlayerGame {
             this.averageResponseTime = 0.0;
         }
     }
+    public StudyDeck getStudyDeck() {
+        return deck;
+    }
 }
