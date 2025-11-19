@@ -1,6 +1,7 @@
 package interface_adapter.leaderboard;
 
 import entity.User;
+import use_case.DataAccessException;
 import use_case.leaderboard.LeaderboardInputBoundary;
 import use_case.leaderboard.LeaderboardInputData;
 import use_case.leaderboard.LeaderboardType;
@@ -11,7 +12,7 @@ public class LeaderboardController {
         this.leaderboardInputBoundary = leaderboardInputBoundary;
     }
 
-    public void loadLeaderboard(User user, LeaderboardType leaderboardType) {
+    public void loadLeaderboard(User user, LeaderboardType leaderboardType) throws DataAccessException {
         LeaderboardInputData inputData = new LeaderboardInputData(user);
         leaderboardInputBoundary.execute(inputData);
     }

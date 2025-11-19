@@ -1,6 +1,7 @@
 package use_case.leaderboard;
 
 import entity.User;
+import use_case.DataAccessException;
 import use_case.registration.login.LoginOutputBoundary;
 import use_case.registration.login.LoginUserDataAccessInterface;
 
@@ -17,7 +18,7 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
     }
 
     @Override
-    public void execute(LeaderboardInputData inputData) {
+    public void execute(LeaderboardInputData inputData) throws DataAccessException {
         User currentUser = inputData.getUser();
         Map<LeaderboardType, ArrayList<User>> topUsers = userDataAccessObject.getTopUsers(5);
         Map<LeaderboardType, Integer> rank = userDataAccessObject.getUserRank(currentUser);
