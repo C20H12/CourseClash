@@ -20,7 +20,7 @@ import view.SinglePlayerView;
 import view.main_screen.MainScreenView;
 import view.registration.*;
 import view.study_set.BrowseStudySetView;
-import data_access.*;
+import frameworks_and_drivers.DataAccess.*;
 import utility.FontLoader;
 
 import view.ViewManager;
@@ -90,7 +90,7 @@ public class AppBuilder {
     }
 
     public AppBuilder addSignupUseCase() {
-        final SignupUserDataAccessObject signupDAO = new SignupUserDataAccessObject();
+        final data_access.SignupUserDataAccessObject signupDAO = new data_access.SignupUserDataAccessObject();
         final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(viewManagerModel,
                 signupViewModel, loginViewModel);
         final SignupInputBoundary userSignupInteractor = new SignupInteractor(
