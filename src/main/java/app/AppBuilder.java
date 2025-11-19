@@ -1,7 +1,9 @@
 package app;
-
 import entity.UserFactory;
 import interface_adapter.*;
+import interface_adapter.SinglePlayer.SinglePlayerController;
+import interface_adapter.SinglePlayer.SinglePlayerPresenter;
+import interface_adapter.SinglePlayer.SinglePlayerViewModel;
 import interface_adapter.leaderboard.LeaderboardController;
 import interface_adapter.leaderboard.LeaderboardPresenter;
 import interface_adapter.leaderboard.LeaderboardViewModel;
@@ -12,6 +14,7 @@ import interface_adapter.registration.signup.SignupController;
 import interface_adapter.registration.signup.SignupPresenter;
 import interface_adapter.registration.signup.SignupViewModel;
 import interface_adapter.user_session.UserSession;
+import use_case.SinglePlayer.SinglePlayerInteractor;
 import use_case.leaderboard.LeaderboardInputBoundary;
 import use_case.leaderboard.LeaderboardInteractor;
 import use_case.leaderboard.LeaderboardOutputBoundary;
@@ -19,11 +22,12 @@ import use_case.registration.login.*;
 import use_case.registration.signup.SignupInputBoundary;
 import use_case.registration.signup.SignupInteractor;
 import use_case.registration.signup.SignupOutputBoundary;
+import view.SinglePlayerView;
 import view.leaderboard.LeaderboardView;
 import view.main_screen.MainScreenView;
 import view.registration.*;
 import view.study_set.BrowseStudySetView;
-import data_access.*;
+import frameworks_and_drivers.DataAccess.*;
 import utility.FontLoader;
 
 import view.ViewManager;
@@ -108,7 +112,7 @@ public class AppBuilder {
     }
 
     public AppBuilder addSignupUseCase() {
-        final SignupUserDataAccessObject signupDAO = new SignupUserDataAccessObject();
+        final frameworks_and_drivers.DataAccess.SignupUserDataAccessObject signupDAO = new frameworks_and_drivers.DataAccess.SignupUserDataAccessObject();
         final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(viewManagerModel,
                 signupViewModel, loginViewModel);
         final SignupInputBoundary userSignupInteractor = new SignupInteractor(
@@ -156,4 +160,23 @@ public class AppBuilder {
 
         return application;
     }
+   // public AppBuilder addSinglePlayerView() {
+        //SinglePlayerViewModel spViewModel = new SinglePlayerViewModel();
+       // SinglePlayerPresenter spPresenter = new SinglePlayerPresenter(spViewModel);
+//        // Create gateway (your studydeck DAO)
+//        // TODO: Need to complete SinglePlayerDataAccessObject File
+//        SinglePlayerDataAccessObject spGateway = new SinglePlayerDataAccessObject();
+//        SinglePlayerInteractor spInteractor =
+//                new SinglePlayerInteractor(spPresenter, spGateway);
+//        SinglePlayerController spController =
+//                new SinglePlayerController(spInteractor);
+//
+//        SinglePlayerView spView = new SinglePlayerView(spViewModel, viewManagerModel);
+//        spView.setController(spController);
+//
+//        cardPanel.add(spView, spView.getViewName());
+//
+//        return this;
+    //}
+
 }

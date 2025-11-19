@@ -2,6 +2,7 @@
 package interface_adapter.SinglePlayer;
 
 import entity.StudyDeck;
+import use_case.DataAccessException;
 import use_case.SinglePlayer.SinglePlayerInputBoundary;
 import use_case.SinglePlayer.SinglePlayerInputData;
 import entity.User;
@@ -34,13 +35,13 @@ public class SinglePlayerController {
     /**
      * Submits an answer to the interactor.
      */
-    public void submitAnswer(String userAnswer) {
+    public void submitAnswer(String userAnswer) throws DataAccessException {
         interactor.submitAnswer(userAnswer);
     }
     /**
      * Ends the current game prematurely.
      */
-    public void endGame() {
+    public void endGame() throws DataAccessException {
         interactor.endGame();
     }
 }

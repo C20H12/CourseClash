@@ -1,9 +1,11 @@
 // huzaifa - start game, end game, submit answer
 package use_case.SinglePlayer;
 
+import use_case.DataAccessException;
+
 public interface SinglePlayerInputBoundary {
     void startGame(SinglePlayerInputData inputData);
-    void submitAnswer(String answer);
-    void endGame();
+    void submitAnswer(String answer) throws DataAccessException;
+    void endGame() throws DataAccessException;
 }
 

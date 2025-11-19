@@ -5,6 +5,8 @@ import entity.User;
 import entity.SinglePlayerGame;
 import entity.StudyCard;
 import entity.StudyDeck;
+import use_case.DataAccessException;
+
 import java.util.List;
 
 public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
@@ -32,6 +34,7 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
         }
 
         this.game = new SinglePlayerGame(player, deck, in.getTimerPerQuestion(), in.isShuffle());
+        this.idx = 0;
         this.cards = deck.getCards();
 
         final int limit = Math.min(in.getNumQuestions(), cards.size());
@@ -50,19 +53,17 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
     }
 
     @Override
-    public void submitAnswer(String answer) {
+    public void submitAnswer(String answer) throws DataAccessException {
         if (game == null) {
             presenter.presentError("Game not started.");
             return;
         }
         final StudyCard current = cards.get(idx);
         final boolean correct = current.getAnswer().equalsIgnoreCase(answer);
-
         if (correct) {
-            game.setScore(game.getScore() + 10);
-            game.setCorrectAnswers(game.getCorrectAnswers() + 1);
+            game.incrementScoreCorrect();
         } else {
-            game.setScore(Math.max(0, game.getScore() - 5));
+            game.decrementScore();
         }
 
         idx++;
@@ -80,7 +81,7 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
             ));
             gateway.saveSinglePlayerResult(
                     game.getPlayer().getUserName(),
-                    game.getStudySet().title,
+                    game.getStudyDeck().getTitle(),
                     game.getScore(),
                     game.getCorrectAnswers() * 100.0 / cards.size(),
                     game.getAverageResponseTime()
@@ -99,12 +100,20 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
         }
     }
     @Override
-    public void endGame() {
+    public void endGame() throws DataAccessException {
         if (game == null) {
             presenter.presentError("Nothing to end.");
             return;
         }
         game.endGame();
+        double accuracy = game.getCorrectAnswers() * 100.0 / cards.size();
+        gateway.saveSinglePlayerResult(
+                game.getPlayer().getUserName(),
+                game.getStudyDeck().getTitle(),
+                game.getScore(),
+                accuracy,
+                game.getAverageResponseTime()
+        );
         presenter.presentResults(new SinglePlayerOutputData(
                 null, null, idx, cards.size(),
                 game.getScore(),

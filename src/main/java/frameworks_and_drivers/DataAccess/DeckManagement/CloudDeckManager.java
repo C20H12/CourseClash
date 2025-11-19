@@ -2,7 +2,7 @@
 // Uses LocalDeckWorker
 // Implements DeckDataAccessInterface
 // Daniel
-package data_access.deck;
+package frameworks_and_drivers.DataAccess.DeckManagement;
 
-public class CloudDeckWorker {
+public class CloudDeckManager {
 }

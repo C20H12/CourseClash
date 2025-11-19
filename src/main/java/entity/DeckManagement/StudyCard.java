@@ -1,6 +1,6 @@
 // Entity for Study Cards
 // Archie
-package entity;
+package entity.DeckManagement;
 
 import java.util.ArrayList;
 
@@ -11,9 +11,4 @@ public class StudyCard {
     public String getQuestion() {return question;}
 }
 
-//todos:
-// validate each card
-//for the getters below, look at 'SinglePLayerInteractor for reference - Note by Huzaifa
-//getAnswer()
-//getOptions()
-
+// TODO add getters and setters, they somehow got removed during the merge

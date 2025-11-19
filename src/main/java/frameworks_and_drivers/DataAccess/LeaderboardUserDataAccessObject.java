@@ -1,4 +1,4 @@
-package data_access;
+package frameworks_and_drivers.DataAccess;
 
 import entity.User;
 import org.json.JSONArray;
@@ -9,7 +9,7 @@ import use_case.leaderboard.LeaderboardUserDataAccessInterface;
 
 import java.util.*;
 
-import static data_access.StaticMethods.makeApiRequest;
+import static frameworks_and_drivers.DataAccess.StaticMethods.makeApiRequest;
 
 public class LeaderboardUserDataAccessObject implements LeaderboardUserDataAccessInterface {
 

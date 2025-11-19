@@ -1,7 +1,8 @@
-// Entity for Study Decks
+// Core entity representing a collection of study cards
 // Archie
-package entity;
+package entity.DeckManagement;
 
+import entity.DeckManagement.StudyCard;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,9 +15,9 @@ public class StudyDeck {
     public List<StudyCard> getCards() {
         return deck;
     }
-
+    public String getTitle() {
+        return this.title;
+    }
 }
 
-// todos:
-// validate ai generated / manually made decks
-// max 25 cards per deck
+// TODO Add validation

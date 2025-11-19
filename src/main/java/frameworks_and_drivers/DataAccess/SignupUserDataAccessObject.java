@@ -1,4 +1,4 @@
-package data_access;
+package frameworks_and_drivers.DataAccess;
 
 import entity.User;
 import org.json.JSONObject;
@@ -8,7 +8,7 @@ import use_case.registration.signup.SignupUserDataAccessInterface;
 import java.util.HashMap;
 import java.util.Map;
 
-import static data_access.StaticMethods.makeApiRequest;
+import static frameworks_and_drivers.DataAccess.StaticMethods.makeApiRequest;
 
 public class SignupUserDataAccessObject implements SignupUserDataAccessInterface {
 

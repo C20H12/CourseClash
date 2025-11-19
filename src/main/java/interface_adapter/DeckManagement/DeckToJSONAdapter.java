@@ -1,6 +1,6 @@
 //
 // Archie
-package use_case.deck_management.adapters;
+package interface_adapter.DeckManagement;
 
 public class DeckToJSONAdapter {
 }
