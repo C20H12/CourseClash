@@ -10,8 +10,10 @@ public class Main {
                 .addLoginView()
                 .addSignupView()
                 .addMainScreenView()
+                //.addSinglePlayerView()
                 .addLoginUseCase()
                 .addSignupUseCase()
+                //.addSinglePlayerUseCase()
                 .build();
         application.setLocationRelativeTo(null);
         application.setVisible(true);
