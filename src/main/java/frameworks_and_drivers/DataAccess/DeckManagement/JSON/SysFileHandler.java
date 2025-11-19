@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SysFileHandler {
-    private final String STORAGE_DIRECTORY = System.getProperty("user.home") + "/.CourseClash/local_storage";
+    private final String STORAGE_DIRECTORY = "src/main/local_storage";
 
     // Init directories via constructor when none present
     public SysFileHandler() {
