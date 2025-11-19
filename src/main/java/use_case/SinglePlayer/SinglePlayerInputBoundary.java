@@ -5,7 +5,7 @@ import use_case.DataAccessException;
 
 public interface SinglePlayerInputBoundary {
     void startGame(SinglePlayerInputData inputData);
-    void submitAnswer(String answer);
+    void submitAnswer(String answer) throws DataAccessException;
     void endGame() throws DataAccessException;
 }
 

@@ -4,6 +4,7 @@ import interface_adapter.SinglePlayer.SinglePlayerController;
 import interface_adapter.SinglePlayer.SinglePlayerState;
 import interface_adapter.SinglePlayer.SinglePlayerViewModel;
 import interface_adapter.ViewManagerModel;
+import use_case.DataAccessException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -138,13 +139,21 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
         if (e.getSource() == submitButton) {
             String selected = getSelectedOptionText();
             if (selected != null) {
-                controller.submitAnswer(selected);
+                try {
+                    controller.submitAnswer(selected);
+                } catch (DataAccessException ex) {
+                    throw new RuntimeException(ex);
+                }
             } else {
                 // No option selected; show a simple message locally
                 messageLabel.setText("Please select an answer.");
             }
         } else if (e.getSource() == endGameButton) {
-            controller.endGame();
+            try {
+                controller.endGame();
+            } catch (DataAccessException ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
 
