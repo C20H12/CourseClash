@@ -1,4 +1,5 @@
 package app;
+
 import entity.UserFactory;
 import interface_adapter.*;
 import interface_adapter.SinglePlayer.SinglePlayerController;
@@ -86,7 +87,6 @@ public class AppBuilder {
     public AppBuilder addMainScreenView() {
         mainScreenViewModel = new MainScreenViewModel();
         browseStudySetViewModel = new BrowseStudySetViewModel();
-        leaderboardViewModel = new LeaderboardViewModel();
 
         mainScreenView = new MainScreenView(mainScreenViewModel, viewManagerModel, browseStudySetViewModel,
                 leaderboardViewModel);
