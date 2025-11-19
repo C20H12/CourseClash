@@ -32,6 +32,7 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
         }
 
         this.game = new SinglePlayerGame(player, deck, in.getTimerPerQuestion(), in.isShuffle());
+        this.idx = 0;
         this.cards = deck.getCards();
 
         final int limit = Math.min(in.getNumQuestions(), cards.size());
@@ -57,12 +58,10 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
         }
         final StudyCard current = cards.get(idx);
         final boolean correct = current.getAnswer().equalsIgnoreCase(answer);
-
         if (correct) {
-            game.setScore(game.getScore() + 10);
-            game.setCorrectAnswers(game.getCorrectAnswers() + 1);
+            game.incrementScoreCorrect();
         } else {
-            game.setScore(Math.max(0, game.getScore() - 5));
+            game.decrementScore();
         }
 
         idx++;
@@ -80,7 +79,7 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
             ));
             gateway.saveSinglePlayerResult(
                     game.getPlayer().getUserName(),
-                    game.getStudyDeck().title,
+                    game.getStudyDeck().getTitle(),
                     game.getScore(),
                     game.getCorrectAnswers() * 100.0 / cards.size(),
                     game.getAverageResponseTime()
@@ -105,6 +104,14 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
             return;
         }
         game.endGame();
+        double accuracy = game.getCorrectAnswers() * 100.0 / cards.size();
+        gateway.saveSinglePlayerResult(
+                game.getPlayer().getUserName(),
+                game.getStudyDeck().getTitle(),
+                game.getScore(),
+                accuracy,
+                game.getAverageResponseTime()
+        );
         presenter.presentResults(new SinglePlayerOutputData(
                 null, null, idx, cards.size(),
                 game.getScore(),

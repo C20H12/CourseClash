@@ -1,5 +1,4 @@
 package app;
-
 import entity.UserFactory;
 import interface_adapter.*;
 import interface_adapter.main_screen.MainScreenViewModel;
@@ -122,4 +121,5 @@ public class AppBuilder {
 
         return application;
     }
+
 }
