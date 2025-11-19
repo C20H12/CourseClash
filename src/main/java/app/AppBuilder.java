@@ -130,7 +130,7 @@ public class AppBuilder {
     }
 
     public AppBuilder addLeaderboardUseCase() {
-        final LeaderboardUserDataAccessObject userDataAccessObject = new LeaderboardUserDataAccessObject();
+        final LeaderboardUserDataAccessObject userDataAccessObject = new LeaderboardUserDataAccessObject(session.getApiKey());
         final LeaderboardOutputBoundary leaderboardOutputBoundary = new LeaderboardPresenter(leaderboardViewModel,
                 viewManagerModel);
         final LeaderboardInputBoundary leaderboardInteractor = new LeaderboardInteractor(
