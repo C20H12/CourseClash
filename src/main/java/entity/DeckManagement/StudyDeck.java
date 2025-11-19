@@ -2,6 +2,7 @@
 // Archie
 package entity.DeckManagement;
 
+import entity.DeckManagement.StudyCard;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,4 @@ public class StudyDeck {
     }
 }
 
-// todos:
-// validate ai generated / manually made decks
-// max 25 cards per deck
+// TODO Add validation
