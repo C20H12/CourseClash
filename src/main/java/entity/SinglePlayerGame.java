@@ -26,7 +26,7 @@ public class SinglePlayerGame {
     public SinglePlayerGame(User player, StudyDeck studyDeck, int timerPerQuestion, boolean shuffleEnabled) {
         this.player = player;
         this.deck = studyDeck;
-        this.questions = studyDeck.getCards();
+        this.questions = studyDeck.getDeck();
         // this will come from StudyDeck file
        //  this.timerPerQuestion = timerPerQuestion;
         this.shuffleEnabled = shuffleEnabled;
