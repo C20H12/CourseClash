@@ -104,8 +104,20 @@ public class LeaderboardViewModel extends ViewModel<LeaderboardState> {
         return rows;
     }
 
-    public Map<LeaderboardType, Integer> getMyRank() {
-        return myRank;
+    public ArrayList<Object> getMyRankInfo(LeaderboardType leaderboardType) {
+        ArrayList<Object> myRankInfo = new ArrayList<>();
+        Integer myRanking = this.myRank.get(leaderboardType);
+        if (myRanking == null) {
+            myRanking = 10; // Not ranked
+        }
+        myRankInfo.add(myRanking);
+        myRankInfo.add(this.currentUser.getUserName());
+        myRankInfo.add(this.currentUser.getLevel());
+        myRankInfo.add(this.currentUser.getExperiencePoints());
+        myRankInfo.add(this.currentUser.getQuestionsAnswered());
+        myRankInfo.add(this.currentUser.getQuestionsCorrect());
+
+        return myRankInfo;
     }
 
     public User getCurrentUser() {
