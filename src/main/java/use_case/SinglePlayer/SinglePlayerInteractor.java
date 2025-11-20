@@ -25,11 +25,12 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
     }
 
     @Override
-    public void startGame(SinglePlayerInputData in) {
+    public void startGame(SinglePlayerInputData in) throws DataAccessException {
         final User player = in.getPlayer();
-        final StudyDeck deck = in.getDeck();
-        if (deck == null || deck.getDeck() == null || deck.getDeck().isEmpty()) {
-            presenter.presentError("Selected deck is empty.");
+        String deckTitle = in.getDeckTitle();
+        StudyDeck deck = gateway.loadDeck(deckTitle);
+        if (deck == null || deck.isEmpty()) {
+            presenter.presentError("Could not load deck: " + deckTitle);
             return;
         }
 
@@ -61,7 +62,8 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
         }
         final StudyCard current = cards.get(idx);
 
-        final boolean correct = current.getAnswers().equals(answer);
+        boolean correct =
+                current.getAnswers().get(current.getSolutionId()).equalsIgnoreCase(answer);
         if (correct) {
             game.incrementScoreCorrect();
         } else {

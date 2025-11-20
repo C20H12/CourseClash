@@ -1,6 +1,6 @@
 package use_case.SinglePlayer;
 
-import entity.StudyDeck;
+import entity.DeckManagement.StudyDeck;
 import use_case.DataAccessException;
 
 /**
@@ -13,7 +13,7 @@ public interface SinglePlayerAccessInterface {
     /**
      * Returns true if a deck with this title exists.
      */
-    boolean existsDeck(String deckTitle);
+    boolean existsDeck(String deckTitle) throws DataAccessException;
 
     /**
      * Loads the deck with the given title.

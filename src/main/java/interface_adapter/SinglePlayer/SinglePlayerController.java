@@ -1,7 +1,7 @@
 // Huzaifa – called by the view; builds InputData, calls interactor
 package interface_adapter.SinglePlayer;
 
-import entity.StudyDeck;
+import entity.DeckManagement.StudyDeck;
 import use_case.DataAccessException;
 import use_case.SinglePlayer.SinglePlayerInputBoundary;
 import use_case.SinglePlayer.SinglePlayerInputData;
@@ -19,12 +19,12 @@ public class SinglePlayerController {
     /**
      * Starts a new single player game with the user’s chosen configuration.
      */
-    public void startGame(User user, StudyDeck studyDeck,
-                          int timerPerQuestion, boolean shuffle, int numQuestions) {
+    public void startGame(User user, String deckTitle,
+                          int timerPerQuestion, boolean shuffle, int numQuestions) throws DataAccessException {
 
         SinglePlayerInputData inputData = new SinglePlayerInputData(
                 user,
-                studyDeck,
+                deckTitle,
                 timerPerQuestion,
                 shuffle,
                 numQuestions

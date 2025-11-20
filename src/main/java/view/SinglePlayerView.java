@@ -97,7 +97,6 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
         }
 
         center.add(optionsPanel, BorderLayout.CENTER);
-
         add(center, BorderLayout.CENTER);
     }
 
@@ -126,8 +125,23 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
     public String getViewName() {
         return viewName;
     }
+
     public void setController(SinglePlayerController controller) {
         this.controller = controller;
+    }
+
+    /**
+     * Called by MainScreen or BrowseStudySetView to start the game.
+     */
+    public void startGame(String deckTitle,
+                          entity.User user,
+                          int timerPerQuestion,
+                          boolean shuffle,
+                          int numQuestions) throws DataAccessException {
+
+        if (controller != null) {
+            controller.startGame(user, deckTitle, timerPerQuestion, shuffle, numQuestions);
+        }
     }
 
     @Override
@@ -145,9 +159,9 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
                     throw new RuntimeException(ex);
                 }
             } else {
-                // No option selected; show a simple message locally
                 messageLabel.setText("Please select an answer.");
             }
+
         } else if (e.getSource() == endGameButton) {
             try {
                 controller.endGame();
@@ -168,26 +182,16 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        // ViewModel has changed; update UI from the state
         SinglePlayerState state = viewModel.getState();
 
-        // Q x/y
-        int current = state.getCurrentIndex();
-        int total = state.getTotal();
-        questionCounterLabel.setText("Q " + current + "/" + total);
-
-        // Score
+        questionCounterLabel.setText("Q " + state.getCurrentIndex() + "/" + state.getTotal());
         scoreLabel.setText(String.valueOf(state.getScore()));
 
-        // Timer – real timer logic can update this later
-
-
-        // Question text
         questionTextArea.setText(state.getQuestionText());
 
-        // Options
         List<String> options = state.getOptions();
         optionsGroup.clearSelection();
+
         for (int i = 0; i < optionButtons.length; i++) {
             if (i < options.size()) {
                 optionButtons[i].setText(options.get(i));
@@ -197,7 +201,6 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
             }
         }
 
-        // Messages and final stats
         messageLabel.setText(state.getMessage() != null ? state.getMessage() : " ");
 
         if (state.isGameOver()) {
@@ -210,10 +213,13 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
             submitButton.setEnabled(true);
         }
 
-        // Optionally handle errors from state.getError() if we want a popup
         if (state.getError() != null && !state.getError().isEmpty()) {
-            JOptionPane.showMessageDialog(this, state.getError(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(
+                    this,
+                    state.getError(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 }
