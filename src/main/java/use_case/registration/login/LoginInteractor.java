@@ -59,7 +59,6 @@ public class LoginInteractor implements LoginInputBoundary {
             String apiKey = (String) loginResponse.get("apiKey");
             final LoginOutputData loginOutputData = new LoginOutputData(user.getUserName(), apiKey, user);
             loginPresenter.prepareSuccessView(loginOutputData);
-            return;
         }
     }
 }

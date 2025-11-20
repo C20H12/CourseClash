@@ -23,5 +23,5 @@ public interface LeaderboardUserDataAccessInterface {
      * @return a map with key as type of ranking and the rank this user is at
      * @throws DataAccessException Exception when data access fails
      */
-    Map<LeaderboardType, Integer> getUserRank(User user) throws DataAccessException;
+//    Map<LeaderboardType, Integer> getUserRank(User user) throws DataAccessException;
 }

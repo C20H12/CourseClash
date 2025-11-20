@@ -16,6 +16,7 @@ import interface_adapter.registration.signup.SignupPresenter;
 import interface_adapter.registration.signup.SignupViewModel;
 import interface_adapter.user_session.UserSession;
 //import use_case.SinglePlayer.SinglePlayerInteractor;
+import use_case.DataAccessException;
 import use_case.leaderboard.LeaderboardInputBoundary;
 import use_case.leaderboard.LeaderboardInteractor;
 import use_case.leaderboard.LeaderboardOutputBoundary;
@@ -82,7 +83,7 @@ public class AppBuilder {
         return this;
     }
 
-    public AppBuilder addMainScreenView() {
+    public AppBuilder addMainScreenView() throws DataAccessException {
         mainScreenViewModel = new MainScreenViewModel();
         browseStudySetViewModel = new BrowseStudySetViewModel();
         leaderboardViewModel = new LeaderboardViewModel();
@@ -103,14 +104,14 @@ public class AppBuilder {
 
         return this;
     }
-
-    public AppBuilder addLeaderboardView() {
-        leaderboardViewModel = new LeaderboardViewModel();
-
-        leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel, mainScreenViewModel);
-        cardPanel.add(leaderboardView, leaderboardView.getViewName());
-        return this;
-    }
+//
+//    public AppBuilder addLeaderboardView() throws DataAccessException {
+//        leaderboardViewModel = new LeaderboardViewModel();
+//
+//        leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel, mainScreenViewModel);
+//        cardPanel.add(leaderboardView, leaderboardView.getViewName());
+//        return this;
+//    }
 
     public AppBuilder addSignupUseCase() {
         final SignupUserDataAccessObject signupDAO =
@@ -135,7 +136,7 @@ public class AppBuilder {
         return this;
     }
 
-    public AppBuilder addLeaderboardUseCase() {
+    public AppBuilder addLeaderboardUseCase() throws DataAccessException {
         final LeaderboardUserDataAccessObject userDataAccessObject = new LeaderboardUserDataAccessObject(session.getApiKey());
         final LeaderboardOutputBoundary leaderboardOutputBoundary = new LeaderboardPresenter(leaderboardViewModel,
                 viewManagerModel);

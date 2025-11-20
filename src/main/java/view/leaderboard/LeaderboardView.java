@@ -1,9 +1,13 @@
 package view.leaderboard;
 
+import entity.User;
+import entity.UserFactory;
+import frameworks_and_drivers.DataAccess.LeaderboardUserDataAccessObject;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.leaderboard.LeaderboardController;
 import interface_adapter.leaderboard.LeaderboardViewModel;
 import interface_adapter.main_screen.MainScreenViewModel;
+import use_case.DataAccessException;
 import use_case.leaderboard.LeaderboardType;
 
 import javax.swing.*;
@@ -28,11 +32,12 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
     private JPanel questionsCorrectLeaderboardPanel = new JPanel();
 
     public LeaderboardView(LeaderboardViewModel leaderboardViewModel, ViewManagerModel viewManagerModel,
-                           MainScreenViewModel mainScreenViewModel) {
+                           MainScreenViewModel mainScreenViewModel) throws DataAccessException {
         // Initialize leaderboard view components here
         this.leaderboardViewModel = leaderboardViewModel;
         this.viewManagerModel = viewManagerModel;
-        this.mainScreenViewModel = mainScreenViewModel; // because back button goes to main screen
+        this.mainScreenViewModel = mainScreenViewModel;
+        // because back button goes to main screen
 
         setLayout(new BorderLayout());
         levelLeaderboardPanel = createContainerPanel(LeaderboardType.LEVEL);
@@ -47,6 +52,7 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
         tabbedPane.addTab("questionsCorrectLeaderboard", questionsCorrectLeaderboardPanel);
 
         add(tabbedPane, BorderLayout.CENTER);
+        setupTabListener();
 
         // ---------- Bottom Buttons ----------
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
@@ -59,12 +65,12 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
         });
         add(buttonPanel, BorderLayout.SOUTH);
 
+
         leaderboardViewModel.addPropertyChangeListener(this);
-        setupTabListener();
     }
 
     // ---------- Leaderboard Panels ----------
-    private JPanel createContainerPanel(LeaderboardType leaderboardType) {
+    private JPanel createContainerPanel(LeaderboardType leaderboardType) throws DataAccessException {
 
         /*
          * containerPanel holds 2 panels: leaderboardPanel and myRankPanel
@@ -86,6 +92,7 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
         String[] header = { "Rank", "Username", "Level",
                 "Experience Points", "Questions Answered", "Questions Correct" };
         DefaultTableModel leaderboardTableModel = new DefaultTableModel(header, 0); // 0 = start with no data
+        if (leaderboardController != null)  leaderboardController.loadLeaderboard();
         // get the leaderboard
         ArrayList<Object> leaderboardAsArray = leaderboardViewModel.getLeaderboardByType(leaderboardType);
             for (Object rowObj : leaderboardAsArray) {
@@ -94,22 +101,26 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
             }
         JTable leaderboardTable = new JTable(leaderboardTableModel);
         JScrollPane leaderboardTableScrollPane = new JScrollPane(leaderboardTable);
-        leaderboardTable.getTableHeader().setFont(new Font("Helvetica", Font.BOLD, 30));
+        leaderboardTable.getTableHeader().setFont(new Font("Helvetica", Font.BOLD, 20));
         leaderboardTable.setFont(new Font("Helvetica", Font.PLAIN, 30));
         leaderboardTable.setRowHeight(50);
         leaderboardPanel.add(leaderboardTableScrollPane, BorderLayout.CENTER);
+        leaderboardPanel.setMinimumSize(new Dimension(leaderboardPanel.getWidth(), 400));
 
         // populate myRankPanel
-        myRankPanel.setLayout(new BorderLayout());
-        myRankPanel.setBorder(BorderFactory.createEmptyBorder(50,50,50,50));
-        DefaultTableModel myRankTableModel = new DefaultTableModel();
-        ArrayList<Object> myRankAsArray = leaderboardViewModel.getMyRankInfo(leaderboardType);
-        myRankTableModel.addRow(myRankAsArray.toArray());
-        JTable myRankTable = new JTable(myRankTableModel);
-        JScrollPane myRankTableScrollPane = new JScrollPane(myRankTable);
-        myRankTable.setFont(new Font("Helvetica", Font.PLAIN, 30));
-        myRankTable.setRowHeight(50);
-        myRankPanel.add(myRankTableScrollPane, BorderLayout.CENTER);
+//        myRankPanel.setLayout(new BorderLayout());
+//        myRankPanel.setBorder(BorderFactory.createEmptyBorder(50,50,50,50));
+//        DefaultTableModel myRankTableModel = new DefaultTableModel(0,6);
+//        ArrayList<Object> myRankAsArray = leaderboardViewModel.getMyRankInfo(leaderboardType);
+//        myRankTableModel.addRow(myRankAsArray.toArray());
+//        JTable myRankTable = new JTable(myRankTableModel);
+//        JScrollPane myRankTableScrollPane = new JScrollPane(myRankTable);
+//        myRankTable.setTableHeader(null);
+//        myRankTable.setFont(new Font("Helvetica", Font.PLAIN, 30));
+//        myRankTable.setRowHeight(50);
+//        myRankPanel.add(myRankTableScrollPane, BorderLayout.CENTER);
+//        myRankPanel.setMinimumSize(new Dimension(myRankPanel.getWidth(), 50));
+//        myRankPanel.setMaximumSize(new Dimension(myRankPanel.getWidth(), 50));
 
         // populate containerPanel
         containerPanel.add(leaderboardPanel);
@@ -146,12 +157,13 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
                 default -> type = LeaderboardType.LEVEL;
             }
 
-            createContainerPanel(type);
+            try {
+                createContainerPanel(type);
+            } catch (DataAccessException ex) {
+                throw new RuntimeException(ex);
+            }
         });
     }
-
-
-
 
     public String getViewName() {
         return viewName;
@@ -164,10 +176,24 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
 
     @Override
     public void propertyChange(java.beans.PropertyChangeEvent evt) {
-        // Handle property change events here
+        if ("leaderboard".equals(evt.getPropertyName())) {
+            // Refresh the current tab's leaderboard
+            int selectedIndex = tabbedPane.getSelectedIndex();
+            LeaderboardType type = switch (selectedIndex) {
+                case 1 -> LeaderboardType.EXPERIENCE_POINTS;
+                case 2 -> LeaderboardType.QUESTIONS_ANSWERED;
+                case 3 -> LeaderboardType.QUESTIONS_CORRECT;
+                default -> LeaderboardType.LEVEL;
+            };
+            try {
+                tabbedPane.setComponentAt(selectedIndex, createContainerPanel(type));
+            } catch (DataAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
-    public void setLeaderboardController(LeaderboardController leaderboardController) {
+    public void setLeaderboardController(LeaderboardController leaderboardController) throws DataAccessException {
         // Set the controller for the leaderboard view
         this.leaderboardController = leaderboardController;
     }
