@@ -20,7 +20,7 @@ public class SinglePlayerDataAccessObject implements SinglePlayerAccessInterface
     private String apiKey = "";   // set when user logs in
 
     public SinglePlayerDataAccessObject() {
-        // empty constructor; apiKey set later
+        this.apiKey = apiKey;
     }
 
     public void setApiKey(String key) {

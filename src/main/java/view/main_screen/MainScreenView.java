@@ -75,6 +75,9 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
                 if ("Leaderboard".equals(button.getText())) {
                     button.addActionListener(e -> switchToLeaderboard());
                 }
+                if ("Single Player".equals(button.getText())) {
+                    button.addActionListener(e -> switchToSinglePlayer());
+                }
 
                 c.gridx = col;
                 c.gridy = row;
@@ -108,6 +111,10 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
     }
     private void switchToLeaderboard() {
         viewManagerModel.setState(leaderboardViewModel.getViewName());
+        viewManagerModel.firePropertyChange();
+    }
+    private void switchToSinglePlayer() {
+        viewManagerModel.setState("single player");
         viewManagerModel.firePropertyChange();
     }
 }
