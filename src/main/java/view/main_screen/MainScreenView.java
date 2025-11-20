@@ -20,14 +20,17 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
     private final ViewManagerModel viewManagerModel;
     private final BrowseStudySetViewModel browseStudySetViewModel;
     private final LeaderboardViewModel leaderboardViewModel;
+    private final interface_adapter.SinglePlayer.SinglePlayerViewModel singlePlayerViewModel;
 
     public MainScreenView(MainScreenViewModel mainScreenViewModel,
                           ViewManagerModel viewManagerModel,
-                          BrowseStudySetViewModel browseStudySetViewModel, LeaderboardViewModel leaderboardViewModel) {
+                          BrowseStudySetViewModel browseStudySetViewModel, LeaderboardViewModel leaderboardViewModel,
+                          interface_adapter.SinglePlayer.SinglePlayerViewModel singlePlayerViewModel) {
         this.mainScreenViewModel = mainScreenViewModel;
         this.viewManagerModel = viewManagerModel;
         this.browseStudySetViewModel = browseStudySetViewModel;
         this.leaderboardViewModel = leaderboardViewModel;
+        this.singlePlayerViewModel = singlePlayerViewModel;
         this.mainScreenViewModel.addPropertyChangeListener(this);
 
         // Set panel layout (this is now the root of this panel)
@@ -114,7 +117,7 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
         viewManagerModel.firePropertyChange();
     }
     private void switchToSinglePlayer() {
-        viewManagerModel.setState("single player");
+        viewManagerModel.setState(singlePlayerViewModel.getViewName());
         viewManagerModel.firePropertyChange();
     }
 }
