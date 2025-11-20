@@ -2,9 +2,9 @@ package app;
 
 import entity.UserFactory;
 import interface_adapter.*;
-import interface_adapter.SinglePlayer.SinglePlayerController;
-import interface_adapter.SinglePlayer.SinglePlayerPresenter;
-import interface_adapter.SinglePlayer.SinglePlayerViewModel;
+//import interface_adapter.SinglePlayer.SinglePlayerController;
+//import interface_adapter.SinglePlayer.SinglePlayerPresenter;
+//import interface_adapter.SinglePlayer.SinglePlayerViewModel;
 import interface_adapter.leaderboard.LeaderboardController;
 import interface_adapter.leaderboard.LeaderboardPresenter;
 import interface_adapter.leaderboard.LeaderboardViewModel;
@@ -15,7 +15,7 @@ import interface_adapter.registration.signup.SignupController;
 import interface_adapter.registration.signup.SignupPresenter;
 import interface_adapter.registration.signup.SignupViewModel;
 import interface_adapter.user_session.UserSession;
-import use_case.SinglePlayer.SinglePlayerInteractor;
+//import use_case.SinglePlayer.SinglePlayerInteractor;
 import use_case.leaderboard.LeaderboardInputBoundary;
 import use_case.leaderboard.LeaderboardInteractor;
 import use_case.leaderboard.LeaderboardOutputBoundary;
@@ -23,9 +23,7 @@ import use_case.registration.login.*;
 import use_case.registration.signup.SignupInputBoundary;
 import use_case.registration.signup.SignupInteractor;
 import use_case.registration.signup.SignupOutputBoundary;
-import view.SinglePlayerView;
-import interface_adapter.SinglePlayer.*;
-import frameworks_and_drivers.DataAccess.SinglePlayerDataAccessObject;
+//import interface_adapter.SinglePlayer.*;
 import view.leaderboard.LeaderboardView;
 import view.main_screen.MainScreenView;
 import view.registration.*;
@@ -87,6 +85,7 @@ public class AppBuilder {
     public AppBuilder addMainScreenView() {
         mainScreenViewModel = new MainScreenViewModel();
         browseStudySetViewModel = new BrowseStudySetViewModel();
+        leaderboardViewModel = new LeaderboardViewModel();
 
         mainScreenView = new MainScreenView(mainScreenViewModel, viewManagerModel, browseStudySetViewModel,
                 leaderboardViewModel);
@@ -114,9 +113,8 @@ public class AppBuilder {
     }
 
     public AppBuilder addSignupUseCase() {
-        final frameworks_and_drivers.DataAccess.SignupUserDataAccessObject signupDAO =
-                new frameworks_and_drivers.DataAccess.SignupUserDataAccessObject();
-        final frameworks_and_drivers.DataAccess.SignupUserDataAccessObject signupDAO = new frameworks_and_drivers.DataAccess.SignupUserDataAccessObject();
+        final SignupUserDataAccessObject signupDAO =
+                new SignupUserDataAccessObject();
         final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(viewManagerModel,
                 signupViewModel, loginViewModel);
         final SignupInputBoundary userSignupInteractor = new SignupInteractor(
@@ -164,26 +162,26 @@ public class AppBuilder {
 
         return application;
     }
-    public AppBuilder addSinglePlayerView() {
-        // ViewModel
-        SinglePlayerViewModel spViewModel = new SinglePlayerViewModel();
-        // Presenter
-        SinglePlayerPresenter spPresenter = new SinglePlayerPresenter(spViewModel);
-        SinglePlayerDataAccessObject spGateway = new SinglePlayerDataAccessObject();
-        // Interactor
-        SinglePlayerInteractor spInteractor =
-                new SinglePlayerInteractor(spPresenter, spGateway);
-        // Controller
-        SinglePlayerController spController =
-                new SinglePlayerController(spInteractor);
-        // View
-        SinglePlayerView spView =
-                new SinglePlayerView(spViewModel, viewManagerModel);
-        spView.setController(spController);
-        // Register the view with the card layout
-        cardPanel.add(spView, spView.getViewName());
-        return this;
-    }
+//    public AppBuilder addSinglePlayerView() {
+//        // ViewModel
+//        SinglePlayerViewModel spViewModel = new SinglePlayerViewModel();
+//        // Presenter
+//        SinglePlayerPresenter spPresenter = new SinglePlayerPresenter(spViewModel);
+//        SinglePlayerDataAccessObject spGateway = new SinglePlayerDataAccessObject();
+//        // Interactor
+//        SinglePlayerInteractor spInteractor =
+//                new SinglePlayerInteractor(spPresenter, spGateway);
+//        // Controller
+//        SinglePlayerController spController =
+//                new SinglePlayerController(spInteractor);
+//        // View
+//        SinglePlayerView spView =
+//                new SinglePlayerView(spViewModel, viewManagerModel);
+//        spView.setController(spController);
+//        // Register the view with the card layout
+//        cardPanel.add(spView, spView.getViewName());
+//        return this;
+//    }
 
 
 }
