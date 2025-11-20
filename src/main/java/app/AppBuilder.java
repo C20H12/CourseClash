@@ -31,7 +31,9 @@ import view.registration.*;
 import view.study_set.BrowseStudySetView;
 import frameworks_and_drivers.DataAccess.*;
 import utility.FontLoader;
-
+import use_case.SinglePlayer.*;
+import frameworks_and_drivers.DataAccess.SinglePlayerDataAccessObject;
+import view.SinglePlayerView;
 import view.ViewManager;
 
 import javax.swing.*;
@@ -64,7 +66,8 @@ public class AppBuilder {
     private MainScreenView mainScreenView;
     private BrowseStudySetView browseStudySetView;
     private LeaderboardView leaderboardView;
-
+    private SinglePlayerViewModel singlePlayerViewModel;
+    private SinglePlayerView singlePlayerView;
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
     }
@@ -87,9 +90,9 @@ public class AppBuilder {
         mainScreenViewModel = new MainScreenViewModel();
         browseStudySetViewModel = new BrowseStudySetViewModel();
         leaderboardViewModel = new LeaderboardViewModel();
-
-        mainScreenView = new MainScreenView(mainScreenViewModel, viewManagerModel, browseStudySetViewModel,
-                leaderboardViewModel);
+        singlePlayerViewModel = new SinglePlayerViewModel();
+        mainScreenView = new MainScreenView(mainScreenViewModel,
+                viewManagerModel, browseStudySetViewModel, leaderboardViewModel,  singlePlayerViewModel);
         cardPanel.add(mainScreenView, mainScreenView.getViewName());
 
         browseStudySetView = new BrowseStudySetView(browseStudySetViewModel, mainScreenViewModel, viewManagerModel);
@@ -97,7 +100,11 @@ public class AppBuilder {
 
         leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel, mainScreenViewModel);
         cardPanel.add(leaderboardView, leaderboardView.getViewName());
+
+        singlePlayerView = new SinglePlayerView(singlePlayerViewModel, viewManagerModel);
+        cardPanel.add(singlePlayerView, singlePlayerView.getViewName());
         return this;
+
     }
 
     public AppBuilder addBrowseStudySetView() {
@@ -144,6 +151,18 @@ public class AppBuilder {
 
         LeaderboardController leaderboardController = new LeaderboardController(leaderboardInteractor);
         leaderboardView.setLeaderboardController(leaderboardController);
+        return this;
+    }
+    public AppBuilder addSinglePlayerUseCase() {
+        // 1) DAO (gateway)
+        SinglePlayerDataAccessObject spDAO = new SinglePlayerDataAccessObject();
+        // 2) Presenter
+        SinglePlayerOutputBoundary spPresenter = new SinglePlayerPresenter(singlePlayerViewModel);
+        // 3) Interactor
+        SinglePlayerInputBoundary spInteractor = new SinglePlayerInteractor(spPresenter, spDAO);
+        // 4) Controller
+        SinglePlayerController spController = new SinglePlayerController(spInteractor);
+        singlePlayerView.setController(spController);
         return this;
     }
 

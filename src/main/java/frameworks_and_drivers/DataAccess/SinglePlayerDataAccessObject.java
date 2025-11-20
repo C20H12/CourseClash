@@ -17,12 +17,12 @@ import static frameworks_and_drivers.DataAccess.StaticMethods.makeApiRequest;
 
 public class SinglePlayerDataAccessObject implements SinglePlayerAccessInterface {
 
+
     private String apiKey = "";   // set when user logs in
 
     public SinglePlayerDataAccessObject() {
-        // empty constructor; apiKey set later
+        // leave apiKey empty; set later via setApiKey(...)
     }
-
     public void setApiKey(String key) {
         this.apiKey = key;
     }

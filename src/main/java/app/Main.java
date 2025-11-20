@@ -15,7 +15,7 @@ public class Main {
                 .addLoginUseCase()
                 .addSignupUseCase()
                 .addLeaderboardUseCase()
-                //.addSinglePlayerUseCase()
+                .addSinglePlayerUseCase()
                 .build();
         application.setLocationRelativeTo(null);
         application.setVisible(true);

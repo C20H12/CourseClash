@@ -20,14 +20,17 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
     private final ViewManagerModel viewManagerModel;
     private final BrowseStudySetViewModel browseStudySetViewModel;
     private final LeaderboardViewModel leaderboardViewModel;
+    private final interface_adapter.SinglePlayer.SinglePlayerViewModel singlePlayerViewModel;
 
     public MainScreenView(MainScreenViewModel mainScreenViewModel,
                           ViewManagerModel viewManagerModel,
-                          BrowseStudySetViewModel browseStudySetViewModel, LeaderboardViewModel leaderboardViewModel) {
+                          BrowseStudySetViewModel browseStudySetViewModel, LeaderboardViewModel leaderboardViewModel,
+                          interface_adapter.SinglePlayer.SinglePlayerViewModel singlePlayerViewModel) {
         this.mainScreenViewModel = mainScreenViewModel;
         this.viewManagerModel = viewManagerModel;
         this.browseStudySetViewModel = browseStudySetViewModel;
         this.leaderboardViewModel = leaderboardViewModel;
+        this.singlePlayerViewModel = singlePlayerViewModel;
         this.mainScreenViewModel.addPropertyChangeListener(this);
 
         // Set panel layout (this is now the root of this panel)
@@ -75,6 +78,9 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
                 if ("Leaderboard".equals(button.getText())) {
                     button.addActionListener(e -> switchToLeaderboard());
                 }
+                if ("Single Player".equals(button.getText())) {
+                    button.addActionListener(e -> switchToSinglePlayer());
+                }
 
                 c.gridx = col;
                 c.gridy = row;
@@ -108,6 +114,10 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
     }
     private void switchToLeaderboard() {
         viewManagerModel.setState(leaderboardViewModel.getViewName());
+        viewManagerModel.firePropertyChange();
+    }
+    private void switchToSinglePlayer() {
+        viewManagerModel.setState(singlePlayerViewModel.getViewName());
         viewManagerModel.firePropertyChange();
     }
 }
