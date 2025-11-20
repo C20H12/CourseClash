@@ -18,8 +18,6 @@ public class SinglePlayerGame {
     private double averageResponseTime;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-   //  private final int timerPerQuestion; // seconds - not currently used anywhere
-    private final boolean shuffleEnabled;
     // private final int fixedTimePerQuestion;
 
     // Constructor
@@ -29,7 +27,7 @@ public class SinglePlayerGame {
         this.questions = studyDeck.getDeck();
         // this will come from StudyDeck file
        //  this.timerPerQuestion = timerPerQuestion;
-        this.shuffleEnabled = shuffleEnabled;
+        //  private final int timerPerQuestion; // seconds - not currently used anywhere
         this.totalQuestions = questions.size();
         this.score = 0;
         this.correctAnswers = 0;
@@ -45,7 +43,9 @@ public class SinglePlayerGame {
     public double getAverageResponseTime() { return averageResponseTime; }
     public StudyDeck getDeck() { return deck; }
     public User getPlayer() { return player; }
-
+    public List<StudyCard> getQuestions() {
+        return questions;
+    }
 
 
     // Optional  setters

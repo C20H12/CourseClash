@@ -10,7 +10,7 @@ public class Main {
                 .addLoginView()
                 .addSignupView()
                 .addMainScreenView()
-                //.addSinglePlayerView()
+                .addSinglePlayerView()
                 .addLoginUseCase()
                 .addSignupUseCase()
                 //.addSinglePlayerUseCase()

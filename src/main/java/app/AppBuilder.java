@@ -17,6 +17,8 @@ import use_case.registration.signup.SignupInputBoundary;
 import use_case.registration.signup.SignupInteractor;
 import use_case.registration.signup.SignupOutputBoundary;
 import view.SinglePlayerView;
+import interface_adapter.SinglePlayer.*;
+import frameworks_and_drivers.DataAccess.SinglePlayerDataAccessObject;
 import view.main_screen.MainScreenView;
 import view.registration.*;
 import view.study_set.BrowseStudySetView;
@@ -90,7 +92,8 @@ public class AppBuilder {
     }
 
     public AppBuilder addSignupUseCase() {
-        final data_access.SignupUserDataAccessObject signupDAO = new data_access.SignupUserDataAccessObject();
+        final frameworks_and_drivers.DataAccess.SignupUserDataAccessObject signupDAO =
+                new frameworks_and_drivers.DataAccess.SignupUserDataAccessObject();
         final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(viewManagerModel,
                 signupViewModel, loginViewModel);
         final SignupInputBoundary userSignupInteractor = new SignupInteractor(
@@ -126,23 +129,26 @@ public class AppBuilder {
 
         return application;
     }
-   // public AppBuilder addSinglePlayerView() {
-        //SinglePlayerViewModel spViewModel = new SinglePlayerViewModel();
-       // SinglePlayerPresenter spPresenter = new SinglePlayerPresenter(spViewModel);
-//        // Create gateway (your studydeck DAO)
-//        // TODO: Need to complete SinglePlayerDataAccessObject File
-//        SinglePlayerDataAccessObject spGateway = new SinglePlayerDataAccessObject();
-//        SinglePlayerInteractor spInteractor =
-//                new SinglePlayerInteractor(spPresenter, spGateway);
-//        SinglePlayerController spController =
-//                new SinglePlayerController(spInteractor);
-//
-//        SinglePlayerView spView = new SinglePlayerView(spViewModel, viewManagerModel);
-//        spView.setController(spController);
-//
-//        cardPanel.add(spView, spView.getViewName());
-//
-//        return this;
-    //}
+    public AppBuilder addSinglePlayerView() {
+        // ViewModel
+        SinglePlayerViewModel spViewModel = new SinglePlayerViewModel();
+        // Presenter
+        SinglePlayerPresenter spPresenter = new SinglePlayerPresenter(spViewModel);
+        SinglePlayerDataAccessObject spGateway = new SinglePlayerDataAccessObject();
+        // Interactor
+        SinglePlayerInteractor spInteractor =
+                new SinglePlayerInteractor(spPresenter, spGateway);
+        // Controller
+        SinglePlayerController spController =
+                new SinglePlayerController(spInteractor);
+        // View
+        SinglePlayerView spView =
+                new SinglePlayerView(spViewModel, viewManagerModel);
+        spView.setController(spController);
+        // Register the view with the card layout
+        cardPanel.add(spView, spView.getViewName());
+        return this;
+    }
+
 
 }
