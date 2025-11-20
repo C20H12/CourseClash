@@ -108,7 +108,14 @@ public class LeaderboardViewModel extends ViewModel<LeaderboardState> {
         ArrayList<Object> myRankInfo = new ArrayList<>();
         Integer myRanking = this.myRank.get(leaderboardType);
         if (myRanking == null) {
-            myRanking = 10; // Not ranked
+            myRanking = 10; // Not ranked, dummy code
+        }
+        if (this.currentUser == null) { // dummy code
+            this.currentUser = new User("CurrentUser", "password");
+            this.currentUser.setLevel(5);
+            this.currentUser.setExperiencePoints(600);
+            this.currentUser.setQuestionsAnswered(80);
+            this.currentUser.setQuestionsCorrect(60);
         }
         myRankInfo.add(myRanking);
         myRankInfo.add(this.currentUser.getUserName());
