@@ -151,7 +151,7 @@ public class AppBuilder {
     public JFrame build() {
         final JFrame application = new JFrame("CourseClash");
         application.setSize(1200, 800);
-        application.setResizable(false); // Fixed size window
+        application.setResizable(true); // Fixed size window
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         FontLoader.registerFonts();
 
