@@ -71,7 +71,6 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
         leaderboardViewModel.addPropertyChangeListener(this);
     }
 
-    // ---------- Leaderboard Panels ----------
     private JPanel createContainerPanel(LeaderboardType leaderboardType) throws DataAccessException {
 
         /*
