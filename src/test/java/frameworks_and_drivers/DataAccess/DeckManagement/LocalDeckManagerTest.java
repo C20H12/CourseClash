@@ -1,4 +1,4 @@
-// Test suite for LocalDeckManager
+// Test suite for LocalDeckManager.
 // Archie
 
 package frameworks_and_drivers.DataAccess.DeckManagement;

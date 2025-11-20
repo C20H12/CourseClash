@@ -1,4 +1,4 @@
-// Handles all raw file system interactions for StudyDeck persistence.
+// Handles all raw file system interactions for StudyDeck persistence..
 // Archie
 package frameworks_and_drivers.DataAccess.DeckManagement.JSON;
 

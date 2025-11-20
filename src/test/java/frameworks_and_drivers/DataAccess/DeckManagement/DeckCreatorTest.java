@@ -1,4 +1,4 @@
-// Temporary interactive deck creator for testing
+// Temporary interactive deck creator for testing.
 // Archie
 
 package frameworks_and_drivers.DataAccess.DeckManagement;
