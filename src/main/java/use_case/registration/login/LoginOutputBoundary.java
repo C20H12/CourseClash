@@ -1,3 +1,8 @@
+/**
+ * File: LoginOutputBoundary.java
+ * Description: Defines the output boundary for login actions.
+ * Author: Albert
+ */
 package use_case.registration.login;
 
 /**

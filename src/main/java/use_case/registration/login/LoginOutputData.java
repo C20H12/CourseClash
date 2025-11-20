@@ -1,3 +1,8 @@
+/**
+ * File: LoginOutputData.java
+ * Description: Defines the output data for login actions.
+ * Author: Albert and Daniel
+ */
 package use_case.registration.login;
 
 import entity.User;
