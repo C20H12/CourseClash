@@ -11,7 +11,7 @@ public class Main {
                 .addSignupView()
                 .addMainScreenView()
                 .addLeaderboardView()
-                //.addSinglePlayerView()
+                .addSinglePlayerView()
                 .addLoginUseCase()
                 .addSignupUseCase()
                 .addLeaderboardUseCase()
