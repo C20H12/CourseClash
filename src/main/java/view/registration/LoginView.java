@@ -3,6 +3,7 @@ package view.registration;
 import interface_adapter.registration.login.LoginController;
 import interface_adapter.registration.login.LoginState;
 import interface_adapter.registration.login.LoginViewModel;
+import use_case.DataAccessException;
 import view.Component.LabelTextPanel;
 
 import javax.swing.*;
@@ -51,10 +52,14 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
                     if (evt.getSource().equals(login)) {
                         final LoginState currentState = loginViewModel.getState();
 
-                        loginController.execute(
-                                currentState.getUsername(),
-                                currentState.getPassword()
-                        );
+                        try {
+                            loginController.execute(
+                                    currentState.getUsername(),
+                                    currentState.getPassword()
+                            );
+                        } catch (DataAccessException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
         );

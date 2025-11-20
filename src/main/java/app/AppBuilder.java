@@ -1,7 +1,7 @@
 package app;
 
 import entity.UserFactory;
-import interface_adapter.*;
+import interface_adapter.ViewManagerModel;
 import interface_adapter.main_screen.MainScreenViewModel;
 import interface_adapter.registration.login.*;
 import use_case.registration.login.*;
@@ -9,8 +9,22 @@ import view.main_screen.MainScreenView;
 import view.registration.*;
 import data_access.*;
 import utility.FontLoader;
-
 import view.ViewManager;
+
+// --- NEW IMPORTS FOR MULTIPLAYER ---
+import interface_adapter.MultiPlayer.MultiPlayerViewModel;
+import view.MultiPlayerView;
+import data_access.InMemoryGameDataAccessObject;
+import data_access.DBStudySetDataAccessObject;
+
+import interface_adapter.MultiPlayer.start_match.MPStartController;
+import interface_adapter.MultiPlayer.start_match.MPStartPresenter;
+import use_case.MultiPlayer.start_match.MPStartInteractor;
+
+import interface_adapter.MultiPlayer.submit_answer.SubmitAnswerController;
+import interface_adapter.MultiPlayer.submit_answer.SubmitAnswerPresenter;
+import use_case.MultiPlayer.submit_answer.SubmitAnswerInteractor;
+// ------------------------------------
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,21 +36,26 @@ public class AppBuilder {
     final ViewManagerModel viewManagerModel = new ViewManagerModel();
     ViewManager viewManager;
 
-    // set which data access implementation to use, can be any
-    // of the classes from the data_access package
-
     // DAO version using local file storage
     final FileUserDataAccessObject userDataAccessObject = new FileUserDataAccessObject("users.csv", userFactory);
 
-    // DAO version using a shared external database
-    // final DBUserDataAccessObject userDataAccessObject = new DBUserDataAccessObject(userFactory);
+    // --- NEW DATA ACCESS FOR MULTIPLAYER ---
+    // We use the API_KEY from your Constants file
+    final DBStudySetDataAccessObject studySetDataAccessObject = new DBStudySetDataAccessObject("abc123");
+    final InMemoryGameDataAccessObject gameDataAccessObject = new InMemoryGameDataAccessObject();
+    // ---------------------------------------
 
-    //private SignupView signupView;
-    //private SignupViewModel signupViewModel;
+    // ViewModels
     private LoginViewModel loginViewModel;
     private MainScreenViewModel mainScreenViewModel;
+    // --- NEW VIEWMODEL ---
+    private final MultiPlayerViewModel multiPlayerViewModel = new MultiPlayerViewModel();
+    // ---------------------
+
+    // Views
     private LoginView loginView;
     private MainScreenView mainScreenView;
+    private MultiPlayerView multiPlayerView; // New View
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
@@ -51,7 +70,9 @@ public class AppBuilder {
 
     public AppBuilder addMainScreenView() {
         mainScreenViewModel = new MainScreenViewModel();
-        mainScreenView = new MainScreenView(mainScreenViewModel);
+        // Note: If you updated MainScreenView to require LogoutController, update this line.
+        // For now, we keep it matching your uploaded file.
+        mainScreenView = new MainScreenView(mainScreenViewModel, null);
         cardPanel.add(mainScreenView, mainScreenView.getViewName());
         return this;
     }
@@ -67,14 +88,54 @@ public class AppBuilder {
         return this;
     }
 
+    // --- NEW METHOD: ADD MULTIPLAYER LOGIC ---
+    public AppBuilder addMultiPlayerUseCase() {
+        // 1. Start Match Stack
+        MPStartPresenter mpStartPresenter = new MPStartPresenter(multiPlayerViewModel, viewManagerModel);
+
+        MPStartInteractor mpStartInteractor = new MPStartInteractor(
+                mpStartPresenter,
+                gameDataAccessObject,       // MultiPlayerAccessInterface
+                userDataAccessObject,       // LoginUserDataAccessInterface (to find User)
+                studySetDataAccessObject    // StudySetDataAccessInterface (to find Deck)
+        );
+
+        MPStartController mpStartController = new MPStartController(mpStartInteractor);
+
+        // 2. Submit Answer Stack
+        SubmitAnswerPresenter submitAnswerPresenter = new SubmitAnswerPresenter(multiPlayerViewModel);
+
+        SubmitAnswerInteractor submitAnswerInteractor = new SubmitAnswerInteractor(
+                gameDataAccessObject,       // SubmitAnswerDataAccessInterface
+                submitAnswerPresenter
+        );
+
+        SubmitAnswerController submitAnswerController = new SubmitAnswerController(submitAnswerInteractor);
+
+        // 3. Create the Multiplayer View
+        multiPlayerView = new MultiPlayerView(multiPlayerViewModel, submitAnswerController);
+        cardPanel.add(multiPlayerView, multiPlayerView.viewName);
+
+        // 4. Inject the Start Controller into the Main Screen
+        // IMPORTANT: Ensure MainScreenView.java has the method:
+        // public void setMPStartController(MPStartController controller)
+        if (mainScreenView != null) {
+            mainScreenView.setMPStartController(mpStartController);
+        }
+
+        return this;
+    }
+    // -----------------------------------------
+
     public JFrame build() {
-        final JFrame application = new JFrame("User Login Example");
+        final JFrame application = new JFrame("CourseClash"); // Updated Title
         application.setSize(1200, 800);
-        application.setResizable(false); // Fixed size window
+        application.setResizable(false);
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         FontLoader.registerFonts();
 
         application.add(cardPanel);
+        // Adjusted to match your constructor: ViewManager(JPanel, CardLayout, ViewManagerModel, JFrame)
         viewManager = new ViewManager(cardPanel, cardLayout, viewManagerModel, application);
 
         viewManagerModel.setState(loginView.getViewName());

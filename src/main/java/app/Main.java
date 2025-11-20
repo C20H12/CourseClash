@@ -1,7 +1,6 @@
 package app;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -10,7 +9,9 @@ public class Main {
                 .addLoginView()
                 .addMainScreenView()
                 .addLoginUseCase()
+                .addMultiPlayerUseCase()
                 .build();
+
         application.setLocationRelativeTo(null);
         application.setVisible(true);
     }

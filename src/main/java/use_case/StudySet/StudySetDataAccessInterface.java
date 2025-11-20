@@ -23,5 +23,4 @@ public interface StudySetDataAccessInterface {
     StudyDeck getSetByName(String setName) throws DataAccessException;
 
 
-
 }
