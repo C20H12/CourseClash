@@ -6,87 +6,219 @@ package use_case.DeckManagement;
 import entity.DeckManagement.StudyCard;
 import entity.DeckManagement.StudyDeck;
 import frameworks_and_drivers.DataAccess.DeckManagement.LocalDeckManager;
+import use_case.DeckManagement.CardCreator;
+import use_case.DeckManagement.CardGenerator;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DeckManager {
     private final LocalDeckManager localDeckManager;
+    private final CardCreator cardCreator; // For manual card creation
+    private final CardGenerator cardGenerator; // For Ai card creation
     private StudyDeck currentDeck;
+    private final String apiKey = "404";
 
     // Constructor that initializes the DeckManager with a LocalDeckManager instance.
     // @param localDeckManager The LocalDeckManager instance to coordinate with for storage operations.
     public DeckManager(LocalDeckManager localDeckManager) {
         this.localDeckManager = localDeckManager;
+        this.cardCreator = new CardCreator(); // Initialize CardCreator for manual card creation
+        this.cardGenerator = new CardGenerator(apiKey); // Init CardGenerator for AI card creation
         this.currentDeck = null;
     }
 
-    // TODO Create a new empty deck with the specified title and description.
+    // Create a new empty deck with the specified title and description.
     // @param title The title for the new deck.
     // @param description The description for the new deck.
     public void createNewDeck(String title, String description) {
-        throw new UnsupportedOperationException("Method not yet implemented");
+        // Create a new empty deck list
+        ArrayList<StudyCard> deckList = new ArrayList<>();
+        // Create a new StudyDeck with a unique ID (using timestamp)
+        StudyDeck newDeck = new StudyDeck(title, description, deckList, (int) System.currentTimeMillis());
+        // Set this as the current deck
+        this.currentDeck = newDeck;
     }
 
-    // TODO Add a new StudyCard to the current deck using CardCreator.
+    // Add a new StudyCard to the current deck using CardCreator.
     // @param question The question text for the new card.
     // @param answers The list of answer options for the new card.
     // @param correctAnswerIndex The index of the correct answer in the answers list.
     public void addCardToCurrentDeck(String question, ArrayList<String> answers, int correctAnswerIndex) {
-        throw new UnsupportedOperationException("Method not yet implemented");
+        if (currentDeck != null) {
+            // Use CardCreator to create the new card
+            StudyCard newCard = cardCreator.createCard(question, answers, correctAnswerIndex);
+            // Create a new deck with the added card (since deck is immutable)
+            ArrayList<StudyCard> newCards = new ArrayList<>(currentDeck.getDeck());
+            newCards.add(newCard);
+            // Update the current deck with the new list
+            this.currentDeck = new StudyDeck(currentDeck.getTitle(), currentDeck.getDescription(), newCards, currentDeck.getId());
+        }
+        // If currentDeck is null, do nothing (no deck to add to)
     }
 
-    // TODO Remove a StudyCard from the current deck by index.
+    // Remove a StudyCard from the current deck by index.
     // @param cardIndex The index of the card to remove.
     public void removeCardFromCurrentDeck(int cardIndex) {
-        throw new UnsupportedOperationException("Method not yet implemented");
+        if (currentDeck != null && cardIndex >= 0 && cardIndex < currentDeck.getDeck().size()) {
+            // Create a new deck without the card at the specified index
+            ArrayList<StudyCard> newCards = new ArrayList<>(currentDeck.getDeck());
+            newCards.remove(cardIndex);
+            // Update the current deck with the new list
+            this.currentDeck = new StudyDeck(currentDeck.getTitle(), currentDeck.getDescription(), newCards, currentDeck.getId());
+        }
+        // If currentDeck is null or index is invalid, do nothing
     }
 
-    // TODO Update an existing StudyCard in the current deck by index.
+    // Update an existing StudyCard in the current deck by index.
     // @param cardIndex The index of the card to update.
     // @param question The new question text for the card.
     // @param answers The new list of answer options for the card.
     // @param correctAnswerIndex The new index of the correct answer in the answers list.
     public void updateCardInCurrentDeck(int cardIndex, String question, ArrayList<String> answers, int correctAnswerIndex) {
-        throw new UnsupportedOperationException("Method not yet implemented");
+        if (currentDeck != null && cardIndex >= 0 && cardIndex < currentDeck.getDeck().size()) {
+            // Create the updated card using CardCreator
+            StudyCard updatedCard = cardCreator.createCard(question, answers, correctAnswerIndex);
+            // Create a new deck with the updated card
+            ArrayList<StudyCard> newCards = new ArrayList<>(currentDeck.getDeck());
+            newCards.set(cardIndex, updatedCard);
+            // Update the current deck with the new list
+            this.currentDeck = new StudyDeck(currentDeck.getTitle(), currentDeck.getDescription(), newCards, currentDeck.getId());
+        }
+        // If currentDeck is null or index is invalid, do nothing
     }
 
-    // TODO Save the current deck to local storage via LocalDeckManager.
+    // Save the current deck to local storage via LocalDeckManager.
     public void saveCurrentDeck() {
-        throw new UnsupportedOperationException("Method not yet implemented");
+        if (currentDeck != null) {
+            localDeckManager.saveDeck(currentDeck);
+        }
+        // If currentDeck is null, do nothing (no deck to save)
     }
 
-    // TODO Load an existing deck from local storage by name.
+    // Load an existing deck from local storage by name.
     // @param deckName The name of the deck to load.
     public void loadDeck(String deckName) {
-        throw new UnsupportedOperationException("Method not yet implemented");
+        StudyDeck loadedDeck = localDeckManager.getDeck(deckName);
+        if (loadedDeck != null) {
+            this.currentDeck = loadedDeck;
+        }
+        // If deck doesn't exist, currentDeck remains unchanged
     }
 
-    // TODO Delete an existing deck from local storage by name.
+    // Delete an existing deck from local storage by name.
     // @param deckName The name of the deck to delete.
     public void deleteDeck(String deckName) {
-        throw new UnsupportedOperationException("Method not yet implemented");
+        localDeckManager.deleteDeck(deckName);
+        // If the deleted deck was the current deck, clear currentDeck
+        if (currentDeck != null && currentDeck.getTitle().equals(deckName)) {
+            this.currentDeck = null;
+        }
     }
 
-    // TODO Rename the current deck and update it in local storage.
+    // Rename the current deck and update it in local storage.
     // @param newDeckName The new name for the current deck.
     public void renameCurrentDeck(String newDeckName) {
-        throw new UnsupportedOperationException("Method not yet implemented");
+        if (currentDeck != null) {
+            // Create a new deck with the updated title
+            StudyDeck newDeck = new StudyDeck(newDeckName, currentDeck.getDescription(),
+                    new ArrayList<>(currentDeck.getDeck()), currentDeck.getId());
+            // Update the current deck reference
+            this.currentDeck = newDeck;
+            // Save the renamed deck to storage
+            localDeckManager.updateDeck(newDeck);
+        }
+        // If currentDeck is null, do nothing
     }
 
-    // TODO Switch to working with an existing deck by name.
+    // Switch to working with an existing deck by name.
     // @param deckName The name of the deck to switch to.
     public void switchToDeck(String deckName) {
-        throw new UnsupportedOperationException("Method not yet implemented");
+        StudyDeck loadedDeck = localDeckManager.getDeck(deckName);
+        if (loadedDeck != null) {
+            this.currentDeck = loadedDeck;
+        }
+        // If deck doesn't exist, currentDeck remains unchanged
     }
 
-    // TODO Get the current deck being managed.
+    // Get the current deck being managed.
     // @return The current StudyDeck object.
     public StudyDeck getCurrentDeck() {
-        throw new UnsupportedOperationException("Method not yet implemented");
+        return currentDeck;
     }
 
-    // TODO Get a list of all deck names from local storage.
+    // Get a list of all deck names from local storage.
     // @return A list of deck names available in local storage.
     public ArrayList<String> getAllDeckNames() {
-        throw new UnsupportedOperationException("Method not yet implemented");
+        List<StudyDeck> allDecks = localDeckManager.getAllDecks();
+        ArrayList<String> deckNames = new ArrayList<>();
+        for (StudyDeck deck : allDecks) {
+            deckNames.add(deck.getTitle());
+        }
+        return deckNames;
     }
+
+    // TODO Generate a new StudyCard using AI with the specified topic and source text.
+    // The generated card is returned but NOT automatically added to the current deck.
+    // @param topic The topic for the generated card.
+    // @param sourceText The source text to base the card on.
+    // @return The generated StudyCard object, or null if generation fails.
+    public StudyCard generateCardWithAI(String topic, String sourceText) {
+        // Use CardGenerator to generate the card via AI
+        return cardGenerator.generateCard(topic, sourceText);
+    }
+
+    // TODO Generate a new StudyCard using AI with the specified topic and source text,
+    // and automatically add it to the current deck.
+    // @param topic The topic for the generated card.
+    // @param sourceText The source text to base the card on.
+    // @return The generated StudyCard object, or null if generation fails.
+    public StudyCard generateAndAddCardWithAI(String topic, String sourceText) {
+        if (currentDeck != null) {
+            // Use CardGenerator to generate the card via AI
+            StudyCard generatedCard = cardGenerator.generateCard(topic, sourceText);
+
+            if (generatedCard != null) {
+                // Add the generated card to the current deck
+                ArrayList<StudyCard> newCards = new ArrayList<>(currentDeck.getDeck());
+                newCards.add(generatedCard);
+                // Update the current deck with the new list
+                this.currentDeck = new StudyDeck(currentDeck.getTitle(), currentDeck.getDescription(), newCards, currentDeck.getId());
+                return generatedCard;
+            }
+        }
+        // If currentDeck is null or generation fails, return null
+        return null;
+    }
+
+    // TODO Generate multiple StudyCards using AI with the specified topic and source text,
+    //  and automatically add them to the current deck.
+    // @param topic The topic for the generated cards.
+    // @param sourceText The source text to base the cards on.
+    // @param numberOfCards The number of cards to generate.
+    // @return A list of generated StudyCard objects, or empty list if generation fails.
+    public ArrayList<StudyCard> generateAndAddMultipleCardsWithAI(String topic, String sourceText, int numberOfCards) {
+        ArrayList<StudyCard> generatedCards = new ArrayList<>();
+
+        if (currentDeck != null) {
+            // Generate multiple cards using CardGenerator
+            for (int i = 0; i < numberOfCards; i++) {
+                StudyCard generatedCard = cardGenerator.generateCard(topic, sourceText);
+                if (generatedCard != null) {
+                    generatedCards.add(generatedCard);
+                }
+            }
+
+            if (!generatedCards.isEmpty()) {
+                // Add all generated cards to the current deck
+                ArrayList<StudyCard> newCards = new ArrayList<>(currentDeck.getDeck());
+                newCards.addAll(generatedCards);
+                // Update the current deck with the new list
+                this.currentDeck = new StudyDeck(currentDeck.getTitle(), currentDeck.getDescription(), newCards, currentDeck.getId());
+            }
+        }
+        // If currentDeck is null or generation fails, return empty list
+        return generatedCards;
+    }
+
+
 }

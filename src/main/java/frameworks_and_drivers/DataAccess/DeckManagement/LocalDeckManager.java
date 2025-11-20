@@ -1,4 +1,4 @@
-// Orchestrates high-level local storage operations for StudyDecks..
+// Orchestrates high-level local storage operations for StudyDecks
 // Uses SysFileHandler
 // Interacts with the use case layer components like DeckManager, DeckBookmarker, etc.
 // Archie
