@@ -1,6 +1,7 @@
 package frameworks_and_drivers.DataAccess;
 
 import entity.User;
+import interface_adapter.user_session.UserSession;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import use_case.DataAccessException;
@@ -13,9 +14,13 @@ import static frameworks_and_drivers.DataAccess.StaticMethods.makeApiRequest;
 
 public class LeaderboardUserDataAccessObject implements LeaderboardUserDataAccessInterface {
 
-    final private String apiKey;
-    public LeaderboardUserDataAccessObject(String apiKey) {
-        this.apiKey = apiKey;
+    private UserSession session = null;
+    public LeaderboardUserDataAccessObject(UserSession userSession) {
+        this.session = userSession;
+    }
+
+    public LeaderboardUserDataAccessObject() {
+
     }
 
     @Override
@@ -29,7 +34,7 @@ public class LeaderboardUserDataAccessObject implements LeaderboardUserDataAcces
             String type = x.name();
             result.put(x, new ArrayList<>());
             params.put("type", type);
-            JSONObject response = makeApiRequest("GET", method, params, apiKey);
+            JSONObject response = makeApiRequest("GET", method, params, session.getApiKey());
             boolean ascOrder = response.getBoolean("asc-order");
             JSONArray rank = response.getJSONArray("rank");
             for (int i = 0; i < rank.length(); i++) {

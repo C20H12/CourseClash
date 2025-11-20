@@ -95,10 +95,11 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
         if (leaderboardController != null)  leaderboardController.loadLeaderboard();
         // get the leaderboard
         ArrayList<Object> leaderboardAsArray = leaderboardViewModel.getLeaderboardByType(leaderboardType);
-            for (Object rowObj : leaderboardAsArray) {
-                Object[] row = (Object[]) rowObj;
-                leaderboardTableModel.addRow(row);
-            }
+        for (Object obj : leaderboardAsArray) {
+            ArrayList<Object> rowObj = (ArrayList<Object>) obj;  // cast
+            Object[] row = rowObj.toArray();
+            leaderboardTableModel.addRow(row);
+        }
         JTable leaderboardTable = new JTable(leaderboardTableModel);
         JScrollPane leaderboardTableScrollPane = new JScrollPane(leaderboardTable);
         leaderboardTable.getTableHeader().setFont(new Font("Helvetica", Font.BOLD, 20));
