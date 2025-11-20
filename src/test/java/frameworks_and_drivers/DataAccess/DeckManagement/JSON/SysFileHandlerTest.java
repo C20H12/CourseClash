@@ -1,4 +1,4 @@
-// Test suite for SysFileHandler class.
+// Test suite for SysFileHandler class..
 // Uses SysFileHandler (obviously lol)
 // Archie
 package frameworks_and_drivers.DataAccess.DeckManagement.JSON;
