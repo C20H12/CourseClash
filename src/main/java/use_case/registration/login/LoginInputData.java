@@ -1,3 +1,8 @@
+/**
+ * File: LoginInputData.java
+ * Description: Defines the input data for login actions.
+ * Author: Albert
+ */
 package use_case.registration.login;
 
 /**

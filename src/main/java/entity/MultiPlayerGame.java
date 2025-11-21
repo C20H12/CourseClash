@@ -1,5 +1,8 @@
 package entity;
 
+import entity.DeckManagement.StudyDeck;
+import entity.DeckManagement.StudyCard;
+
 import java.util.List;
 
 public class MultiPlayerGame {
@@ -9,8 +12,8 @@ public class MultiPlayerGame {
 
     private int currentCardIndex;
     private User currentTurn;
+    private int currentCardAnswersSubmitted;
     private boolean isFinished;
-
     private int scoreA;
     private int scoreB;
 
@@ -23,28 +26,19 @@ public class MultiPlayerGame {
         this.isFinished = false;
         this.scoreA = 0;
         this.scoreB = 0;
+        this.currentCardAnswersSubmitted = 0;
     }
 
 
-    public User getPlayerA() { return playerA; }
-    public User getPlayerB() { return playerB; }
+    public boolean recordAnswerAndIsReadyToAdvance() {
+        this.currentCardAnswersSubmitted++;
+        return this.currentCardAnswersSubmitted == 2;
+    }
 
-    public StudyDeck getDeck() { return deck; }
-
-    public int getCurrentCardIndex() { return currentCardIndex; }
-
-    public User getCurrentTurn() { return currentTurn; }
-    public void setCurrentTurn(User currentTurn) { this.currentTurn = currentTurn; }
-
-    public boolean isFinished() { return isFinished; }
-    public void setFinished(boolean finished) { this.isFinished = finished; }
-
-    public int getScoreA() { return scoreA; }
-    public void setScoreA(int scoreA) { this.scoreA = scoreA; }
-
-    public int getScoreB() { return scoreB; }
-    public void setScoreB(int scoreB) { this.scoreB = scoreB; }
-
+    public void advanceCardAndResetCounter() {
+        this.currentCardIndex++;
+        this.currentCardAnswersSubmitted = 0;
+    }
 
     public void switchTurn() {
         if (currentTurn.getUserName().equals(playerA.getUserName())) {
@@ -62,19 +56,23 @@ public class MultiPlayerGame {
         }
     }
 
-    public boolean isGameOver() {
-        return currentCardIndex >= deck.getCards().size();
-    }
-
     public StudyCard getCurrentCard() {
-        List<StudyCard> cards = deck.getCards();
+        List<StudyCard> cards = deck.getDeck();
         if (currentCardIndex < cards.size()) {
             return cards.get(currentCardIndex);
         }
         return null;
     }
 
-    public void advanceCard() {
-        currentCardIndex++;
+    public boolean isGameOver() {
+        return currentCardIndex >= deck.getDeck().size();
     }
+
+    // --- Getters and Setters ---
+    public User getPlayerA() { return playerA; }
+    public User getPlayerB() { return playerB; }
+    public StudyDeck getDeck() { return deck; }
+    public User getCurrentTurn() { return currentTurn; }
+    public int getScoreA() { return scoreA; }
+    public int getScoreB() { return scoreB; }
 }

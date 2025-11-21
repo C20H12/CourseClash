@@ -1,7 +1,7 @@
 package use_case.MultiPlayer.submit_answer;
 
 import entity.MultiPlayerGame;
-import entity.StudyCard;
+import entity.DeckManagement.StudyCard;
 
 public class SubmitAnswerInteractor implements SubmitAnswerInputBoundary {
     private final SubmitAnswerDataAccessInterface userDataAccessObject;
@@ -15,7 +15,6 @@ public class SubmitAnswerInteractor implements SubmitAnswerInputBoundary {
 
     @Override
     public void execute(SubmitAnswerInputData inputData) {
-        // 1. Retrieve the game based on the username
         MultiPlayerGame game = userDataAccessObject.getMultiPlayerGame(inputData.getUsername());
 
         if (game == null) {
@@ -23,28 +22,24 @@ public class SubmitAnswerInteractor implements SubmitAnswerInputBoundary {
             return;
         }
 
-        // 2. Get current logic data
         StudyCard currentCard = game.getCurrentCard();
         String userAnswer = inputData.getAnswer();
-        // We assume StudyCard has getAnswer(). If it is getCorrectAnswer(), please adjust this line.
         String correctAnswer = currentCard.getCorrectAnswer();
         String currentTurnUsername = game.getCurrentTurn().getUserName();
 
-        // 3. Check the Answer
         boolean isCorrect = userAnswer.equalsIgnoreCase(correctAnswer);
-
-        // 4. Update Score (Only if correct)
         if (isCorrect) {
             game.incrementScoreFor(currentTurnUsername);
         }
 
-        // 5. Switch Turn
         game.switchTurn();
 
-        // 6. Advance to the next card
-        game.advanceCard();
+        boolean readyToAdvance = game.recordAnswerAndIsReadyToAdvance();
 
-        // 7. Check for Game Over (Implicit End Match)
+        if (readyToAdvance) {
+            game.advanceCardAndResetCounter();
+        }
+
         boolean isGameOver = game.isGameOver();
         StudyCard nextCard = null;
 
@@ -52,18 +47,11 @@ public class SubmitAnswerInteractor implements SubmitAnswerInputBoundary {
             nextCard = game.getCurrentCard();
         }
 
-        // 8. Save the updated game state
         userDataAccessObject.save(game);
 
-        // 9. Prepare Output Data
         SubmitAnswerOutputData outputData = new SubmitAnswerOutputData(
-                game.getScoreA(),
-                game.getScoreB(),
-                game.getCurrentTurn().getUserName(),
-                nextCard,       // Will be null if game is over
-                isCorrect,
-                correctAnswer,
-                isGameOver      // The flag that tells UI to show "Game Over"
+                game.getScoreA(), game.getScoreB(), game.getCurrentTurn().getUserName(),
+                nextCard, isCorrect, correctAnswer, isGameOver
         );
 
         userPresenter.prepareSuccessView(outputData);

@@ -11,9 +11,7 @@ public class SubmitAnswerController {
     }
 
     public void execute(String answer, String username) {
-        // Package the data
         SubmitAnswerInputData inputData = new SubmitAnswerInputData(answer, username);
-        // Send to Interactor
         interactor.execute(inputData);
     }
 }

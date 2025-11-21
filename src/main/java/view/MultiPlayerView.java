@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 
 public class MultiPlayerView extends JPanel implements ActionListener, PropertyChangeListener {
     public final String viewName = "multiplayer game";
@@ -17,118 +18,114 @@ public class MultiPlayerView extends JPanel implements ActionListener, PropertyC
     private final MultiPlayerViewModel viewModel;
     private final SubmitAnswerController submitAnswerController;
 
-    // UI Components
     private final JLabel player1ScoreLabel = new JLabel("Player 1: 0");
     private final JLabel player2ScoreLabel = new JLabel("Player 2: 0");
     private final JLabel turnLabel = new JLabel("Current Turn: -");
     private final JLabel cardLabel = new JLabel("Waiting for game...");
     private final JLabel messageLabel = new JLabel(" ");
 
-    private final JTextField answerInputField = new JTextField(15);
-    private final JButton submitButton = new JButton(MultiPlayerViewModel.SUBMIT_BUTTON_LABEL);
+    private final JPanel optionButtonPanel = new JPanel();
 
     public MultiPlayerView(MultiPlayerViewModel viewModel, SubmitAnswerController controller) {
         this.viewModel = viewModel;
         this.submitAnswerController = controller;
         this.viewModel.addPropertyChangeListener(this);
 
-        // 1. Main Layout
-        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        this.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Add padding
+        this.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(10, 10, 10, 10);
 
-        // 2. Score Panel (Top)
-        JPanel scorePanel = new JPanel();
-        scorePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 30, 0));
-        player1ScoreLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        player2ScoreLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        JPanel scorePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 50, 0));
+        player1ScoreLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        player2ScoreLabel.setFont(new Font("Arial", Font.BOLD, 16));
         scorePanel.add(player1ScoreLabel);
         scorePanel.add(player2ScoreLabel);
-        this.add(scorePanel);
 
-        this.add(Box.createVerticalStrut(20)); // Spacer
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weighty = 0.1;
+        gbc.anchor = GridBagConstraints.NORTH;
+        this.add(scorePanel, gbc);
 
-        // 3. Turn Indicator
-        turnLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        turnLabel.setFont(new Font("Arial", Font.ITALIC, 12));
-        this.add(turnLabel);
+        turnLabel.setFont(new Font("Arial", Font.ITALIC, 14));
+        turnLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        this.add(Box.createVerticalStrut(30)); // Spacer
+        gbc.gridy = 1;
+        gbc.weighty = 0;
+        this.add(turnLabel, gbc);
 
-        // 4. Question/Card Area
-        cardLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
-        cardLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        this.add(cardLabel);
+        cardLabel.setFont(new Font("SansSerif", Font.BOLD, 24));
+        cardLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        this.add(Box.createVerticalStrut(30)); // Spacer
+        gbc.gridy = 2;
+        gbc.weighty = 0.2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        this.add(cardLabel, gbc);
 
-        // 5. Input Area
-        JPanel inputPanel = new JPanel();
-        inputPanel.add(new JLabel("Your Answer: "));
-        inputPanel.add(answerInputField);
-        this.add(inputPanel);
+        optionButtonPanel.setLayout(new GridLayout(0, 2, 20, 20));
 
-        // 6. Submit Button
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.add(submitButton);
-        this.add(buttonPanel);
+        gbc.gridy = 3;
+        gbc.weighty = 0.5;
+        gbc.fill = GridBagConstraints.BOTH;
+        this.add(optionButtonPanel, gbc);
 
-        // 7. Feedback Message
-        messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
         messageLabel.setForeground(Color.BLUE);
-        this.add(messageLabel);
+        messageLabel.setFont(new Font("Arial", Font.BOLD, 18));
 
-        // --- ACTION LISTENERS ---
-
-        // Submit Logic
-        submitButton.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-                        if (evt.getSource().equals(submitButton)) {
-                            MultiPlayerState currentState = viewModel.getState();
-                            String answer = answerInputField.getText();
-                            String user = currentState.getCurrentTurnUser();
-
-                            if (answer.isEmpty()) {
-                                JOptionPane.showMessageDialog(null, "Please enter an answer.");
-                                return;
-                            }
-
-                            // Execute Controller
-                            submitAnswerController.execute(answer, user);
-
-                            // Clear input
-                            answerInputField.setText("");
-                        }
-                    }
-                }
-        );
+        gbc.gridy = 4;
+        gbc.weighty = 0.1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.SOUTH;
+        this.add(messageLabel, gbc);
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         MultiPlayerState state = (MultiPlayerState) evt.getNewValue();
 
-        // Update Scores
         player1ScoreLabel.setText("Player 1 (" + state.getPlayerA() + "): " + state.getScoreA());
         player2ScoreLabel.setText("Player 2 (" + state.getPlayerB() + "): " + state.getScoreB());
-
-        // Update Turn
         turnLabel.setText("Current Turn: " + state.getCurrentTurnUser());
+        messageLabel.setText(state.getMessage());
 
-        // Update Card/Question
-        if (state.getCurrentCard() != null) {
-            // Assuming StudyCard has getQuestion(). If it's getTerm(), change this line!
-            cardLabel.setText(state.getCurrentCard().getQuestion());
+        optionButtonPanel.removeAll();
+
+        if (state.isGameOver()) {
+            cardLabel.setText("--- MATCH COMPLETE ---");
+        }
+        else if (state.getCurrentCard() != null) {
+            cardLabel.setText("<html><div style='text-align: center;'>" + state.getCurrentCard().getQuestion() + "</div></html>");
+
+            ArrayList<String> options = state.getCurrentCard().getAnswers();
+            for (String optionText : options) {
+                JButton optionButton = new JButton(optionText);
+                optionButton.setFont(new Font("Arial", Font.PLAIN, 18));
+                optionButton.setFocusPainted(false);
+
+                optionButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        for (Component c : optionButtonPanel.getComponents()) {
+                            c.setEnabled(false);
+                        }
+                        String currentUser = state.getCurrentTurnUser();
+                        submitAnswerController.execute(optionText, currentUser);
+                    }
+                });
+
+                optionButtonPanel.add(optionButton);
+            }
         } else {
-            cardLabel.setText("Game Over!"); // Or empty if waiting
+            cardLabel.setText("Waiting for next card...");
         }
 
-        // Update Message
-        messageLabel.setText(state.getMessage());
+        optionButtonPanel.revalidate();
+        optionButtonPanel.repaint();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // Required by interface, but we use anonymous inner class above
     }
 }

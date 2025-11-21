@@ -1,6 +1,6 @@
 package use_case.MultiPlayer.submit_answer;
 
-import entity.StudyCard;
+import entity.DeckManagement.StudyCard;
 
 public class SubmitAnswerOutputData {
     private final int player1Score;

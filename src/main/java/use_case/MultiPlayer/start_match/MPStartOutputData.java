@@ -1,6 +1,6 @@
 package use_case.MultiPlayer.start_match;
 
-import entity.StudyCard;
+import entity.DeckManagement.StudyCard;
 
 public class MPStartOutputData {
     private final String player1;

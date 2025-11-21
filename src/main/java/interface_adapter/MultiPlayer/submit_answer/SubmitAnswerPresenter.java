@@ -16,28 +16,41 @@ public class SubmitAnswerPresenter implements SubmitAnswerOutputBoundary {
     public void prepareSuccessView(SubmitAnswerOutputData response) {
         MultiPlayerState state = multiPlayerViewModel.getState();
 
-        // 1. Always update scores regardless of game state
         state.setScoreA(response.getPlayer1Score());
         state.setScoreB(response.getPlayer2Score());
 
-        // 2. Check for Game Over
         if (response.isGameOver()) {
-            state.setMessage("GAME OVER! Final Score - P1: " + response.getPlayer1Score() + " | P2: " + response.getPlayer2Score());
-            state.setCurrentCard(null); // Clear the card display
+            state.setIsGameOver(true);
+
+            // --- Determine Winner Logic ---
+            String winnerMessage;
+            int score1 = response.getPlayer1Score();
+            int score2 = response.getPlayer2Score();
+            String playerA = state.getPlayerA();
+            String playerB = state.getPlayerB();
+
+            if (score1 > score2) {
+                winnerMessage = "🏆 " + playerA + " WINS!";
+            } else if (score2 > score1) {
+                winnerMessage = "🏆 " + playerB + " WINS!";
+            } else {
+                winnerMessage = "🤝 IT'S A TIE!";
+            }
+
+            state.setMessage("GAME OVER! " + winnerMessage + " Final Scores: " + score1 + " - " + score2);
+            state.setCurrentCard(null);
+
         } else {
-            // 3. Game is still running: Update Turn and Card
             state.setCurrentTurnUser(response.getCurrentTurnUser());
             state.setCurrentCard(response.getNextCard());
 
-            // 4. Provide Feedback on the last answer
             if (response.isCorrect()) {
                 state.setMessage("Correct!");
             } else {
-                state.setMessage("Wrong! The answer was: " + response.getCorrectAnswer());
+                state.setMessage("Wrong! Answer was: " + response.getCorrectAnswer());
             }
         }
 
-        // 5. Update ViewModel and notify View
         multiPlayerViewModel.setState(state);
         multiPlayerViewModel.firePropertyChange();
     }

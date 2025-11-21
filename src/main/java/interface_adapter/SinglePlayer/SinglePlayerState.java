@@ -41,8 +41,7 @@ public class SinglePlayerState {
     public void setGameOver(boolean gameOver) { this.gameOver = gameOver; }
     public void setMessage(String message) { this.message = message; }
     public void setError(String error) { this.error = error; }
-    // For final results
-    public void setFinalScore(int score) { this.score = score; }
-    public void setFinalAccuracy(double accuracy) { this.accuracy = accuracy; }
-    public void setFinalAvgTime(double time) { this.avgResponseTime = time; }
+    public boolean isError() {
+        return error != null && !error.isEmpty();
+    }
 }

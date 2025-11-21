@@ -1,4 +1,4 @@
-package use_case.MultiPlayer; // Change to start_multiplayer if that is your folder
+package use_case.MultiPlayer;
 
 import entity.MultiPlayerGame;
 
