@@ -5,6 +5,7 @@ package frameworks_and_drivers.DataAccess.DeckManagement.JSON;
 
 import entity.DeckManagement.StudyCard;
 import entity.DeckManagement.StudyDeck;
+import frameworks_and_drivers.DataAccess.DeckManagement.StudyDeckJSONFileHandler;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,13 +19,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SysFileHandlerTest {
 
-    private SysFileHandler handler;
+    private StudyDeckJSONFileHandler handler;
     private String testStorageDir = System.getProperty("user.home") + "/.CourseClash/local_storage";
     private String testFileName = testStorageDir + "/Test_Deck.json";
 
     @BeforeEach
     void setUp() {
-        handler = new SysFileHandler();
+        handler = new StudyDeckJSONFileHandler();
         // Clean up all JSON files before each test
         File storageDir = new File(testStorageDir);
         File[] files = storageDir.listFiles();
@@ -51,7 +52,7 @@ class SysFileHandlerTest {
     @DisplayName("Test SysFileHandler constructor executes without error")
     void testConstructor() {
         // Verify the constructor runs without throwing exceptions
-        assertDoesNotThrow(() -> new SysFileHandler());
+        assertDoesNotThrow(() -> new StudyDeckJSONFileHandler());
     }
 
     @Test
@@ -205,9 +206,9 @@ class SysFileHandlerTest {
         StudyDeck testDeck = new StudyDeck("Sample Deck", "Test Description", cards, 456);
 
         // Use reflection to access the private deckToJson method
-        java.lang.reflect.Method method = SysFileHandler.class.getDeclaredMethod("deckToJson", StudyDeck.class);
+        java.lang.reflect.Method method = StudyDeckJSONFileHandler.class.getDeclaredMethod("deckToJson", StudyDeck.class);
         method.setAccessible(true);
-        String result = (String) method.invoke(new SysFileHandler(), testDeck);
+        String result = (String) method.invoke(new StudyDeckJSONFileHandler(), testDeck);
 
         // Verify the JSON contains expected elements
         assertNotNull(result);
@@ -242,9 +243,9 @@ class SysFileHandlerTest {
                 "}";
 
         // Use reflection to access the private jsonToDeck method
-        java.lang.reflect.Method method = SysFileHandler.class.getDeclaredMethod("jsonToDeck", String.class);
+        java.lang.reflect.Method method = StudyDeckJSONFileHandler.class.getDeclaredMethod("jsonToDeck", String.class);
         method.setAccessible(true);
-        StudyDeck result = (StudyDeck) method.invoke(new SysFileHandler(), json);
+        StudyDeck result = (StudyDeck) method.invoke(new StudyDeckJSONFileHandler(), json);
 
         // Verify the deck was reconstructed correctly
         assertNotNull(result);
@@ -277,9 +278,9 @@ class SysFileHandlerTest {
                 "}";
 
         // Use reflection to access the private jsonToCard method
-        java.lang.reflect.Method method = SysFileHandler.class.getDeclaredMethod("jsonToCard", String.class);
+        java.lang.reflect.Method method = StudyDeckJSONFileHandler.class.getDeclaredMethod("jsonToCard", String.class);
         method.setAccessible(true);
-        StudyCard result = (StudyCard) method.invoke(new SysFileHandler(), json);
+        StudyCard result = (StudyCard) method.invoke(new StudyDeckJSONFileHandler(), json);
 
         // Verify the card was reconstructed correctly
         assertNotNull(result);
@@ -295,22 +296,22 @@ class SysFileHandlerTest {
     @DisplayName("Test findMatchingBracket finds matching bracket correctly")
     void testFindMatchingBracket() throws Exception {
         // Use reflection to access the private findMatchingBracket method
-        java.lang.reflect.Method method = SysFileHandler.class.getDeclaredMethod("findMatchingBracket", String.class, int.class);
+        java.lang.reflect.Method method = StudyDeckJSONFileHandler.class.getDeclaredMethod("findMatchingBracket", String.class, int.class);
         method.setAccessible(true);
 
         // Test simple nested brackets
         String input1 = "{ { } }";
-        int result1 = (int) method.invoke(new SysFileHandler(), input1, 0);
+        int result1 = (int) method.invoke(new StudyDeckJSONFileHandler(), input1, 0);
         assertEquals(input1.length() - 1, result1);
 
         // Test more complex nested brackets
         String input2 = "{ { { } } }";
-        int result2 = (int) method.invoke(new SysFileHandler(), input2, 0);
+        int result2 = (int) method.invoke(new StudyDeckJSONFileHandler(), input2, 0);
         assertEquals(input2.length() - 1, result2);
 
         // Test unmatched brackets
         String input3 = "{ { }";
-        int result3 = (int) method.invoke(new SysFileHandler(), input3, 0);
+        int result3 = (int) method.invoke(new StudyDeckJSONFileHandler(), input3, 0);
         assertEquals(-1, result3);
     }
 
@@ -318,33 +319,33 @@ class SysFileHandlerTest {
     @DisplayName("Test escapeJsonString handles special characters correctly")
     void testEscapeJsonString() throws Exception {
         // Use reflection to access the private escapeJsonString method
-        java.lang.reflect.Method method = SysFileHandler.class.getDeclaredMethod("escapeJsonString", String.class);
+        java.lang.reflect.Method method = StudyDeckJSONFileHandler.class.getDeclaredMethod("escapeJsonString", String.class);
         method.setAccessible(true);
 
         // Test various special characters
         String input1 = "Hello \"World\"";
         String expected1 = "Hello \\\"World\\\"";
-        String result1 = (String) method.invoke(new SysFileHandler(), input1);
+        String result1 = (String) method.invoke(new StudyDeckJSONFileHandler(), input1);
         assertEquals(expected1, result1);
 
         String input2 = "Line 1\nLine 2";
         String expected2 = "Line 1\\nLine 2";
-        String result2 = (String) method.invoke(new SysFileHandler(), input2);
+        String result2 = (String) method.invoke(new StudyDeckJSONFileHandler(), input2);
         assertEquals(expected2, result2);
 
         String input3 = "Tab\tSeparated";
         String expected3 = "Tab\\tSeparated";
-        String result3 = (String) method.invoke(new SysFileHandler(), input3);
+        String result3 = (String) method.invoke(new StudyDeckJSONFileHandler(), input3);
         assertEquals(expected3, result3);
 
         String input4 = "Back\\Slash";
         String expected4 = "Back\\\\Slash";
-        String result4 = (String) method.invoke(new SysFileHandler(), input4);
+        String result4 = (String) method.invoke(new StudyDeckJSONFileHandler(), input4);
         assertEquals(expected4, result4);
 
         String input5 = null;
         String expected5 = "null";
-        String result5 = (String) method.invoke(new SysFileHandler(), input5);
+        String result5 = (String) method.invoke(new StudyDeckJSONFileHandler(), input5);
         assertEquals(expected5, result5);
     }
 
@@ -352,33 +353,33 @@ class SysFileHandlerTest {
     @DisplayName("Test unescapeJsonString handles escaped characters correctly")
     void testUnescapeJsonString() throws Exception {
         // Use reflection to access the private unescapeJsonString method
-        java.lang.reflect.Method method = SysFileHandler.class.getDeclaredMethod("unescapeJsonString", String.class);
+        java.lang.reflect.Method method = StudyDeckJSONFileHandler.class.getDeclaredMethod("unescapeJsonString", String.class);
         method.setAccessible(true);
 
         // Test various escaped characters
         String input1 = "Hello \\\"World\\\"";
         String expected1 = "Hello \"World\"";
-        String result1 = (String) method.invoke(new SysFileHandler(), input1);
+        String result1 = (String) method.invoke(new StudyDeckJSONFileHandler(), input1);
         assertEquals(expected1, result1);
 
         String input2 = "Line 1\\nLine 2";
         String expected2 = "Line 1\nLine 2";
-        String result2 = (String) method.invoke(new SysFileHandler(), input2);
+        String result2 = (String) method.invoke(new StudyDeckJSONFileHandler(), input2);
         assertEquals(expected2, result2);
 
         String input3 = "Tab\\tSeparated";
         String expected3 = "Tab\tSeparated";
-        String result3 = (String) method.invoke(new SysFileHandler(), input3);
+        String result3 = (String) method.invoke(new StudyDeckJSONFileHandler(), input3);
         assertEquals(expected3, result3);
 
         String input4 = "Back\\\\Slash";
         String expected4 = "Back\\Slash";
-        String result4 = (String) method.invoke(new SysFileHandler(), input4);
+        String result4 = (String) method.invoke(new StudyDeckJSONFileHandler(), input4);
         assertEquals(expected4, result4);
 
         String input5 = null;
         String expected5 = null;
-        String result5 = (String) method.invoke(new SysFileHandler(), input5);
+        String result5 = (String) method.invoke(new StudyDeckJSONFileHandler(), input5);
         assertEquals(expected5, result5);
     }
 }

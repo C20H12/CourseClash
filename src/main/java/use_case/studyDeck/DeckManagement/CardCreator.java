@@ -1,6 +1,6 @@
 // Handles manual card creation logic in the Use Case layer.
 // Archie
-package use_case.DeckManagement;
+package use_case.studyDeck.DeckManagement;
 
 import entity.DeckManagement.StudyCard;
 import java.util.ArrayList;

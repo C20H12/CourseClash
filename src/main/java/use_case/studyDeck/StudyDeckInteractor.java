@@ -1,30 +1,37 @@
-// Primary deck management orchestrator in the Use Case layer.
-// Uses CardCreator and CardGenerator
-// Archie
-package use_case.DeckManagement;
+package use_case.studyDeck;
 
 import entity.DeckManagement.StudyCard;
 import entity.DeckManagement.StudyDeck;
-import frameworks_and_drivers.DataAccess.DeckManagement.LocalDeckManager;
-import use_case.DeckManagement.CardCreator;
-import use_case.DeckManagement.CardGenerator;
+import use_case.studyDeck.DeckManagement.CardCreator;
+import use_case.studyDeck.DeckManagement.CardGenerator;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class DeckManager {
-    private final LocalDeckManager localDeckManager;
-    private final CardCreator cardCreator; // For manual card creation
-    private final CardGenerator cardGenerator; // For Ai card creation
+public class StudyDeckInteractor implements StudyDeckInputBoundary {
+    private final StudyDeckDataAccessInterface studyDeckDataAccessObject;
+    private final StudyDeckOutputBoundary studyDeckOutputBoundary;
     private StudyDeck currentDeck;
-    private final String apiKey = "404";
 
-    // Constructor that initializes the DeckManager with a LocalDeckManager instance.
-    // @param localDeckManager The LocalDeckManager instance to coordinate with for storage operations.
-    public DeckManager(LocalDeckManager localDeckManager) {
-        this.localDeckManager = localDeckManager;
-        this.cardCreator = new CardCreator(); // Initialize CardCreator for manual card creation
-        this.cardGenerator = new CardGenerator(apiKey); // Init CardGenerator for AI card creation
-        this.currentDeck = null;
+    private StudyDeckInteractor(StudyDeckDataAccessInterface studyDeckDataAccessObject,
+                                StudyDeckOutputBoundary studyDeckOutputBoundary) {
+        this.studyDeckDataAccessObject = studyDeckDataAccessObject;
+        this.studyDeckOutputBoundary = studyDeckOutputBoundary;
+    }
+
+    @Override
+    public void execute(StudyDeckInputData inputData, StudyDeckAction action) {
+        switch(action) {
+            case ADD_DECK -> {
+                studyDeckDataAccessObject.
+            }
+            case REMOVE_DECK -> {
+
+            }
+            case EDIT_DECK -> {
+
+            }
+        }
     }
 
     // Create a new empty deck with the specified title and description.
@@ -46,7 +53,7 @@ public class DeckManager {
     public void addCardToCurrentDeck(String question, ArrayList<String> answers, int correctAnswerIndex) {
         if (currentDeck != null) {
             // Use CardCreator to create the new card
-            StudyCard newCard = cardCreator.createCard(question, answers, correctAnswerIndex);
+            StudyCard newCard = new CardCreator().createCard(question, answers, correctAnswerIndex);
             // Create a new deck with the added card (since deck is immutable)
             ArrayList<StudyCard> newCards = new ArrayList<>(currentDeck.getDeck());
             newCards.add(newCard);
@@ -77,7 +84,7 @@ public class DeckManager {
     public void updateCardInCurrentDeck(int cardIndex, String question, ArrayList<String> answers, int correctAnswerIndex) {
         if (currentDeck != null && cardIndex >= 0 && cardIndex < currentDeck.getDeck().size()) {
             // Create the updated card using CardCreator
-            StudyCard updatedCard = cardCreator.createCard(question, answers, correctAnswerIndex);
+            StudyCard updatedCard = new CardCreator().createCard(question, answers, correctAnswerIndex);
             // Create a new deck with the updated card
             ArrayList<StudyCard> newCards = new ArrayList<>(currentDeck.getDeck());
             newCards.set(cardIndex, updatedCard);
@@ -90,7 +97,7 @@ public class DeckManager {
     // Save the current deck to local storage via LocalDeckManager.
     public void saveCurrentDeck() {
         if (currentDeck != null) {
-            localDeckManager.saveDeck(currentDeck);
+            studyDeckDataAccessObject.saveDeck(currentDeck);
         }
         // If currentDeck is null, do nothing (no deck to save)
     }
@@ -98,7 +105,7 @@ public class DeckManager {
     // Load an existing deck from local storage by name.
     // @param deckName The name of the deck to load.
     public void loadDeck(String deckName) {
-        StudyDeck loadedDeck = localDeckManager.getDeck(deckName);
+        StudyDeck loadedDeck = studyDeckDataAccessObject.getDeck(deckName);
         if (loadedDeck != null) {
             this.currentDeck = loadedDeck;
         }
@@ -108,7 +115,7 @@ public class DeckManager {
     // Delete an existing deck from local storage by name.
     // @param deckName The name of the deck to delete.
     public void deleteDeck(String deckName) {
-        localDeckManager.deleteDeck(deckName);
+        studyDeckDataAccessObject.deleteDeck(deckName);
         // If the deleted deck was the current deck, clear currentDeck
         if (currentDeck != null && currentDeck.getTitle().equals(deckName)) {
             this.currentDeck = null;
@@ -125,7 +132,7 @@ public class DeckManager {
             // Update the current deck reference
             this.currentDeck = newDeck;
             // Save the renamed deck to storage
-            localDeckManager.updateDeck(newDeck);
+            studyDeckDataAccessObject.updateDeck(newDeck);
         }
         // If currentDeck is null, do nothing
     }
@@ -133,7 +140,7 @@ public class DeckManager {
     // Switch to working with an existing deck by name.
     // @param deckName The name of the deck to switch to.
     public void switchToDeck(String deckName) {
-        StudyDeck loadedDeck = localDeckManager.getDeck(deckName);
+        StudyDeck loadedDeck = studyDeckDataAccessObject.getDeck(deckName);
         if (loadedDeck != null) {
             this.currentDeck = loadedDeck;
         }
@@ -149,7 +156,7 @@ public class DeckManager {
     // Get a list of all deck names from local storage.
     // @return A list of deck names available in local storage.
     public ArrayList<String> getAllDeckNames() {
-        List<StudyDeck> allDecks = localDeckManager.getAllDecks();
+        List<StudyDeck> allDecks = studyDeckDataAccessObject.getAllDecks();
         ArrayList<String> deckNames = new ArrayList<>();
         for (StudyDeck deck : allDecks) {
             deckNames.add(deck.getTitle());
@@ -164,7 +171,7 @@ public class DeckManager {
     // @return The generated StudyCard object, or null if generation fails.
     public StudyCard generateCardWithAI(String topic, String sourceText) {
         // Use CardGenerator to generate the card via AI
-        return cardGenerator.generateCard(topic, sourceText);
+        return new CardGenerator("").generateCard(topic, sourceText);
     }
 
     // TODO Generate a new StudyCard using AI with the specified topic and source text,
@@ -175,7 +182,7 @@ public class DeckManager {
     public StudyCard generateAndAddCardWithAI(String topic, String sourceText) {
         if (currentDeck != null) {
             // Use CardGenerator to generate the card via AI
-            StudyCard generatedCard = cardGenerator.generateCard(topic, sourceText);
+            StudyCard generatedCard = new CardGenerator("").generateCard(topic, sourceText);
 
             if (generatedCard != null) {
                 // Add the generated card to the current deck
@@ -202,7 +209,7 @@ public class DeckManager {
         if (currentDeck != null) {
             // Generate multiple cards using CardGenerator
             for (int i = 0; i < numberOfCards; i++) {
-                StudyCard generatedCard = cardGenerator.generateCard(topic, sourceText);
+                StudyCard generatedCard = new CardGenerator("").generateCard(topic, sourceText);
                 if (generatedCard != null) {
                     generatedCards.add(generatedCard);
                 }
@@ -219,6 +226,7 @@ public class DeckManager {
         // If currentDeck is null or generation fails, return empty list
         return generatedCards;
     }
+
 
 
 }

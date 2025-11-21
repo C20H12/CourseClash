@@ -1,7 +1,7 @@
 // Handles AI card generation logic in the Use Case layer.
 // Uses GeminiApiClient
 // Archie
-package use_case.DeckManagement;
+package use_case.studyDeck.DeckManagement;
 
 import entity.DeckManagement.StudyCard;
 import frameworks_and_drivers.AIServices.GeminiApiClient;
