@@ -1,8 +1,8 @@
 package interface_adapter.MultiPlayer.start_match;
 
-import interface_adapter.ViewManagerModel;
 import interface_adapter.MultiPlayer.MultiPlayerState;
 import interface_adapter.MultiPlayer.MultiPlayerViewModel;
+import interface_adapter.ViewManagerModel;
 import use_case.MultiPlayer.start_match.MPStartOutputBoundary;
 import use_case.MultiPlayer.start_match.MPStartOutputData;
 

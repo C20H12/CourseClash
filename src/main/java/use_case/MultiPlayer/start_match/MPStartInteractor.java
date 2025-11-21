@@ -1,13 +1,13 @@
 package use_case.MultiPlayer.start_match;
 
-import entity.MultiPlayerGame;
 import entity.DeckManagement.StudyCard;
 import entity.DeckManagement.StudyDeck;
+import entity.MultiPlayerGame;
 import entity.User;
 import use_case.DataAccessException;
-import use_case.registration.login.LoginUserDataAccessInterface;
-import use_case.StudySet.StudySetDataAccessInterface;
 import use_case.MultiPlayer.MultiPlayerAccessInterface;
+import use_case.StudySet.StudySetDataAccessInterface;
+import use_case.registration.login.LoginUserDataAccessInterface;
 
 public class MPStartInteractor implements MPStartInputBoundary {
     private final MPStartOutputBoundary presenter;
