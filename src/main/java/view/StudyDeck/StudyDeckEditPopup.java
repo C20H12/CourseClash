@@ -50,6 +50,8 @@ public class StudyDeckEditPopup extends JDialog {
 		if (!cardStateMap.isEmpty()) {
 			selectedCardId = cardStateMap.keySet().iterator().next();
 			loadCardIntoEditor(selectedCardId);
+		} else {
+			toggleCardFieldsEnable(false);
 		}
 	}
 
@@ -223,6 +225,7 @@ public class StudyDeckEditPopup extends JDialog {
 		if (state == null) {
 			return;
 		}
+		toggleCardFieldsEnable(true);
 		questionArea.setText(state.getQuestion());
 		for (int i = 0; i < answerFields.size(); i++) {
 			answerFields.get(i).setText(state.getAnswers().get(i));
@@ -260,11 +263,12 @@ public class StudyDeckEditPopup extends JDialog {
 		}
 		cardStateMap.remove(id);
 		if (cardStateMap.isEmpty()) {
-			selectedCardId = addNewStudyCard("", Arrays.asList("", "", "", ""), 0);
+			selectedCardId = -1;
+			toggleCardFieldsEnable(false);
 		} else if (selectedCardId == id) {
 			selectedCardId = cardStateMap.keySet().iterator().next();
+			loadCardIntoEditor(selectedCardId);
 		}
-		loadCardIntoEditor(selectedCardId);
 		refreshCardListUi();
 	}
 
@@ -276,6 +280,16 @@ public class StudyDeckEditPopup extends JDialog {
 			return 3;
 		}
 		return idx;
+	}
+
+	private void toggleCardFieldsEnable(boolean enab) {
+		questionArea.setEnabled(enab);
+		for (JTextField field : answerFields) {
+			field.setEnabled(enab);
+		}
+		for (JRadioButton btn : answerChoiceButtons) {
+			btn.setEnabled(enab);
+		}
 	}
 
 	/**
