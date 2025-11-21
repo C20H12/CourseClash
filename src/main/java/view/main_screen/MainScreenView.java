@@ -3,12 +3,9 @@ package view.main_screen;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.leaderboard.LeaderboardViewModel;
 import interface_adapter.main_screen.MainScreenViewModel;
-// Import the Controller
 import interface_adapter.MultiPlayer.start_match.MPStartController;
-// import interface_adapter.registration.logout.LogoutController; // Uncomment if you have it
 import interface_adapter.studyset.studyset_browse.BrowseStudySetViewModel;
 import use_case.DataAccessException;
-// import interface_adapter.SinglePlayer.SinglePlayerViewModel; // Uncomment if you have it
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,16 +19,12 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
     private final MainScreenViewModel mainScreenViewModel;
     private final ViewManagerModel viewManagerModel;
 
-    // Optional ViewModels (Set to null if not used yet)
     private final BrowseStudySetViewModel browseStudySetViewModel;
     private final LeaderboardViewModel leaderboardViewModel;
     // private final SinglePlayerViewModel singlePlayerViewModel;
 
-    // Controllers
     private MPStartController mpStartController;
-    // private LogoutController logoutController;
 
-    // --- UNIFIED CONSTRUCTOR ---
     public MainScreenView(MainScreenViewModel mainScreenViewModel,
                           ViewManagerModel viewManagerModel,
                           BrowseStudySetViewModel browseStudySetViewModel,
@@ -46,10 +39,8 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
 
         this.mainScreenViewModel.addPropertyChangeListener(this);
 
-        // Set panel layout
         this.setLayout(new BorderLayout(10, 10));
 
-        // ---------- Title Image ----------
         try {
             ImageIcon originalTitleImage = new ImageIcon("images/TitleImage.png");
             if (originalTitleImage.getIconWidth() > 0) {
@@ -67,7 +58,6 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
             System.out.println("Image not found, skipping.");
         }
 
-        // ---------- Buttons ----------
         JPanel buttonPanel = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
@@ -80,12 +70,10 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
         JButton manageSetButton = new JButton("Manage Study Set");
         JButton leaderboardButton = new JButton("Leaderboard");
 
-        // -- Button Logic --
         manageSetButton.addActionListener(e -> switchToBrowseStudySet());
         leaderboardButton.addActionListener(e -> switchToLeaderboard());
         singlePlayerButton.addActionListener(e -> System.out.println("Single Player clicked (WIP)"));
 
-        // -- Multiplayer Logic --
         multiplayerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
