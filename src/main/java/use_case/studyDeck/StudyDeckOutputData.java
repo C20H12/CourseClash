@@ -1,15 +1,17 @@
 package use_case.studyDeck;
 
+import java.util.List;
+
 import entity.DeckManagement.StudyDeck;
 
 public class StudyDeckOutputData {
-    private StudyDeck deck;
+    private List<StudyDeck> decks;
 
-    public StudyDeckOutputData(StudyDeck deck) {
-        this.deck = deck;
+    public StudyDeckOutputData(List<StudyDeck> deck) {
+        this.decks = deck;
     }
 
-    public StudyDeck getDeck() {
-        return this.deck;
+    public List<StudyDeck> getDecks() {
+        return this.decks;
     }
 }

@@ -3,7 +3,7 @@ package view.main_screen;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.leaderboard.LeaderboardViewModel;
 import interface_adapter.main_screen.MainScreenViewModel;
-import interface_adapter.studyset.studyset_browse.BrowseStudySetViewModel;
+import interface_adapter.studyDeck.StudyDeckViewModel;
 import view.ViewManager;
 import view.leaderboard.LeaderboardView;
 
@@ -18,13 +18,13 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
     private final String viewName = "main screen";
     private final MainScreenViewModel mainScreenViewModel;
     private final ViewManagerModel viewManagerModel;
-    private final BrowseStudySetViewModel browseStudySetViewModel;
+    private final StudyDeckViewModel browseStudySetViewModel;
     private final LeaderboardViewModel leaderboardViewModel;
     private final interface_adapter.SinglePlayer.SinglePlayerViewModel singlePlayerViewModel;
 
     public MainScreenView(MainScreenViewModel mainScreenViewModel,
                           ViewManagerModel viewManagerModel,
-                          BrowseStudySetViewModel browseStudySetViewModel, LeaderboardViewModel leaderboardViewModel,
+                          StudyDeckViewModel browseStudySetViewModel, LeaderboardViewModel leaderboardViewModel,
                           interface_adapter.SinglePlayer.SinglePlayerViewModel singlePlayerViewModel) {
         this.mainScreenViewModel = mainScreenViewModel;
         this.viewManagerModel = viewManagerModel;

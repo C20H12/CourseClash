@@ -5,15 +5,13 @@ import entity.DeckManagement.StudyDeck;
 import use_case.studyDeck.DeckManagement.CardCreator;
 import use_case.studyDeck.DeckManagement.CardGenerator;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class StudyDeckInteractor implements StudyDeckInputBoundary {
     private final StudyDeckDataAccessInterface studyDeckDataAccessObject;
     private final StudyDeckOutputBoundary studyDeckOutputBoundary;
-    private StudyDeck currentDeck;
 
-    private StudyDeckInteractor(StudyDeckDataAccessInterface studyDeckDataAccessObject,
+    public StudyDeckInteractor(StudyDeckDataAccessInterface studyDeckDataAccessObject,
                                 StudyDeckOutputBoundary studyDeckOutputBoundary) {
         this.studyDeckDataAccessObject = studyDeckDataAccessObject;
         this.studyDeckOutputBoundary = studyDeckOutputBoundary;
@@ -24,7 +22,6 @@ public class StudyDeckInteractor implements StudyDeckInputBoundary {
         switch(action) {
             case ADD_DECK -> {
                 studyDeckDataAccessObject.saveDeck(inputData.getStudyDeck());
-
             }
             case REMOVE_DECK -> {
                 studyDeckDataAccessObject.deleteDeck(inputData.getStudyDeck().getTitle());
@@ -32,7 +29,12 @@ public class StudyDeckInteractor implements StudyDeckInputBoundary {
             case EDIT_DECK -> {
                 studyDeckDataAccessObject.updateDeck(inputData.getStudyDeck());
             }
+            case LOAD_ALL -> {
+                break;
+            }
         }
+        List<StudyDeck> decks = studyDeckDataAccessObject.getAllDecks();
+        studyDeckOutputBoundary.prepareView(new StudyDeckOutputData(decks));
     }
 //
 //    // Create a new empty deck with the specified title and description.

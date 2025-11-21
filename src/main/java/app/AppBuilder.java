@@ -8,11 +8,13 @@ import interface_adapter.leaderboard.LeaderboardController;
 import interface_adapter.leaderboard.LeaderboardPresenter;
 import interface_adapter.leaderboard.LeaderboardViewModel;
 import interface_adapter.main_screen.MainScreenViewModel;
-import interface_adapter.studyset.studyset_browse.BrowseStudySetViewModel;
 import interface_adapter.registration.login.*;
 import interface_adapter.registration.signup.SignupController;
 import interface_adapter.registration.signup.SignupPresenter;
 import interface_adapter.registration.signup.SignupViewModel;
+import interface_adapter.studyDeck.StudyDeckController;
+import interface_adapter.studyDeck.StudyDeckPresenter;
+import interface_adapter.studyDeck.StudyDeckViewModel;
 import interface_adapter.user_session.UserSession;
 import use_case.SinglePlayer.SinglePlayerInteractor;
 import use_case.leaderboard.LeaderboardInputBoundary;
@@ -22,19 +24,23 @@ import use_case.registration.login.*;
 import use_case.registration.signup.SignupInputBoundary;
 import use_case.registration.signup.SignupInteractor;
 import use_case.registration.signup.SignupOutputBoundary;
+import use_case.studyDeck.StudyDeckInputBoundary;
+import use_case.studyDeck.StudyDeckInteractor;
+import use_case.studyDeck.StudyDeckOutputBoundary;
 import view.SinglePlayerView;
 import interface_adapter.SinglePlayer.*;
 import frameworks_and_drivers.DataAccess.SinglePlayerDataAccessObject;
+import frameworks_and_drivers.DataAccess.DeckManagement.StudyDeckLocalDataAccessObject;
 import view.leaderboard.LeaderboardView;
 import view.main_screen.MainScreenView;
 import view.registration.*;
-import view.study_set.BrowseStudySetView;
 import frameworks_and_drivers.DataAccess.*;
 import utility.FontLoader;
 import use_case.SinglePlayer.*;
 import frameworks_and_drivers.DataAccess.SinglePlayerDataAccessObject;
 import view.SinglePlayerView;
 import view.ViewManager;
+import view.StudyDeck.StudyDeckView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -60,11 +66,11 @@ public class AppBuilder {
     private SignupViewModel signupViewModel;
     private LoginViewModel loginViewModel;
     private MainScreenViewModel mainScreenViewModel;
-    private BrowseStudySetViewModel browseStudySetViewModel;
+    private StudyDeckViewModel studyDeckViewModel;
     private LeaderboardViewModel leaderboardViewModel;
     private LoginView loginView;
     private MainScreenView mainScreenView;
-    private BrowseStudySetView browseStudySetView;
+    private StudyDeckView browseStudySetView;
     private LeaderboardView leaderboardView;
     private SinglePlayerViewModel singlePlayerViewModel;
     private SinglePlayerView singlePlayerView;
@@ -88,14 +94,14 @@ public class AppBuilder {
 
     public AppBuilder addMainScreenView() {
         mainScreenViewModel = new MainScreenViewModel();
-        browseStudySetViewModel = new BrowseStudySetViewModel();
+        studyDeckViewModel = new StudyDeckViewModel();
         leaderboardViewModel = new LeaderboardViewModel();
         singlePlayerViewModel = new SinglePlayerViewModel();
         mainScreenView = new MainScreenView(mainScreenViewModel,
-                viewManagerModel, browseStudySetViewModel, leaderboardViewModel,  singlePlayerViewModel);
+                viewManagerModel, studyDeckViewModel, leaderboardViewModel,  singlePlayerViewModel);
         cardPanel.add(mainScreenView, mainScreenView.getViewName());
 
-        browseStudySetView = new BrowseStudySetView(browseStudySetViewModel, mainScreenViewModel, viewManagerModel);
+        browseStudySetView = new StudyDeckView(studyDeckViewModel, mainScreenViewModel, viewManagerModel);
         cardPanel.add(browseStudySetView, browseStudySetView.getViewName());
 
         leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel, mainScreenViewModel);
@@ -105,11 +111,6 @@ public class AppBuilder {
         cardPanel.add(singlePlayerView, singlePlayerView.getViewName());
         return this;
 
-    }
-
-    public AppBuilder addBrowseStudySetView() {
-
-        return this;
     }
 
     public AppBuilder addLeaderboardView() {
@@ -142,6 +143,16 @@ public class AppBuilder {
         return this;
     }
 
+    public AppBuilder addStudyDeckUseCase() {
+        final StudyDeckLocalDataAccessObject studyDeckDAO = new StudyDeckLocalDataAccessObject();
+        final StudyDeckOutputBoundary studyDeckOutputBoundary = new StudyDeckPresenter(studyDeckViewModel);
+        final StudyDeckInputBoundary studyDeckInteractor = new StudyDeckInteractor(studyDeckDAO, studyDeckOutputBoundary);
+
+        StudyDeckController studyDeckController = new StudyDeckController(studyDeckInteractor);
+        browseStudySetView.setStudySetViewController(studyDeckController);
+        return this;
+    }
+
     public AppBuilder addLeaderboardUseCase() {
         final LeaderboardUserDataAccessObject userDataAccessObject = new LeaderboardUserDataAccessObject(session.getApiKey());
         final LeaderboardOutputBoundary leaderboardOutputBoundary = new LeaderboardPresenter(leaderboardViewModel,
@@ -153,6 +164,7 @@ public class AppBuilder {
         leaderboardView.setLeaderboardController(leaderboardController);
         return this;
     }
+
     public AppBuilder addSinglePlayerUseCase() {
         // 1) DAO (gateway)
         SinglePlayerDataAccessObject spDAO = new SinglePlayerDataAccessObject();
@@ -169,7 +181,7 @@ public class AppBuilder {
     public JFrame build() {
         final JFrame application = new JFrame("CourseClash");
         application.setSize(1200, 800);
-        application.setResizable(false); // Fixed size window
+        application.setResizable(true); // Fixed size window
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         FontLoader.registerFonts();
 

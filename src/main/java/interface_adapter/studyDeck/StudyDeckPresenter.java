@@ -12,6 +12,7 @@ public class StudyDeckPresenter implements StudyDeckOutputBoundary {
 
     @Override
     public void prepareView(StudyDeckOutputData studyDeckOutputData) {
-
+        studyDeckViewModel.setState(studyDeckOutputData.getDecks());
+        studyDeckViewModel.firePropertyChange();
     }
 }
