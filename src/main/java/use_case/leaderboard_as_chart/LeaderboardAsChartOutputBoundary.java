@@ -1,3 +1,5 @@
 package use_case.leaderboard_as_chart;
 
-public interface LeaderboardAsChartOutputBoundary {}
+public interface LeaderboardAsChartOutputBoundary {
+    void present(LeaderboardAsChartOutputData outputData);
+}

@@ -3,7 +3,9 @@ package view.leaderboard;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.leaderboard.LeaderboardController;
 import interface_adapter.leaderboard.LeaderboardViewModel;
+import interface_adapter.leaderboard_as_chart.LeaderboardAsChartController;
 import interface_adapter.main_screen.MainScreenViewModel;
+import use_case.DataAccessException;
 import use_case.leaderboard.LeaderboardType;
 
 import javax.swing.*;
@@ -19,6 +21,8 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
     private final ViewManagerModel viewManagerModel;
     private final MainScreenViewModel mainScreenViewModel;
     private LeaderboardController leaderboardController = null;
+    private LeaderboardAsChartController leaderboardChartController;
+    private String leaderboardChartViewName = "LeaderboardChartView";
 
     // Panels for leaderboards
     private final JTabbedPane tabbedPane = new JTabbedPane();
@@ -55,6 +59,17 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
         buttonPanel.add(backButton);
         backButton.addActionListener(e -> {
             switchToMainScreen();
+        });
+        add(buttonPanel, BorderLayout.SOUTH);
+
+        JButton chartButton = createStyledButton("Show as Chart");
+        buttonPanel.add(chartButton);
+        chartButton.addActionListener(e -> {
+            try {
+                switchToLeaderboardChart();
+            } catch (DataAccessException ex) {
+                throw new RuntimeException(ex);
+            }
         });
         add(buttonPanel, BorderLayout.SOUTH);
 
@@ -99,6 +114,7 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
         viewManagerModel.firePropertyChange();
     }
 
+
     private void setupTabListener() {
         tabbedPane.addChangeListener(e -> {
             LeaderboardType type;
@@ -135,5 +151,16 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
     public void setLeaderboardController(LeaderboardController leaderboardController) {
         // Set the controller for the leaderboard view
         this.leaderboardController = leaderboardController;
+    }
+
+    public void setLeaderboardChartController(interface_adapter.leaderboard_as_chart.LeaderboardAsChartController controller) {
+        this.leaderboardChartController = controller;
+    }
+
+    private void switchToLeaderboardChart() throws DataAccessException {
+        leaderboardChartController.requestChart();
+        viewManagerModel.setState(leaderboardChartViewName);
+        viewManagerModel.firePropertyChange();
+
     }
 }

@@ -1,3 +1,7 @@
 package use_case.leaderboard_as_chart;
 
-public interface LeaderboardAsChartInputBoundary {}
+import use_case.DataAccessException;
+
+public interface LeaderboardAsChartInputBoundary {
+    void execute() throws DataAccessException;
+}

@@ -7,6 +7,9 @@ import interface_adapter.SinglePlayer.SinglePlayerViewModel;
 import interface_adapter.leaderboard.LeaderboardController;
 import interface_adapter.leaderboard.LeaderboardPresenter;
 import interface_adapter.leaderboard.LeaderboardViewModel;
+import interface_adapter.leaderboard_as_chart.LeaderboardAsChartController;
+import interface_adapter.leaderboard_as_chart.LeaderboardAsChartPresenter;
+import interface_adapter.leaderboard_as_chart.LeaderboardAsChartViewModel;
 import interface_adapter.main_screen.MainScreenViewModel;
 import interface_adapter.studyset.studyset_browse.BrowseStudySetViewModel;
 import interface_adapter.registration.login.*;
@@ -18,6 +21,7 @@ import use_case.SinglePlayer.SinglePlayerInteractor;
 import use_case.leaderboard.LeaderboardInputBoundary;
 import use_case.leaderboard.LeaderboardInteractor;
 import use_case.leaderboard.LeaderboardOutputBoundary;
+import use_case.leaderboard_as_chart.*;
 import use_case.registration.login.*;
 import use_case.registration.signup.SignupInputBoundary;
 import use_case.registration.signup.SignupInteractor;
@@ -26,6 +30,7 @@ import view.SinglePlayerView;
 import interface_adapter.SinglePlayer.*;
 import frameworks_and_drivers.DataAccess.SinglePlayerDataAccessObject;
 import view.leaderboard.LeaderboardView;
+import view.leaderboard_as_chart.LeaderboardChartView;
 import view.main_screen.MainScreenView;
 import view.registration.*;
 import view.study_set.BrowseStudySetView;
@@ -66,6 +71,9 @@ public class AppBuilder {
     private MainScreenView mainScreenView;
     private BrowseStudySetView browseStudySetView;
     private LeaderboardView leaderboardView;
+    private LeaderboardAsChartViewModel leaderboardChartViewModel;
+    private LeaderboardChartView leaderboardChartView;
+    private LeaderboardAsChartController leaderboardChartController;
     private SinglePlayerViewModel singlePlayerViewModel;
     private SinglePlayerView singlePlayerView;
     public AppBuilder() {
@@ -119,6 +127,19 @@ public class AppBuilder {
         cardPanel.add(leaderboardView, leaderboardView.getViewName());
         return this;
     }
+
+    public AppBuilder addLeaderboardChartView() {
+        leaderboardChartViewModel = new interface_adapter.leaderboard_as_chart.LeaderboardAsChartViewModel();
+        LeaderboardAsChartPresenter chartPresenter = new LeaderboardAsChartPresenter(leaderboardChartViewModel);
+        LeaderboardUserDataAccessObject leaderboardDAO = new LeaderboardUserDataAccessObject(session.getApiKey());
+        LeaderboardAsChartInteractor chartInteractor = new LeaderboardAsChartInteractor(leaderboardDAO, chartPresenter);
+        leaderboardChartController = new interface_adapter.leaderboard_as_chart.LeaderboardAsChartController(chartInteractor);
+        leaderboardView.setLeaderboardChartController(leaderboardChartController);
+        leaderboardChartView = new LeaderboardChartView(leaderboardChartController, leaderboardChartViewModel, viewManagerModel);
+        cardPanel.add(leaderboardChartView, leaderboardChartView.getViewName());
+        return this;
+    }
+
 
     public AppBuilder addSignupUseCase() {
         final frameworks_and_drivers.DataAccess.SignupUserDataAccessObject signupDAO = new frameworks_and_drivers.DataAccess.SignupUserDataAccessObject();
