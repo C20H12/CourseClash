@@ -104,14 +104,6 @@ public class AppBuilder {
 
         return this;
     }
-//
-//    public AppBuilder addLeaderboardView() throws DataAccessException {
-//        leaderboardViewModel = new LeaderboardViewModel();
-//
-//        leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel, mainScreenViewModel);
-//        cardPanel.add(leaderboardView, leaderboardView.getViewName());
-//        return this;
-//    }
 
     public AppBuilder addSignupUseCase() {
         final SignupUserDataAccessObject signupDAO =
@@ -163,26 +155,26 @@ public class AppBuilder {
 
         return application;
     }
-//    public AppBuilder addSinglePlayerView() {
-//        // ViewModel
-//        SinglePlayerViewModel spViewModel = new SinglePlayerViewModel();
-//        // Presenter
-//        SinglePlayerPresenter spPresenter = new SinglePlayerPresenter(spViewModel);
-//        SinglePlayerDataAccessObject spGateway = new SinglePlayerDataAccessObject();
-//        // Interactor
-//        SinglePlayerInteractor spInteractor =
-//                new SinglePlayerInteractor(spPresenter, spGateway);
-//        // Controller
-//        SinglePlayerController spController =
-//                new SinglePlayerController(spInteractor);
-//        // View
-//        SinglePlayerView spView =
-//                new SinglePlayerView(spViewModel, viewManagerModel);
-//        spView.setController(spController);
-//        // Register the view with the card layout
-//        cardPanel.add(spView, spView.getViewName());
-//        return this;
-//    }
+    public AppBuilder addSinglePlayerView() {
+        // ViewModel
+        SinglePlayerViewModel spViewModel = new SinglePlayerViewModel();
+        // Presenter
+        SinglePlayerPresenter spPresenter = new SinglePlayerPresenter(spViewModel);
+        SinglePlayerDataAccessObject spGateway = new SinglePlayerDataAccessObject();
+        // Interactor
+        SinglePlayerInteractor spInteractor =
+                new SinglePlayerInteractor(spPresenter, spGateway);
+        // Controller
+        SinglePlayerController spController =
+                new SinglePlayerController(spInteractor);
+        // View
+        SinglePlayerView spView =
+                new SinglePlayerView(spViewModel, viewManagerModel);
+        spView.setController(spController);
+        // Register the view with the card layout
+        cardPanel.add(spView, spView.getViewName());
+        return this;
+    }
 
 
 }
