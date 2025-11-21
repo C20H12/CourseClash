@@ -177,6 +177,13 @@ public class StudyDeckView extends JPanel implements PropertyChangeListener {
     });
 
     editButton.addActionListener(e -> {
+      StudyDeckEditPopup editPopup = new StudyDeckEditPopup(deck);
+      editPopup.setModalityType(Dialog.DEFAULT_MODALITY_TYPE);
+      editPopup.setVisible(true);
+      System.out.println(1);
+
+      StudyDeck updatedDeck = editPopup.getUpdatedStudyDeck();
+      studyDeckController.execute(updatedDeck, StudyDeckAction.EDIT_DECK);
     });
 
     return card;
