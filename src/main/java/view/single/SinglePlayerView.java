@@ -4,15 +4,21 @@ package view.single;
 import interface_adapter.SinglePlayer.SinglePlayerController;
 import interface_adapter.SinglePlayer.SinglePlayerState;
 import interface_adapter.SinglePlayer.SinglePlayerViewModel;
+import interface_adapter.user_session.UserSession;
 import interface_adapter.ViewManagerModel;
 import use_case.DataAccessException;
 import javax.swing.*;
+
+import entity.User;
+import entity.DeckManagement.StudyDeck;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
+import java.util.Map;
 
 public class SinglePlayerView extends JPanel implements ActionListener, PropertyChangeListener {
 
@@ -21,6 +27,8 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
     private final SinglePlayerViewModel viewModel;
     private final ViewManagerModel viewManagerModel;
     private SinglePlayerController controller;
+
+    private UserSession session;
 
     // --- Top bar ---
     private final JLabel questionCounterLabel = new JLabel("Q 0/0");
@@ -39,16 +47,30 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
     private final JLabel accuracyLabel = new JLabel(" ");
     private final JLabel avgTimeLabel = new JLabel(" ");
 
-    public SinglePlayerView(SinglePlayerViewModel viewModel, ViewManagerModel viewManagerModel) {
+    public SinglePlayerView(SinglePlayerViewModel viewModel, ViewManagerModel viewManagerModel, UserSession session) {
         this.viewModel = viewModel;
         this.viewManagerModel = viewManagerModel;
 
+        this.session = session;
+
         this.viewModel.addPropertyChangeListener(this);
+
+        // when this first loads
+        this.viewManagerModel.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (evt.getNewValue().equals(viewName)) {
+                    // show a dialog with all the decks for selection
+                    controller.showAllDecks();
+                }
+            }
+        });
 
         setLayout(new BorderLayout());
         buildTopBar();
         buildQuestionArea();
         buildBottomBar();
+
     }
 
     private void buildTopBar() {
@@ -134,7 +156,7 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
      * Called by MainScreen or BrowseStudySetView to start the game.
      */
     public void startGame(String deckTitle,
-                          entity.User user,
+                          User user,
                           int timerPerQuestion,
                           boolean shuffle,
                           int numQuestions) throws DataAccessException {
@@ -165,6 +187,8 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
         } else if (e.getSource() == endGameButton) {
             try {
                 controller.endGame();
+                viewManagerModel.setState("main screen");
+                viewManagerModel.firePropertyChange();
             } catch (DataAccessException ex) {
                 throw new RuntimeException(ex);
             }
@@ -182,6 +206,26 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals("initShowAllDeckNames")) {
+            List<StudyDeck> allDecks = viewModel.getState().getDecksList();
+            SinglePlayerSelectSetPopup popup = new SinglePlayerSelectSetPopup(allDecks);
+            popup.setVisible(true);
+            popup.setModalityType(Dialog.DEFAULT_MODALITY_TYPE);
+            StudyDeck selectedDeck = popup.getSelectedDeck();
+            if (selectedDeck != null) {
+                try {
+                    // start game with selected deck
+                    startGame(selectedDeck.getTitle(), session.getUser(), 10, false, selectedDeck.getCardCount());
+                }
+                catch (DataAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                viewManagerModel.setState("main screen");
+                viewManagerModel.firePropertyChange();
+            }
+            return;
+        }
         SinglePlayerState state = viewModel.getState();
 
         questionCounterLabel.setText("Q " + state.getCurrentIndex() + "/" + state.getTotal());

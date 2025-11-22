@@ -2,6 +2,9 @@ package interface_adapter.SinglePlayer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import entity.DeckManagement.StudyDeck;
 
 public class SinglePlayerState {
 
@@ -16,6 +19,8 @@ public class SinglePlayerState {
     private String message = "";
     private String error = "";
 
+    private List<StudyDeck> decksList;
+
     public SinglePlayerState() {}
 
     // --- GETTERS ---
@@ -29,6 +34,7 @@ public class SinglePlayerState {
     public boolean isGameOver() { return gameOver; }
     public String getMessage() { return message; }
     public String getError() { return error; }
+    public List<StudyDeck> getDecksList() { return decksList; }
 
     // --- SETTERS ---
     public void setQuestionText(String questionText) { this.questionText = questionText; }
@@ -41,6 +47,7 @@ public class SinglePlayerState {
     public void setGameOver(boolean gameOver) { this.gameOver = gameOver; }
     public void setMessage(String message) { this.message = message; }
     public void setError(String error) { this.error = error; }
+    public void setDecksList(List<StudyDeck> decksList) { this.decksList = decksList; }
     public boolean isError() {
         return error != null && !error.isEmpty();
     }

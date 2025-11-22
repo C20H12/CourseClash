@@ -52,10 +52,6 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
                 0, 0.0, 0.0, false,
                 "Game started"
         ));
-        if (!gateway.existsDeck(deckTitle)) {
-            presenter.presentError("Deck does not exist: " + deckTitle);
-            return;
-        }
     }
 
     @Override
@@ -66,8 +62,7 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
         }
         final StudyCard current = cards.get(idx);
 
-        boolean correct =
-                current.getAnswers().get(current.getSolutionId()).equalsIgnoreCase(answer);
+        boolean correct = current.getAnswers().get(current.getSolutionId()).equalsIgnoreCase(answer);
         if (correct) {
             game.incrementScoreCorrect();
         } else {
@@ -130,5 +125,11 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
                 true,
                 "Ended by user"
         ));
+    }
+
+    @Override
+    public void showAllDeckNames() throws DataAccessException {
+        List<StudyDeck> decks = gateway.getAllDecks();
+        presenter.presentAllDecks(decks);
     }
 }

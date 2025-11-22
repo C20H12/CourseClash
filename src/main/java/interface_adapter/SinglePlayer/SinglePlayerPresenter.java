@@ -2,6 +2,10 @@
 // generated sample code from GPT to be worked on
 package interface_adapter.SinglePlayer;
 
+import java.util.List;
+import java.util.Map;
+
+import entity.DeckManagement.StudyDeck;
 import use_case.SinglePlayer.SinglePlayerOutputBoundary;
 import use_case.SinglePlayer.SinglePlayerOutputData;
 
@@ -48,5 +52,12 @@ public class SinglePlayerPresenter implements SinglePlayerOutputBoundary {
         state.setError(message);
         state.setMessage(message);
         viewModel.firePropertyChange();
+    }
+
+    @Override
+    public void presentAllDecks(List<StudyDeck> names) {
+        SinglePlayerState state = viewModel.getState();
+        state.setDecksList(names);
+        viewModel.firePropertyChange("initShowAllDeckNames");
     }
 }

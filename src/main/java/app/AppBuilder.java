@@ -106,7 +106,7 @@ public class AppBuilder {
         leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel, mainScreenViewModel);
         cardPanel.add(leaderboardView, leaderboardView.getViewName());
 
-        singlePlayerView = new SinglePlayerView(singlePlayerViewModel, viewManagerModel);
+        singlePlayerView = new SinglePlayerView(singlePlayerViewModel, viewManagerModel, session);
         cardPanel.add(singlePlayerView, singlePlayerView.getViewName());
         return this;
 
@@ -166,7 +166,7 @@ public class AppBuilder {
 
     public AppBuilder addSinglePlayerUseCase() {
         // 1) DAO (gateway)
-        SinglePlayerDataAccessObject spDAO = new SinglePlayerDataAccessObject();
+        SinglePlayerDataAccessObject spDAO = new SinglePlayerDataAccessObject(session);
         // 2) Presenter
         SinglePlayerOutputBoundary spPresenter = new SinglePlayerPresenter(singlePlayerViewModel);
         // 3) Interactor
@@ -192,26 +192,5 @@ public class AppBuilder {
 
         return application;
     }
-    public AppBuilder addSinglePlayerView() {
-        // ViewModel
-        SinglePlayerViewModel spViewModel = new SinglePlayerViewModel();
-        // Presenter
-        SinglePlayerPresenter spPresenter = new SinglePlayerPresenter(spViewModel);
-        SinglePlayerDataAccessObject spGateway = new SinglePlayerDataAccessObject();
-        // Interactor
-        SinglePlayerInteractor spInteractor =
-                new SinglePlayerInteractor(spPresenter, spGateway);
-        // Controller
-        SinglePlayerController spController =
-                new SinglePlayerController(spInteractor);
-        // View
-        SinglePlayerView spView =
-                new SinglePlayerView(spViewModel, viewManagerModel);
-        spView.setController(spController);
-        // Register the view with the card layout
-        cardPanel.add(spView, spView.getViewName());
-        return this;
-    }
-
 
 }
