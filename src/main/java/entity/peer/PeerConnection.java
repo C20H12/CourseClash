@@ -1,39 +1,20 @@
 // Class to manage WebRTC peer connections
-// author: Luhan (Refactored for P2P Game Logic)
+// author: Luhan, Mahir (Refactored for P2P Game Logic)
 package entity.peer;
+
+import dev.onvoid.webrtc.*;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.UUID;
-
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import dev.onvoid.webrtc.CreateSessionDescriptionObserver;
-import dev.onvoid.webrtc.PeerConnectionFactory;
-import dev.onvoid.webrtc.PeerConnectionObserver;
-import dev.onvoid.webrtc.RTCAnswerOptions;
-import dev.onvoid.webrtc.RTCConfiguration;
-import dev.onvoid.webrtc.RTCDataChannel;
-import dev.onvoid.webrtc.RTCDataChannelBuffer;
-import dev.onvoid.webrtc.RTCDataChannelInit;
-import dev.onvoid.webrtc.RTCDataChannelObserver;
-import dev.onvoid.webrtc.RTCDataChannelState;
-import dev.onvoid.webrtc.RTCIceCandidate;
-import dev.onvoid.webrtc.RTCIceGatheringState;
-import dev.onvoid.webrtc.RTCIceServer;
-import dev.onvoid.webrtc.RTCOfferOptions;
-import dev.onvoid.webrtc.RTCPeerConnection;
-import dev.onvoid.webrtc.RTCSdpType;
-import dev.onvoid.webrtc.RTCSessionDescription;
-import dev.onvoid.webrtc.SetSessionDescriptionObserver;
 
 public class PeerConnection {
     private String uid;
@@ -80,24 +61,19 @@ public class PeerConnection {
         this(UUID.randomUUID().toString());
     }
 
-    // --- KEY FIX: Switch Identity and RESET Connection ---
     public void switchIdentity(String newId) {
         if (this.uid.equals(newId)) return;
 
         System.out.println("PEER: Switching identity from " + this.uid + " to " + newId);
 
-        // 1. Close old connection
         if (peerConnection != null) {
             peerConnection.close();
-            peerConnection = null; // Ensure it's dead
+            peerConnection = null;
         }
 
-        // 2. Update ID
         this.uid = newId;
 
-        // 3. Re-subscribe to MQTT with new ID
         try {
-            // We stay connected to MQTT, just subscribe to new topics
             client.subscribe(uid + "/get_offer", 2, (topic, msg) -> {
                 System.out.println("PEER: Got request for offer on " + uid);
                 MqttMessage offerMsg = new MqttMessage(offerJsonObject.toString().getBytes(StandardCharsets.UTF_8));
@@ -109,8 +85,6 @@ public class PeerConnection {
                 connect(new String(msg.getPayload(), StandardCharsets.UTF_8));
             });
 
-            // 4. CRITICAL: Create a NEW WebRTC Offer immediately
-            // This prepares the "fresh" connection so it's ready when an opponent connects.
             createOffer();
 
             System.out.println("PEER: Identity switched. Listening as " + uid);

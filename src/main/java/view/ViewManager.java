@@ -17,16 +17,13 @@ public class ViewManager implements PropertyChangeListener {
         this.cardLayout = cardLayout;
         this.viewManagerModel = viewManagerModel;
 
-        // Register the listener
         this.viewManagerModel.addPropertyChangeListener(this);
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        // FIX: Listen to both "view" (manual) and "state" (default from ViewModel)
         if (evt.getPropertyName().equals("view") || evt.getPropertyName().equals("state")) {
 
-            // The newValue should be the View Name (String)
             if (evt.getNewValue() instanceof String) {
                 String viewModelName = (String) evt.getNewValue();
 

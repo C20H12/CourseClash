@@ -28,16 +28,14 @@ public class MPStartInteractor implements MPStartInputBoundary {
 
     @Override
     public void execute(MPStartInputData inputData) throws DataAccessException {
-        // 1. Retrieve the Deck
-        // Uses getDeckName() which we fixed in MPStartInputData
+
         StudyDeck deck = deckDataAccess.getSetByName(inputData.getDeckName());
 
-        // 2. Retrieve the Users
-        // Uses get(username) which we fixed in LoginUserDataAccessInterface
+
         User player1 = userDataAccess.get(inputData.getPlayerAName());
         User player2 = userDataAccess.get(inputData.getPlayerBName());
 
-        // 3. Validation
+
         if (player1 == null || player2 == null) {
             presenter.prepareFailView("One of the players does not exist.");
             return;
@@ -51,14 +49,10 @@ public class MPStartInteractor implements MPStartInputBoundary {
             return;
         }
 
-        // 4. Create the Game Entity
         MultiPlayerGame game = new MultiPlayerGame(player1, player2, deck);
 
-        // 5. Save/Send Game State
-        // In P2P mode, this sends the initial state JSON to the opponent so their screen updates.
         gameDataAccess.save(game);
 
-        // 6. Prepare Success View
         StudyCard firstCard = deck.getDeck().get(0);
 
         MPStartOutputData outputData = new MPStartOutputData(

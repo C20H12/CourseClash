@@ -22,7 +22,6 @@ public class NetworkGameDataAccessObject implements MultiPlayerAccessInterface, 
         try {
             String jsonState = GameStateSerializer.serialize(game);
 
-            // Log the attempt
             System.out.println("NETWORK DAO: Attempting to save/send game state...");
 
             if (isConnected) {
@@ -36,7 +35,6 @@ public class NetworkGameDataAccessObject implements MultiPlayerAccessInterface, 
                 return;
             }
 
-            // Initial Connection Logic
             String currentUser = peerConnection.getUid();
             String opponent = game.getPlayerA().getUserName().equals(currentUser)
                     ? game.getPlayerB().getUserName()

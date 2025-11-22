@@ -23,7 +23,6 @@ public class SubmitAnswerInteractor implements SubmitAnswerInputBoundary {
             return;
         }
 
-        // --- SECURITY: Turn Order ---
         if (!inputData.getUsername().equals(game.getCurrentTurn().getUserName())) {
             System.out.println("ILLEGAL MOVE: " + inputData.getUsername() + " tried to play out of turn.");
             return;
@@ -34,24 +33,19 @@ public class SubmitAnswerInteractor implements SubmitAnswerInputBoundary {
         String correctAnswer = currentCard.getCorrectAnswer();
         String currentTurnUsername = game.getCurrentTurn().getUserName();
 
-        // 1. Score Update
         boolean isCorrect = userAnswer.equalsIgnoreCase(correctAnswer);
         if (isCorrect) {
             game.incrementScoreFor(currentTurnUsername);
         }
 
-        // 2. Switch Turn (Happens after every single move)
         game.switchTurn();
 
-        // 3. Shared Question Logic
-        // Increment counter. If counter == 2, both have played -> Advance Card.
         boolean readyToAdvance = game.recordAnswerAndIsReadyToAdvance();
 
         if (readyToAdvance) {
             game.advanceCardAndResetCounter();
         }
 
-        // 4. Game Over Check
         boolean isGameOver = game.isGameOver();
         StudyCard nextCard = null;
 
@@ -59,10 +53,8 @@ public class SubmitAnswerInteractor implements SubmitAnswerInputBoundary {
             nextCard = game.getCurrentCard();
         }
 
-        // 5. Network Sync (Send JSON to opponent)
         userDataAccessObject.save(game);
 
-        // 6. Update Host View
         SubmitAnswerOutputData outputData = new SubmitAnswerOutputData(
                 game.getScoreA(),
                 game.getScoreB(),

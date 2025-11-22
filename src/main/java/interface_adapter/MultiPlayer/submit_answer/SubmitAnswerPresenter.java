@@ -20,17 +20,14 @@ public class SubmitAnswerPresenter implements SubmitAnswerOutputBoundary {
         System.out.println("PRESENTER: Updating View State...");
         MultiPlayerState state = multiPlayerViewModel.getState();
 
-        // 1. Sync Player Names (Critical for Guest)
         state.setPlayerA(response.getPlayerA());
         state.setPlayerB(response.getPlayerB());
 
-        // 2. Update Scores
         state.setScoreA(response.getPlayer1Score());
         state.setScoreB(response.getPlayer2Score());
 
-        // 3. Game Over Logic
         if (response.isGameOver()) {
-            state.setIsGameOver(true); // Tells View to disable buttons
+            state.setIsGameOver(true);
 
             String winnerMessage;
             int score1 = response.getPlayer1Score();
@@ -46,7 +43,6 @@ public class SubmitAnswerPresenter implements SubmitAnswerOutputBoundary {
             state.setCurrentCard(null);
 
         } else {
-            // Game Continuing
             state.setIsGameOver(false);
             state.setCurrentTurnUser(response.getCurrentTurnUser());
             state.setCurrentCard(response.getNextCard());
@@ -58,12 +54,9 @@ public class SubmitAnswerPresenter implements SubmitAnswerOutputBoundary {
             }
         }
 
-        // 4. Fire State Change
         multiPlayerViewModel.setState(state);
         multiPlayerViewModel.firePropertyChange();
 
-        // 5. Force View Switch (If not already on Game Screen)
-        // This handles the "Magic Moment" where Guest jumps to game upon receiving data.
         String currentView = viewManagerModel.getState();
         String gameViewName = multiPlayerViewModel.getViewName();
 

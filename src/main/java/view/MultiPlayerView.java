@@ -36,7 +36,6 @@ public class MultiPlayerView extends JPanel implements ActionListener, PropertyC
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(10, 10, 10, 10);
 
-        // Score
         JPanel scorePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 50, 0));
         player1ScoreLabel.setFont(new Font("Arial", Font.BOLD, 16));
         player2ScoreLabel.setFont(new Font("Arial", Font.BOLD, 16));
@@ -45,23 +44,19 @@ public class MultiPlayerView extends JPanel implements ActionListener, PropertyC
         gbc.gridx = 0; gbc.gridy = 0;
         this.add(scorePanel, gbc);
 
-        // Turn
         turnLabel.setHorizontalAlignment(SwingConstants.CENTER);
         gbc.gridy = 1;
         this.add(turnLabel, gbc);
 
-        // Card
         cardLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
         cardLabel.setHorizontalAlignment(SwingConstants.CENTER);
         gbc.gridy = 2; gbc.weighty = 0.2;
         this.add(cardLabel, gbc);
 
-        // Options
         optionButtonPanel.setLayout(new GridLayout(0, 2, 20, 20));
         gbc.gridy = 3; gbc.weighty = 0.5; gbc.fill = GridBagConstraints.BOTH;
         this.add(optionButtonPanel, gbc);
 
-        // Message
         messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
         gbc.gridy = 4; gbc.weighty = 0.1;
         this.add(messageLabel, gbc);
@@ -85,7 +80,6 @@ public class MultiPlayerView extends JPanel implements ActionListener, PropertyC
         optionButtonPanel.removeAll();
 
         boolean isMyTurn = localPlayerName != null && localPlayerName.equals(state.getCurrentTurnUser());
-        // DEBUG: Print if buttons should be enabled
         if (isMyTurn) System.out.println("VIEW: It is my turn! Buttons enabled.");
         else System.out.println("VIEW: Not my turn. Buttons disabled.");
 
@@ -100,7 +94,6 @@ public class MultiPlayerView extends JPanel implements ActionListener, PropertyC
                 btn.setEnabled(isMyTurn);
 
                 btn.addActionListener(e -> {
-                    // Immediately disable to prevent double-click
                     for(Component c : optionButtonPanel.getComponents()) c.setEnabled(false);
                     submitAnswerController.execute(option, localPlayerName);
                 });

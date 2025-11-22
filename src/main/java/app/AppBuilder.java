@@ -1,63 +1,56 @@
 package app;
 
 import entity.UserFactory;
+import entity.peer.PeerConnection;
+import frameworks_and_drivers.DataAccess.*;
+import interface_adapter.MultiPlayer.MultiPlayerViewModel;
+import interface_adapter.MultiPlayer.receive_message.ReceiveMessageController;
+import interface_adapter.MultiPlayer.start_match.MPStartController;
+import interface_adapter.MultiPlayer.start_match.MPStartPresenter;
+import interface_adapter.MultiPlayer.submit_answer.SubmitAnswerController;
+import interface_adapter.MultiPlayer.submit_answer.SubmitAnswerPresenter;
+import interface_adapter.SinglePlayer.SinglePlayerController;
+import interface_adapter.SinglePlayer.SinglePlayerPresenter;
+import interface_adapter.SinglePlayer.SinglePlayerViewModel;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.leaderboard.LeaderboardController;
 import interface_adapter.leaderboard.LeaderboardPresenter;
 import interface_adapter.leaderboard.LeaderboardViewModel;
 import interface_adapter.main_screen.MainScreenViewModel;
-import interface_adapter.studyset.studyset_browse.BrowseStudySetViewModel;
-import interface_adapter.registration.login.*;
+import interface_adapter.registration.login.LoginController;
+import interface_adapter.registration.login.LoginPresenter;
+import interface_adapter.registration.login.LoginViewModel;
 import interface_adapter.registration.signup.SignupController;
 import interface_adapter.registration.signup.SignupPresenter;
 import interface_adapter.registration.signup.SignupViewModel;
+import interface_adapter.studyset.studyset_browse.BrowseStudySetViewModel;
 import interface_adapter.user_session.UserSession;
-import interface_adapter.SinglePlayer.SinglePlayerController;
-import interface_adapter.SinglePlayer.SinglePlayerPresenter;
-import interface_adapter.SinglePlayer.SinglePlayerViewModel;
+import use_case.MultiPlayer.receive_message.ReceiveMessageInteractor;
+import use_case.MultiPlayer.start_match.MPStartInteractor;
+import use_case.MultiPlayer.submit_answer.SubmitAnswerInteractor;
 import use_case.SinglePlayer.SinglePlayerInputBoundary;
 import use_case.SinglePlayer.SinglePlayerInteractor;
 import use_case.SinglePlayer.SinglePlayerOutputBoundary;
+import use_case.StudySet.StudySetDataAccessInterface;
 import use_case.leaderboard.LeaderboardInputBoundary;
 import use_case.leaderboard.LeaderboardInteractor;
 import use_case.leaderboard.LeaderboardOutputBoundary;
-import use_case.registration.login.*;
+import use_case.registration.login.LoginInputBoundary;
+import use_case.registration.login.LoginInteractor;
+import use_case.registration.login.LoginOutputBoundary;
+import use_case.registration.login.LoginUserDataAccessInterface;
 import use_case.registration.signup.SignupInputBoundary;
 import use_case.registration.signup.SignupInteractor;
 import use_case.registration.signup.SignupOutputBoundary;
+import utility.FontLoader;
+import view.MultiPlayerView;
 import view.SinglePlayerView;
+import view.ViewManager;
 import view.leaderboard.LeaderboardView;
 import view.main_screen.MainScreenView;
-import view.registration.*;
+import view.registration.LoginView;
+import view.registration.SignupView;
 import view.study_set.BrowseStudySetView;
-import utility.FontLoader;
-import view.ViewManager;
-
-// --- DATA ACCESS IMPORTS ---
-import frameworks_and_drivers.DataAccess.InMemoryUserDataAccessObject;
-import frameworks_and_drivers.DataAccess.InMemoryStudySetDataAccessObject;
-import frameworks_and_drivers.DataAccess.NetworkGameDataAccessObject;
-import frameworks_and_drivers.DataAccess.SinglePlayerDataAccessObject;
-import frameworks_and_drivers.DataAccess.LeaderboardUserDataAccessObject;
-import frameworks_and_drivers.DataAccess.LoginUserDataAccessObject;
-import frameworks_and_drivers.DataAccess.SignupUserDataAccessObject;
-// ---------------------------
-
-// --- MULTIPLAYER IMPORTS ---
-import entity.peer.PeerConnection;
-import interface_adapter.MultiPlayer.MultiPlayerViewModel;
-import view.MultiPlayerView;
-import interface_adapter.MultiPlayer.start_match.MPStartController;
-import interface_adapter.MultiPlayer.start_match.MPStartPresenter;
-import use_case.MultiPlayer.start_match.MPStartInteractor;
-import interface_adapter.MultiPlayer.submit_answer.SubmitAnswerController;
-import interface_adapter.MultiPlayer.submit_answer.SubmitAnswerPresenter;
-import use_case.MultiPlayer.submit_answer.SubmitAnswerInteractor;
-import interface_adapter.MultiPlayer.receive_message.ReceiveMessageController;
-import use_case.MultiPlayer.receive_message.ReceiveMessageInteractor;
-import use_case.registration.login.LoginUserDataAccessInterface;
-import use_case.StudySet.StudySetDataAccessInterface;
-// ---------------------------
 
 import javax.swing.*;
 import java.awt.*;
@@ -70,16 +63,13 @@ public class AppBuilder {
     final ViewManagerModel viewManagerModel = new ViewManagerModel();
     ViewManager viewManager;
 
-    // --- DATA ACCESS OBJECTS ---
-    // Using In-Memory Mocks for stable testing of Multiplayer logic
+
     final LoginUserDataAccessInterface userDataAccessObject = new InMemoryUserDataAccessObject(userFactory);
     final StudySetDataAccessInterface studySetDataAccessObject = new InMemoryStudySetDataAccessObject();
     final SinglePlayerDataAccessObject spDAO = new SinglePlayerDataAccessObject();
 
-    // PeerConnection defined as a class field so listeners can access it
     private PeerConnection peerConnection;
 
-    // ViewModels
     private SignupViewModel signupViewModel;
     private LoginViewModel loginViewModel;
     private MainScreenViewModel mainScreenViewModel;
@@ -88,7 +78,6 @@ public class AppBuilder {
     private SinglePlayerViewModel singlePlayerViewModel;
     private final MultiPlayerViewModel multiPlayerViewModel = new MultiPlayerViewModel();
 
-    // Views
     private SignupView signupView;
     private LoginView loginView;
     private MainScreenView mainScreenView;
@@ -133,16 +122,13 @@ public class AppBuilder {
         singlePlayerView = new SinglePlayerView(singlePlayerViewModel, viewManagerModel);
         cardPanel.add(singlePlayerView, singlePlayerView.getViewName());
 
-        // --- LISTENER: Sync Login State with Network & View ---
         mainScreenViewModel.addPropertyChangeListener(evt -> {
             if (peerConnection != null) {
                 String newUsername = mainScreenViewModel.getState().getUsername();
 
                 if (newUsername != null && !newUsername.isEmpty()) {
-                    // 1. Update Network Identity
                     peerConnection.switchIdentity(newUsername);
 
-                    // 2. Update View Identity (So it knows whose turn it is)
                     if (multiPlayerView != null) {
                         multiPlayerView.setLocalPlayerName(newUsername);
                     }
@@ -174,17 +160,14 @@ public class AppBuilder {
     }
 
     public AppBuilder addMultiPlayerUseCase() {
-        // 1. Initialize PeerConnection
         String currentUser = userDataAccessObject.getCurrentUsername();
         if (currentUser == null || currentUser.isEmpty()) {
             currentUser = "TestUser"; // Default for safety
         }
         this.peerConnection = new PeerConnection(currentUser);
 
-        // 2. Initialize Network DAO
         NetworkGameDataAccessObject networkDAO = new NetworkGameDataAccessObject(peerConnection);
 
-        // 3. Setup Receive Message Listener
         ReceiveMessageInteractor receiveInteractor = new ReceiveMessageInteractor(
                 networkDAO,
                 new SubmitAnswerPresenter(multiPlayerViewModel, viewManagerModel),
@@ -193,7 +176,6 @@ public class AppBuilder {
         );
         ReceiveMessageController receiveController = new ReceiveMessageController(receiveInteractor);
 
-        // 4. Attach Network Callback (Thread Safe)
         peerConnection.onDataRecieved(data -> {
             System.out.println(" [DEBUG] NETWORK: Raw data received!");
             SwingUtilities.invokeLater(() -> {
@@ -206,7 +188,6 @@ public class AppBuilder {
             });
         });
 
-        // 5. Setup Start Match Use Case
         MPStartPresenter mpStartPresenter = new MPStartPresenter(multiPlayerViewModel, viewManagerModel);
         MPStartInteractor mpStartInteractor = new MPStartInteractor(
                 mpStartPresenter,
@@ -216,7 +197,6 @@ public class AppBuilder {
         );
         MPStartController mpStartController = new MPStartController(mpStartInteractor);
 
-        // 6. Setup Submit Answer Use Case
         SubmitAnswerPresenter submitAnswerPresenter = new SubmitAnswerPresenter(multiPlayerViewModel, viewManagerModel);
         SubmitAnswerInteractor submitAnswerInteractor = new SubmitAnswerInteractor(
                 networkDAO,
@@ -224,16 +204,13 @@ public class AppBuilder {
         );
         SubmitAnswerController submitAnswerController = new SubmitAnswerController(submitAnswerInteractor);
 
-        // 7. Create and Add View
         multiPlayerView = new MultiPlayerView(multiPlayerViewModel, submitAnswerController);
         cardPanel.add(multiPlayerView, multiPlayerView.viewName);
 
-        // 8. Inject Controller into Main Screen
         if (mainScreenView != null) {
             mainScreenView.setMPStartController(mpStartController);
         }
 
-        // 9. Open Connection
         peerConnection.onConnection(() -> System.out.println("NETWORK: Peer Connected!"));
 
         return this;
@@ -266,8 +243,7 @@ public class AppBuilder {
         application.add(cardPanel);
         viewManager = new ViewManager(cardPanel, cardLayout, viewManagerModel, application);
 
-        // --- INITIAL VIEW ---
-        // Default to Login screen
+
         viewManagerModel.setState(loginView.getViewName());
         viewManagerModel.firePropertyChange("view");
 

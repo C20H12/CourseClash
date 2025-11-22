@@ -27,7 +27,6 @@ public class MultiPlayerState {
 
     public MultiPlayerState() {}
 
-    // --- Getters ---
     public String getPlayerA() { return playerA; }
     public String getPlayerB() { return playerB; }
     public int getScoreA() { return scoreA; }
@@ -37,7 +36,6 @@ public class MultiPlayerState {
     public String getMessage() { return message; }
     public boolean isGameOver() { return isGameOver; }
 
-    // --- Setters ---
     public void setPlayerA(String playerA) { this.playerA = playerA; }
     public void setPlayerB(String playerB) { this.playerB = playerB; }
     public void setScoreA(int scoreA) { this.scoreA = scoreA; }

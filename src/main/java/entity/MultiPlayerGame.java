@@ -11,7 +11,7 @@ public class MultiPlayerGame {
 
     private int currentCardIndex;
     private User currentTurn;
-    private int currentCardAnswersSubmitted; // Tracks if 0, 1, or 2 users answered
+    private int currentCardAnswersSubmitted;
     private boolean isFinished;
     private int scoreA;
     private int scoreB;
@@ -28,26 +28,17 @@ public class MultiPlayerGame {
         this.currentCardAnswersSubmitted = 0;
     }
 
-    // --- SHARED QUESTION LOGIC ---
 
-    /**
-     * Increments the submission counter.
-     * @return true if both players have answered (counter == 2), false otherwise.
-     */
     public boolean recordAnswerAndIsReadyToAdvance() {
         this.currentCardAnswersSubmitted++;
         return this.currentCardAnswersSubmitted >= 2;
     }
 
-    /**
-     * Moves to the next card and resets the submission counter to 0.
-     */
     public void advanceCardAndResetCounter() {
         this.currentCardIndex++;
         this.currentCardAnswersSubmitted = 0;
     }
 
-    // --- GAMEPLAY METHODS ---
 
     public void switchTurn() {
         if (currentTurn.getUserName().equals(playerA.getUserName())) {
@@ -77,7 +68,6 @@ public class MultiPlayerGame {
         return currentCardIndex >= deck.getDeck().size();
     }
 
-    // --- GETTERS & SETTERS (Required for Serializer & Presenters) ---
 
     public User getPlayerA() { return playerA; }
     public User getPlayerB() { return playerB; }
