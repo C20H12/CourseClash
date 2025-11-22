@@ -1,20 +1,21 @@
 // Handles all raw file system interactions for StudyDeck persistence..
 // Archie
-package frameworks_and_drivers.DataAccess.DeckManagement.JSON;
+package frameworks_and_drivers.DataAccess.DeckManagement;
 
 import entity.DeckManagement.StudyCard;
 import entity.DeckManagement.StudyDeck;
+import use_case.studyDeck.StudyDeckDataAccessInterface;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SysFileHandler {
+public class StudyDeckJSONFileHandler  {
     private final String STORAGE_DIRECTORY = "src/main/local_storage";
 
     // Init directories via constructor when none present
-    public SysFileHandler() {
+    public StudyDeckJSONFileHandler() {
         new File(STORAGE_DIRECTORY).mkdirs();
     }
 

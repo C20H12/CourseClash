@@ -5,6 +5,7 @@ package frameworks_and_drivers.DataAccess.DeckManagement;
 
 import entity.DeckManagement.StudyCard;
 import entity.DeckManagement.StudyDeck;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -56,7 +57,7 @@ public class DeckCreatorTest {
         StudyDeck deck = new StudyDeck(title, description, cards, id);
 
         // Save to local storage
-        LocalDeckManager manager = new LocalDeckManager();
+        StudyDeckLocalDataAccessObject manager = new StudyDeckLocalDataAccessObject();
         manager.saveDeck(deck);
 
         System.out.println("\n=== Deck Created Successfully! ===");

@@ -6,18 +6,18 @@ package frameworks_and_drivers.DataAccess.DeckManagement;
 
 import entity.DeckManagement.StudyCard;
 import entity.DeckManagement.StudyDeck;
-import frameworks_and_drivers.DataAccess.DeckManagement.JSON.SysFileHandler;
+import use_case.studyDeck.StudyDeckDataAccessInterface;
 
 import java.util.List;
 import java.util.ArrayList;
 
-public class LocalDeckManager {
+public class StudyDeckLocalDataAccessObject implements StudyDeckDataAccessInterface {
 
-    private final SysFileHandler fileHandler;
+    private final StudyDeckJSONFileHandler fileHandler;
 
     // Initializing SysFileHandler instance via constructor.
-    public LocalDeckManager() {
-        this.fileHandler = new SysFileHandler();
+    public StudyDeckLocalDataAccessObject() {
+        this.fileHandler = new StudyDeckJSONFileHandler();
     }
 
     // Save a StudyDeck object to local storage using SysFileHandler.
