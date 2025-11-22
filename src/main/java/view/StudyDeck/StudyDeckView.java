@@ -18,9 +18,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import entity.DeckManagement.StudyDeck;
-import frameworks_and_drivers.DataAccess.DeckManagement.StudyDeckJSONFileHandler;
 
 public class StudyDeckView extends JPanel implements PropertyChangeListener {
   private final String viewName = "browse study set";
@@ -161,10 +161,27 @@ public class StudyDeckView extends JPanel implements PropertyChangeListener {
     JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
     actionPanel.setBackground(Color.WHITE);
 
-    JButton editButton = new JButton("edit");
-    JButton deleButton = new JButton("delete");
+    JButton editButton = new JButton("");
+    JButton deleButton = new JButton("");
+
+    ImageIcon rawTrashCanIcon = new ImageIcon(
+              Objects.requireNonNull(getClass().getResource("/icon/trash_can_black.png"))
+      );
+    Image scaledTrashCanIcon = rawTrashCanIcon.getImage().getScaledInstance(36, 36, Image.SCALE_SMOOTH);
+    ImageIcon trashCanIcon = new ImageIcon(scaledTrashCanIcon);
+    deleButton.setIcon(trashCanIcon);
+
+    ImageIcon rawPenIcon = new ImageIcon(
+              Objects.requireNonNull(getClass().getResource("/icon/pen_black.png"))
+    );
+    Image scaledPenIcon = rawPenIcon.getImage().getScaledInstance(36, 36, Image.SCALE_SMOOTH);
+    ImageIcon penIcon = new ImageIcon(scaledPenIcon);
+    editButton.setIcon(penIcon);
+
     styleIconButton(editButton);
     styleIconButton(deleButton);
+    editButton.setBackground(Color.LIGHT_GRAY);
+    deleButton.setBackground(Color.LIGHT_GRAY);
 
     actionPanel.add(editButton);
     actionPanel.add(deleButton);

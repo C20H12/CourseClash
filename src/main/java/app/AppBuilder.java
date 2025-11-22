@@ -57,11 +57,6 @@ public class AppBuilder {
     // set which data access implementation to use, can be any
     // of the classes from the data_access package
 
-    // DAO version using local file storage
-//    final FileUserDataAccessObject userDataAccessObject = new FileUserDataAccessObject("users.csv", userFactory);
-    // DAO version using a shared external database
-    // final DBUserDataAccessObject userDataAccessObject = new DBUserDataAccessObject(userFactory);
-
     private SignupView signupView;
     private SignupViewModel signupViewModel;
     private LoginViewModel loginViewModel;
@@ -178,21 +173,6 @@ public class AppBuilder {
         return this;
     }
 
-    public JFrame build() {
-        final JFrame application = new JFrame("CourseClash");
-        application.setSize(1200, 800);
-        application.setResizable(true); // Fixed size window
-        application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        FontLoader.registerFonts();
-
-        application.add(cardPanel);
-        viewManager = new ViewManager(cardPanel, cardLayout, viewManagerModel, application);
-
-        viewManagerModel.setState(signupView.getViewName());
-        viewManagerModel.firePropertyChange();
-
-        return application;
-    }
     public AppBuilder addSinglePlayerView() {
         // ViewModel
         SinglePlayerViewModel spViewModel = new SinglePlayerViewModel();
@@ -214,5 +194,19 @@ public class AppBuilder {
         return this;
     }
 
+    public JFrame build() {
+        final JFrame application = new JFrame("CourseClash");
+        application.setSize(1200, 800);
+        application.setResizable(true); // Fixed size window
+        application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        FontLoader.registerFonts();
 
+        application.add(cardPanel);
+        viewManager = new ViewManager(cardPanel, cardLayout, viewManagerModel, application);
+
+        viewManagerModel.setState(signupView.getViewName());
+        viewManagerModel.firePropertyChange();
+
+        return application;
+    }
 }
