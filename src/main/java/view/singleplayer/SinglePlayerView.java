@@ -1,11 +1,11 @@
 package view.singleplayer;
 
+
 import interface_adapter.SinglePlayer.SinglePlayerController;
 import interface_adapter.SinglePlayer.SinglePlayerState;
 import interface_adapter.SinglePlayer.SinglePlayerViewModel;
 import interface_adapter.ViewManagerModel;
 import use_case.DataAccessException;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -88,7 +88,7 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
         center.add(questionScroll, BorderLayout.NORTH);
 
         JPanel optionsPanel = new JPanel();
-        optionsPanel.setLayout(new GridLayout(4, 1, 4, 4));
+        optionsPanel.setLayout(new GridLayout(4, 1, 2, 2));
 
         for (int i = 0; i < optionButtons.length; i++) {
             optionButtons[i] = new JRadioButton("Option " + (i + 1));

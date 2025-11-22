@@ -1,0 +1,24 @@
+{
+  "title": "testingDeckXD",
+  "description": "so i made this lil interactive thingie to test out if the sysfilehandler could actually write stuff",
+  "id": 69,
+  "deck": [
+    {
+      "question": "how old are you?",
+      "answers": [
+        "never bornasdasdasd",
+        "6",
+        "21"
+      ],
+      "solutionId": 0
+    },
+    {
+      "question": "test q",
+      "answers": [
+        "true",
+        "false"
+      ],
+      "solutionId": 1
+    }
+  ]
+}

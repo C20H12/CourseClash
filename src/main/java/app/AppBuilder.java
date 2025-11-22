@@ -9,11 +9,13 @@ import interface_adapter.leaderboard.LeaderboardController;
 import interface_adapter.leaderboard.LeaderboardPresenter;
 import interface_adapter.leaderboard.LeaderboardViewModel;
 import interface_adapter.main_screen.MainScreenViewModel;
-import interface_adapter.studyset.studyset_browse.BrowseStudySetViewModel;
 import interface_adapter.registration.login.*;
 import interface_adapter.registration.signup.SignupController;
 import interface_adapter.registration.signup.SignupPresenter;
 import interface_adapter.registration.signup.SignupViewModel;
+import interface_adapter.studyDeck.StudyDeckController;
+import interface_adapter.studyDeck.StudyDeckPresenter;
+import interface_adapter.studyDeck.StudyDeckViewModel;
 import interface_adapter.user_session.UserSession;
 //import use_case.SinglePlayer.SinglePlayerInteractor;
 import use_case.DataAccessException;
@@ -24,15 +26,21 @@ import use_case.registration.login.*;
 import use_case.registration.signup.SignupInputBoundary;
 import use_case.registration.signup.SignupInteractor;
 import use_case.registration.signup.SignupOutputBoundary;
-//import interface_adapter.SinglePlayer.*;
+import use_case.studyDeck.StudyDeckInputBoundary;
+import use_case.studyDeck.StudyDeckInteractor;
+import use_case.studyDeck.StudyDeckOutputBoundary;
+import view.singleplayer.SinglePlayerView;
+import interface_adapter.SinglePlayer.*;
+import frameworks_and_drivers.DataAccess.SinglePlayerDataAccessObject;
+import frameworks_and_drivers.DataAccess.DeckManagement.StudyDeckLocalDataAccessObject;
 import view.leaderboard.LeaderboardView;
 import view.main_screen.MainScreenView;
 import view.registration.*;
-import view.study_set.BrowseStudySetView;
 import frameworks_and_drivers.DataAccess.*;
 import utility.FontLoader;
-
+import use_case.SinglePlayer.*;
 import view.ViewManager;
+import view.StudyDeck.StudyDeckView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -58,13 +66,14 @@ public class AppBuilder {
     private SignupViewModel signupViewModel;
     private LoginViewModel loginViewModel;
     private MainScreenViewModel mainScreenViewModel;
-    private BrowseStudySetViewModel browseStudySetViewModel;
+    private StudyDeckViewModel studyDeckViewModel;
     private LeaderboardViewModel leaderboardViewModel;
     private LoginView loginView;
     private MainScreenView mainScreenView;
-    private BrowseStudySetView browseStudySetView;
+    private StudyDeckView browseStudySetView;
     private LeaderboardView leaderboardView;
-
+    private SinglePlayerViewModel singlePlayerViewModel;
+    private SinglePlayerView singlePlayerView;
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
     }
@@ -85,29 +94,27 @@ public class AppBuilder {
 
     public AppBuilder addMainScreenView() throws DataAccessException {
         mainScreenViewModel = new MainScreenViewModel();
-        browseStudySetViewModel = new BrowseStudySetViewModel();
+        studyDeckViewModel = new StudyDeckViewModel();
         leaderboardViewModel = new LeaderboardViewModel();
-
-        mainScreenView = new MainScreenView(mainScreenViewModel, viewManagerModel, browseStudySetViewModel,
-                leaderboardViewModel);
+        singlePlayerViewModel = new SinglePlayerViewModel();
+        mainScreenView = new MainScreenView(mainScreenViewModel,
+                viewManagerModel, studyDeckViewModel, leaderboardViewModel,  singlePlayerViewModel);
         cardPanel.add(mainScreenView, mainScreenView.getViewName());
 
-        browseStudySetView = new BrowseStudySetView(browseStudySetViewModel, mainScreenViewModel, viewManagerModel);
+        browseStudySetView = new StudyDeckView(studyDeckViewModel, mainScreenViewModel, viewManagerModel);
         cardPanel.add(browseStudySetView, browseStudySetView.getViewName());
 
         leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel, mainScreenViewModel);
         cardPanel.add(leaderboardView, leaderboardView.getViewName());
-        return this;
-    }
 
-    public AppBuilder addBrowseStudySetView() {
-
+        singlePlayerView = new SinglePlayerView(singlePlayerViewModel, viewManagerModel);
+        cardPanel.add(singlePlayerView, singlePlayerView.getViewName());
         return this;
+
     }
 
     public AppBuilder addSignupUseCase() {
-        final SignupUserDataAccessObject signupDAO =
-                new SignupUserDataAccessObject();
+        final SignupUserDataAccessObject signupDAO = new SignupUserDataAccessObject();
         final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(viewManagerModel,
                 signupViewModel, loginViewModel);
         final SignupInputBoundary userSignupInteractor = new SignupInteractor(
@@ -128,6 +135,17 @@ public class AppBuilder {
         return this;
     }
 
+
+    public AppBuilder addStudyDeckUseCase() {
+        final StudyDeckLocalDataAccessObject studyDeckDAO = new StudyDeckLocalDataAccessObject();
+        final StudyDeckOutputBoundary studyDeckOutputBoundary = new StudyDeckPresenter(studyDeckViewModel);
+        final StudyDeckInputBoundary studyDeckInteractor = new StudyDeckInteractor(studyDeckDAO, studyDeckOutputBoundary);
+
+        StudyDeckController studyDeckController = new StudyDeckController(studyDeckInteractor);
+        browseStudySetView.setStudySetViewController(studyDeckController);
+        return this;
+    }
+
     public AppBuilder addLeaderboardUseCase() throws DataAccessException {
         final LeaderboardUserDataAccessObject userDataAccessObject = new LeaderboardUserDataAccessObject(session);
         final LeaderboardOutputBoundary leaderboardOutputBoundary = new LeaderboardPresenter(leaderboardViewModel,
@@ -137,6 +155,19 @@ public class AppBuilder {
 
         LeaderboardController leaderboardController = new LeaderboardController(leaderboardInteractor);
         leaderboardView.setLeaderboardController(leaderboardController);
+        return this;
+    }
+
+    public AppBuilder addSinglePlayerUseCase() {
+        // 1) DAO (gateway)
+        SinglePlayerDataAccessObject spDAO = new SinglePlayerDataAccessObject();
+        // 2) Presenter
+        SinglePlayerOutputBoundary spPresenter = new SinglePlayerPresenter(singlePlayerViewModel);
+        // 3) Interactor
+        SinglePlayerInputBoundary spInteractor = new SinglePlayerInteractor(spPresenter, spDAO);
+        // 4) Controller
+        SinglePlayerController spController = new SinglePlayerController(spInteractor);
+        singlePlayerView.setController(spController);
         return this;
     }
 

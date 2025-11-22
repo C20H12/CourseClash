@@ -35,6 +35,7 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
         }
 
         this.game = new SinglePlayerGame(player, deck, in.getTimerPerQuestion(), in.isShuffle());
+        this.game.startGame();
         this.idx = 0;
         this.cards = deck.getDeck();
 
@@ -44,7 +45,6 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
         }
 
         // First question
-        // TODO don't forget to
         final StudyCard first = cards.get(0);
         presenter.presentQuestion(new SinglePlayerOutputData(
                 first.getQuestion(), first.getAnswers(),
@@ -52,6 +52,10 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
                 0, 0.0, 0.0, false,
                 "Game started"
         ));
+        if (!gateway.existsDeck(deckTitle)) {
+            presenter.presentError("Deck does not exist: " + deckTitle);
+            return;
+        }
     }
 
     @Override
