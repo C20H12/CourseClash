@@ -1,10 +1,9 @@
-//Mahir
 package entity;
 
-import entity.DeckManagement.StudyCard;
 import entity.DeckManagement.StudyDeck;
-
+import entity.DeckManagement.StudyCard;
 import java.util.List;
+
 
 public class MultiPlayerGame {
     private final User playerA;
@@ -30,7 +29,7 @@ public class MultiPlayerGame {
         this.currentCardAnswersSubmitted = 0;
     }
 
-
+    // --- GAME LOGIC ---
     public boolean recordAnswerAndIsReadyToAdvance() {
         this.currentCardAnswersSubmitted++;
         return this.currentCardAnswersSubmitted == 2;
@@ -69,11 +68,24 @@ public class MultiPlayerGame {
         return currentCardIndex >= deck.getDeck().size();
     }
 
-    // --- Getters and Setters ---
+    // --- GETTERS & SETTERS FOR SERIALIZER ---
+    // These are required for GameStateSerializer to save/load the game
+
     public User getPlayerA() { return playerA; }
     public User getPlayerB() { return playerB; }
-    public StudyDeck getDeck() { return deck; }
-    public User getCurrentTurn() { return currentTurn; }
+
     public int getScoreA() { return scoreA; }
+    public void setScoreA(int scoreA) { this.scoreA = scoreA; }
+
     public int getScoreB() { return scoreB; }
+    public void setScoreB(int scoreB) { this.scoreB = scoreB; }
+
+    public User getCurrentTurn() { return currentTurn; }
+    public void setCurrentTurn(User currentTurn) { this.currentTurn = currentTurn; }
+
+    public StudyDeck getDeck() { return deck; }
+
+    // Used for saving state
+    public int getCardIndex() { return currentCardIndex; }
+    public void setCardIndex(int index) { this.currentCardIndex = index; }
 }
