@@ -1,11 +1,12 @@
+//Mahir
 package use_case.MultiPlayer.receive_message;
 
-import frameworks_and_drivers.DataAccess.GameStateSerializer;
-import frameworks_and_drivers.DataAccess.NetworkGameDataAccessObject;
+import entity.DeckManagement.StudyCard;
+import entity.DeckManagement.StudyDeck;
 import entity.MultiPlayerGame;
 import entity.UserFactory;
-import entity.DeckManagement.StudyDeck;
-import entity.DeckManagement.StudyCard;
+import frameworks_and_drivers.DataAccess.GameStateSerializer;
+import frameworks_and_drivers.DataAccess.NetworkGameDataAccessObject;
 import use_case.MultiPlayer.submit_answer.SubmitAnswerOutputBoundary;
 import use_case.MultiPlayer.submit_answer.SubmitAnswerOutputData;
 import use_case.StudySet.StudySetDataAccessInterface;
@@ -31,21 +32,15 @@ public class ReceiveMessageInteractor implements ReceiveMessageInputBoundary {
         try {
             System.out.println("NETWORK: Processing incoming game state...");
 
-            // 1. Retrieve the Deck
-            // (Hardcoded "Biology" for this test phase, ideally passed in JSON)
             StudyDeck deck = deckDAO.getSetByName("Biology");
 
-            // 2. Deserialize JSON -> MultiPlayerGame Object
             MultiPlayerGame game = GameStateSerializer.deserialize(jsonState, userFactory, deck);
 
-            // 3. Update Local Cache so we are in sync
             gameDAO.updateLocalGame(game);
 
-            // 4. Prepare Output for View
             boolean isGameOver = game.isGameOver();
             StudyCard nextCard = isGameOver ? null : game.getCurrentCard();
 
-            // We assume the incoming move was valid/correct for UI update purposes
             SubmitAnswerOutputData output = new SubmitAnswerOutputData(
                     game.getScoreA(),
                     game.getScoreB(),
@@ -54,7 +49,7 @@ public class ReceiveMessageInteractor implements ReceiveMessageInputBoundary {
                     true,
                     "",
                     isGameOver,
-                    game.getPlayerA().getUserName(), // Sync names to Guest View
+                    game.getPlayerA().getUserName(),
                     game.getPlayerB().getUserName()
             );
 

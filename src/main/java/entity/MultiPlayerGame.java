@@ -1,7 +1,9 @@
+//Mahir
 package entity;
 
 import entity.DeckManagement.StudyCard;
 import entity.DeckManagement.StudyDeck;
+
 import java.util.List;
 
 public class MultiPlayerGame {

@@ -1,3 +1,4 @@
+//Mahir
 package view;
 
 import interface_adapter.MultiPlayer.MultiPlayerState;
@@ -10,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 
 public class MultiPlayerView extends JPanel implements ActionListener, PropertyChangeListener {
     public final String viewName = "multiplayer game";

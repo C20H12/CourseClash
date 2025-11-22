@@ -13,7 +13,6 @@ public class MultiPlayerState {
     private String message = "";
     private boolean isGameOver = false;
 
-    // Copy Constructor
     public MultiPlayerState(MultiPlayerState copy) {
         playerA = copy.playerA;
         playerB = copy.playerB;
