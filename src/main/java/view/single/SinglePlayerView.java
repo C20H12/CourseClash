@@ -1,4 +1,4 @@
-package view;
+package view.single;
 
 
 import interface_adapter.SinglePlayer.SinglePlayerController;

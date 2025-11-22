@@ -27,7 +27,7 @@ import use_case.registration.signup.SignupOutputBoundary;
 import use_case.studyDeck.StudyDeckInputBoundary;
 import use_case.studyDeck.StudyDeckInteractor;
 import use_case.studyDeck.StudyDeckOutputBoundary;
-import view.SinglePlayerView;
+import view.single.SinglePlayerView;
 import interface_adapter.SinglePlayer.*;
 import frameworks_and_drivers.DataAccess.SinglePlayerDataAccessObject;
 import frameworks_and_drivers.DataAccess.DeckManagement.StudyDeckLocalDataAccessObject;
@@ -38,7 +38,6 @@ import frameworks_and_drivers.DataAccess.*;
 import utility.FontLoader;
 import use_case.SinglePlayer.*;
 import frameworks_and_drivers.DataAccess.SinglePlayerDataAccessObject;
-import view.SinglePlayerView;
 import view.ViewManager;
 import view.StudyDeck.StudyDeckView;
 
@@ -112,7 +111,7 @@ public class AppBuilder {
         return this;
 
     }
-
+    
     public AppBuilder addLeaderboardView() {
         leaderboardViewModel = new LeaderboardViewModel();
 
