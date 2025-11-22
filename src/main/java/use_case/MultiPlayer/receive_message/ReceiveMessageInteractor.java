@@ -5,7 +5,8 @@ import frameworks_and_drivers.DataAccess.NetworkGameDataAccessObject;
 import entity.MultiPlayerGame;
 import entity.UserFactory;
 import entity.DeckManagement.StudyDeck;
-import use_case.MultiPlayer.submit_answer.SubmitAnswerOutputBoundary; // Reuse the presenter!
+import entity.DeckManagement.StudyCard;
+import use_case.MultiPlayer.submit_answer.SubmitAnswerOutputBoundary;
 import use_case.MultiPlayer.submit_answer.SubmitAnswerOutputData;
 import use_case.StudySet.StudySetDataAccessInterface;
 
@@ -13,7 +14,7 @@ public class ReceiveMessageInteractor implements ReceiveMessageInputBoundary {
     private final NetworkGameDataAccessObject gameDAO;
     private final SubmitAnswerOutputBoundary presenter;
     private final UserFactory userFactory;
-    private final StudySetDataAccessInterface deckDAO; // Needed to reconstruct game
+    private final StudySetDataAccessInterface deckDAO;
 
     public ReceiveMessageInteractor(NetworkGameDataAccessObject gameDAO,
                                     SubmitAnswerOutputBoundary presenter,
@@ -28,34 +29,40 @@ public class ReceiveMessageInteractor implements ReceiveMessageInputBoundary {
     @Override
     public void execute(String jsonState) {
         try {
-            // 1. We need the Deck to reconstruct the game.
-            // Simplify: Assume we are using the "Biology" deck for this test.
+            System.out.println("NETWORK: Processing incoming game state...");
+
+            // 1. Retrieve the Deck
+            // (Hardcoded "Biology" for this test phase, ideally passed in JSON)
             StudyDeck deck = deckDAO.getSetByName("Biology");
 
-            // 2. Convert JSON -> Game Object
+            // 2. Deserialize JSON -> MultiPlayerGame Object
             MultiPlayerGame game = GameStateSerializer.deserialize(jsonState, userFactory, deck);
 
-            // 3. Update the DAO so our local state matches opponent
+            // 3. Update Local Cache so we are in sync
             gameDAO.updateLocalGame(game);
 
-            // 4. Update the View (Reuse existing Output Data logic)
+            // 4. Prepare Output for View
             boolean isGameOver = game.isGameOver();
-            entity.DeckManagement.StudyCard nextCard = isGameOver ? null : game.getCurrentCard();
+            StudyCard nextCard = isGameOver ? null : game.getCurrentCard();
 
+            // We assume the incoming move was valid/correct for UI update purposes
             SubmitAnswerOutputData output = new SubmitAnswerOutputData(
                     game.getScoreA(),
                     game.getScoreB(),
                     game.getCurrentTurn().getUserName(),
                     nextCard,
-                    true, // Assume correct for UI update purposes
+                    true,
                     "",
-                    isGameOver
+                    isGameOver,
+                    game.getPlayerA().getUserName(), // Sync names to Guest View
+                    game.getPlayerB().getUserName()
             );
 
             presenter.prepareSuccessView(output);
 
         } catch (Exception e) {
             System.out.println("Error processing incoming move: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

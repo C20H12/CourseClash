@@ -1,5 +1,5 @@
 package entity.peer;
 
 public interface PeerConnectCallback {
-  void onConnect();
+  void onConnect() throws Exception;
 }

@@ -1,4 +1,3 @@
-//Mahir
 package view;
 
 import interface_adapter.MultiPlayer.MultiPlayerState;
@@ -15,16 +14,16 @@ import java.util.ArrayList;
 
 public class MultiPlayerView extends JPanel implements ActionListener, PropertyChangeListener {
     public final String viewName = "multiplayer game";
-
     private final MultiPlayerViewModel viewModel;
     private final SubmitAnswerController submitAnswerController;
+    private String localPlayerName = "";
 
+    // Components
     private final JLabel player1ScoreLabel = new JLabel("Player 1: 0");
     private final JLabel player2ScoreLabel = new JLabel("Player 2: 0");
     private final JLabel turnLabel = new JLabel("Current Turn: -");
-    private final JLabel cardLabel = new JLabel("Waiting for game...");
+    private final JLabel cardLabel = new JLabel("Waiting...");
     private final JLabel messageLabel = new JLabel(" ");
-
     private final JPanel optionButtonPanel = new JPanel();
 
     public MultiPlayerView(MultiPlayerViewModel viewModel, SubmitAnswerController controller) {
@@ -37,89 +36,76 @@ public class MultiPlayerView extends JPanel implements ActionListener, PropertyC
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(10, 10, 10, 10);
 
+        // Score
         JPanel scorePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 50, 0));
         player1ScoreLabel.setFont(new Font("Arial", Font.BOLD, 16));
         player2ScoreLabel.setFont(new Font("Arial", Font.BOLD, 16));
         scorePanel.add(player1ScoreLabel);
         scorePanel.add(player2ScoreLabel);
-
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weighty = 0.1;
-        gbc.anchor = GridBagConstraints.NORTH;
+        gbc.gridx = 0; gbc.gridy = 0;
         this.add(scorePanel, gbc);
 
-        turnLabel.setFont(new Font("Arial", Font.ITALIC, 14));
+        // Turn
         turnLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
         gbc.gridy = 1;
-        gbc.weighty = 0;
         this.add(turnLabel, gbc);
 
-        cardLabel.setFont(new Font("SansSerif", Font.BOLD, 24));
+        // Card
+        cardLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
         cardLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
-        gbc.gridy = 2;
-        gbc.weighty = 0.2;
-        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.gridy = 2; gbc.weighty = 0.2;
         this.add(cardLabel, gbc);
 
+        // Options
         optionButtonPanel.setLayout(new GridLayout(0, 2, 20, 20));
-
-        gbc.gridy = 3;
-        gbc.weighty = 0.5;
-        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridy = 3; gbc.weighty = 0.5; gbc.fill = GridBagConstraints.BOTH;
         this.add(optionButtonPanel, gbc);
 
+        // Message
         messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        messageLabel.setForeground(Color.BLUE);
-        messageLabel.setFont(new Font("Arial", Font.BOLD, 18));
-
-        gbc.gridy = 4;
-        gbc.weighty = 0.1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.anchor = GridBagConstraints.SOUTH;
+        gbc.gridy = 4; gbc.weighty = 0.1;
         this.add(messageLabel, gbc);
+    }
+
+    public void setLocalPlayerName(String name) {
+        this.localPlayerName = name;
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         MultiPlayerState state = (MultiPlayerState) evt.getNewValue();
 
-        player1ScoreLabel.setText("Player 1 (" + state.getPlayerA() + "): " + state.getScoreA());
-        player2ScoreLabel.setText("Player 2 (" + state.getPlayerB() + "): " + state.getScoreB());
+        System.out.println("VIEW UPDATE: Turn=" + state.getCurrentTurnUser() + ", Me=" + localPlayerName);
+
+        player1ScoreLabel.setText(state.getPlayerA() + ": " + state.getScoreA());
+        player2ScoreLabel.setText(state.getPlayerB() + ": " + state.getScoreB());
         turnLabel.setText("Current Turn: " + state.getCurrentTurnUser());
         messageLabel.setText(state.getMessage());
 
         optionButtonPanel.removeAll();
 
+        boolean isMyTurn = localPlayerName != null && localPlayerName.equals(state.getCurrentTurnUser());
+        // DEBUG: Print if buttons should be enabled
+        if (isMyTurn) System.out.println("VIEW: It is my turn! Buttons enabled.");
+        else System.out.println("VIEW: Not my turn. Buttons disabled.");
+
         if (state.isGameOver()) {
-            cardLabel.setText("--- MATCH COMPLETE ---");
-        }
-        else if (state.getCurrentCard() != null) {
-            cardLabel.setText("<html><div style='text-align: center;'>" + state.getCurrentCard().getQuestion() + "</div></html>");
+            cardLabel.setText("GAME OVER");
+        } else if (state.getCurrentCard() != null) {
+            cardLabel.setText("<html><center>" + state.getCurrentCard().getQuestion() + "</center></html>");
 
-            ArrayList<String> options = state.getCurrentCard().getAnswers();
-            for (String optionText : options) {
-                JButton optionButton = new JButton(optionText);
-                optionButton.setFont(new Font("Arial", Font.PLAIN, 18));
-                optionButton.setFocusPainted(false);
+            for (String option : state.getCurrentCard().getAnswers()) {
+                JButton btn = new JButton(option);
+                btn.setFont(new Font("Arial", Font.PLAIN, 16));
+                btn.setEnabled(isMyTurn);
 
-                optionButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        for (Component c : optionButtonPanel.getComponents()) {
-                            c.setEnabled(false);
-                        }
-                        String currentUser = state.getCurrentTurnUser();
-                        submitAnswerController.execute(optionText, currentUser);
-                    }
+                btn.addActionListener(e -> {
+                    // Immediately disable to prevent double-click
+                    for(Component c : optionButtonPanel.getComponents()) c.setEnabled(false);
+                    submitAnswerController.execute(option, localPlayerName);
                 });
-
-                optionButtonPanel.add(optionButton);
+                optionButtonPanel.add(btn);
             }
-        } else {
-            cardLabel.setText("Waiting for next card...");
         }
 
         optionButtonPanel.revalidate();
@@ -127,6 +113,5 @@ public class MultiPlayerView extends JPanel implements ActionListener, PropertyC
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-    }
+    public void actionPerformed(ActionEvent e) {}
 }

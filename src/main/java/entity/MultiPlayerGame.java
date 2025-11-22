@@ -1,9 +1,8 @@
 package entity;
 
-import entity.DeckManagement.StudyDeck;
 import entity.DeckManagement.StudyCard;
+import entity.DeckManagement.StudyDeck;
 import java.util.List;
-
 
 public class MultiPlayerGame {
     private final User playerA;
@@ -12,7 +11,7 @@ public class MultiPlayerGame {
 
     private int currentCardIndex;
     private User currentTurn;
-    private int currentCardAnswersSubmitted;
+    private int currentCardAnswersSubmitted; // Tracks if 0, 1, or 2 users answered
     private boolean isFinished;
     private int scoreA;
     private int scoreB;
@@ -29,16 +28,26 @@ public class MultiPlayerGame {
         this.currentCardAnswersSubmitted = 0;
     }
 
-    // --- GAME LOGIC ---
+    // --- SHARED QUESTION LOGIC ---
+
+    /**
+     * Increments the submission counter.
+     * @return true if both players have answered (counter == 2), false otherwise.
+     */
     public boolean recordAnswerAndIsReadyToAdvance() {
         this.currentCardAnswersSubmitted++;
-        return this.currentCardAnswersSubmitted == 2;
+        return this.currentCardAnswersSubmitted >= 2;
     }
 
+    /**
+     * Moves to the next card and resets the submission counter to 0.
+     */
     public void advanceCardAndResetCounter() {
         this.currentCardIndex++;
         this.currentCardAnswersSubmitted = 0;
     }
+
+    // --- GAMEPLAY METHODS ---
 
     public void switchTurn() {
         if (currentTurn.getUserName().equals(playerA.getUserName())) {
@@ -68,11 +77,14 @@ public class MultiPlayerGame {
         return currentCardIndex >= deck.getDeck().size();
     }
 
-    // --- GETTERS & SETTERS FOR SERIALIZER ---
-    // These are required for GameStateSerializer to save/load the game
+    // --- GETTERS & SETTERS (Required for Serializer & Presenters) ---
 
     public User getPlayerA() { return playerA; }
     public User getPlayerB() { return playerB; }
+    public StudyDeck getDeck() { return deck; }
+
+    public User getCurrentTurn() { return currentTurn; }
+    public void setCurrentTurn(User currentTurn) { this.currentTurn = currentTurn; }
 
     public int getScoreA() { return scoreA; }
     public void setScoreA(int scoreA) { this.scoreA = scoreA; }
@@ -80,12 +92,9 @@ public class MultiPlayerGame {
     public int getScoreB() { return scoreB; }
     public void setScoreB(int scoreB) { this.scoreB = scoreB; }
 
-    public User getCurrentTurn() { return currentTurn; }
-    public void setCurrentTurn(User currentTurn) { this.currentTurn = currentTurn; }
-
-    public StudyDeck getDeck() { return deck; }
-
-    // Used for saving state
     public int getCardIndex() { return currentCardIndex; }
     public void setCardIndex(int index) { this.currentCardIndex = index; }
+
+    public int getCurrentCardAnswersSubmitted() { return currentCardAnswersSubmitted; }
+    public void setCurrentCardAnswersSubmitted(int count) { this.currentCardAnswersSubmitted = count; }
 }

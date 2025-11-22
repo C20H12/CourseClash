@@ -1,4 +1,3 @@
-//Mahir
 package use_case.MultiPlayer.submit_answer;
 
 import entity.DeckManagement.StudyCard;
@@ -10,11 +9,13 @@ public class SubmitAnswerOutputData {
     private final StudyCard nextCard;
     private final boolean isCorrect;
     private final String correctAnswer;
-    private final boolean isGameOver; // <--- NEW FIELD
+    private final boolean isGameOver;
+    private final String playerA;
+    private final String playerB;
 
     public SubmitAnswerOutputData(int player1Score, int player2Score, String currentTurnUser,
                                   StudyCard nextCard, boolean isCorrect, String correctAnswer,
-                                  boolean isGameOver) { // <--- Update Constructor
+                                  boolean isGameOver, String playerA, String playerB) {
         this.player1Score = player1Score;
         this.player2Score = player2Score;
         this.currentTurnUser = currentTurnUser;
@@ -22,15 +23,19 @@ public class SubmitAnswerOutputData {
         this.isCorrect = isCorrect;
         this.correctAnswer = correctAnswer;
         this.isGameOver = isGameOver;
+        this.playerA = playerA;
+        this.playerB = playerB;
     }
 
-    // ... existing getters ...
     public int getPlayer1Score() { return player1Score; }
     public int getPlayer2Score() { return player2Score; }
     public String getCurrentTurnUser() { return currentTurnUser; }
     public StudyCard getNextCard() { return nextCard; }
     public boolean isCorrect() { return isCorrect; }
     public String getCorrectAnswer() { return correctAnswer; }
+    public boolean isGameOver() { return isGameOver; }
 
-    public boolean isGameOver() { return isGameOver; } // <--- New Getter
+    // --- NEW GETTERS ---
+    public String getPlayerA() { return playerA; }
+    public String getPlayerB() { return playerB; }
 }
