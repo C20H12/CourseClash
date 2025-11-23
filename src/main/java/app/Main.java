@@ -13,6 +13,7 @@ public class Main {
                 .addSignupView()
                 .addMainScreenView()
                 .addSinglePlayerView()
+                .addLeaderboardView()
                 .addLoginUseCase()
                 .addSignupUseCase()
                 .addLeaderboardUseCase()

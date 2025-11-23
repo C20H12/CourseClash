@@ -64,8 +64,17 @@ public class StaticMethods {
             params.forEach(formBuilder::add);
             RequestBody formBody = formBuilder.build();
 
+            // Build form body for POST
+            StringBuilder query = new StringBuilder();
+            if (!params.isEmpty()) {
+                query.append("?");
+                params.forEach((k, v) -> query.append(k).append("=").append(v).append("&"));
+                query.setLength(query.length() - 1); // remove trailing &
+            }
+
+
             request = new Request.Builder()
-                    .url(API_URL + method)
+                    .url(API_URL + method + query)
                     .post(formBody)
                     .build();
 
