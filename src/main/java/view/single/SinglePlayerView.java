@@ -1,6 +1,6 @@
 package view.single;
 
-
+// UI for single player
 import interface_adapter.SinglePlayer.SinglePlayerController;
 import interface_adapter.SinglePlayer.SinglePlayerState;
 import interface_adapter.SinglePlayer.SinglePlayerViewModel;
