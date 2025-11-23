@@ -43,7 +43,6 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
         if (limit < cards.size()) {
             this.cards = this.cards.subList(0, limit);
         }
-
         // First question
         final StudyCard first = cards.get(0);
         presenter.presentQuestion(new SinglePlayerOutputData(

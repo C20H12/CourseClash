@@ -23,10 +23,14 @@ public class SinglePlayerPresenter implements SinglePlayerOutputBoundary {
 
     @Override
     public void presentQuestion(SinglePlayerOutputData data) {
+        int current = data.getCurrentIndex(); // 1-based
+        int total = data.getTotal();
+        int questionsLeft = total - current + 1;
+
         SinglePlayerState state = viewModel.getState();
         state.setQuestionText(data.getQuestionText());
         state.setOptions(data.getOptions());
-        state.setCurrentIndex(data.getCurrentIndex());
+        state.setCurrentIndex(questionsLeft);
         state.setTotal(data.getTotal());
         state.setScore(data.getScore());
         state.setAccuracy(data.getAccuracy());
