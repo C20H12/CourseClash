@@ -27,7 +27,7 @@ import use_case.registration.signup.SignupOutputBoundary;
 import use_case.studyDeck.StudyDeckInputBoundary;
 import use_case.studyDeck.StudyDeckInteractor;
 import use_case.studyDeck.StudyDeckOutputBoundary;
-import view.SinglePlayerView;
+import view.single.SinglePlayerView;
 import interface_adapter.SinglePlayer.*;
 import frameworks_and_drivers.DataAccess.SinglePlayerDataAccessObject;
 import frameworks_and_drivers.DataAccess.DeckManagement.StudyDeckLocalDataAccessObject;
@@ -38,7 +38,6 @@ import frameworks_and_drivers.DataAccess.*;
 import utility.FontLoader;
 import use_case.SinglePlayer.*;
 import frameworks_and_drivers.DataAccess.SinglePlayerDataAccessObject;
-import view.SinglePlayerView;
 import view.ViewManager;
 import view.StudyDeck.StudyDeckView;
 
@@ -107,12 +106,12 @@ public class AppBuilder {
         leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel, mainScreenViewModel);
         cardPanel.add(leaderboardView, leaderboardView.getViewName());
 
-        singlePlayerView = new SinglePlayerView(singlePlayerViewModel, viewManagerModel);
+        singlePlayerView = new SinglePlayerView(singlePlayerViewModel, viewManagerModel, session);
         cardPanel.add(singlePlayerView, singlePlayerView.getViewName());
         return this;
 
     }
-
+    
     public AppBuilder addLeaderboardView() {
         leaderboardViewModel = new LeaderboardViewModel();
 
@@ -167,7 +166,7 @@ public class AppBuilder {
 
     public AppBuilder addSinglePlayerUseCase() {
         // 1) DAO (gateway)
-        SinglePlayerDataAccessObject spDAO = new SinglePlayerDataAccessObject();
+        SinglePlayerDataAccessObject spDAO = new SinglePlayerDataAccessObject(session);
         // 2) Presenter
         SinglePlayerOutputBoundary spPresenter = new SinglePlayerPresenter(singlePlayerViewModel);
         // 3) Interactor
@@ -193,26 +192,5 @@ public class AppBuilder {
 
         return application;
     }
-    public AppBuilder addSinglePlayerView() {
-        // ViewModel
-        SinglePlayerViewModel spViewModel = new SinglePlayerViewModel();
-        // Presenter
-        SinglePlayerPresenter spPresenter = new SinglePlayerPresenter(spViewModel);
-        SinglePlayerDataAccessObject spGateway = new SinglePlayerDataAccessObject();
-        // Interactor
-        SinglePlayerInteractor spInteractor =
-                new SinglePlayerInteractor(spPresenter, spGateway);
-        // Controller
-        SinglePlayerController spController =
-                new SinglePlayerController(spInteractor);
-        // View
-        SinglePlayerView spView =
-                new SinglePlayerView(spViewModel, viewManagerModel);
-        spView.setController(spController);
-        // Register the view with the card layout
-        cardPanel.add(spView, spView.getViewName());
-        return this;
-    }
-
 
 }

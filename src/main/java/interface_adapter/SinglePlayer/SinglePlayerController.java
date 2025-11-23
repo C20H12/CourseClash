@@ -5,6 +5,9 @@ import entity.DeckManagement.StudyDeck;
 import use_case.DataAccessException;
 import use_case.SinglePlayer.SinglePlayerInputBoundary;
 import use_case.SinglePlayer.SinglePlayerInputData;
+
+import java.util.List;
+
 import entity.User;
 /**
  * Controller for the Single Player Game use case.
@@ -43,5 +46,13 @@ public class SinglePlayerController {
      */
     public void endGame() throws DataAccessException {
         interactor.endGame();
+    }
+
+    public void showAllDecks() {
+        try {
+            interactor.showAllDeckNames();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
