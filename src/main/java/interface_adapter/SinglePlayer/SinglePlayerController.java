@@ -1,4 +1,4 @@
-// Huzaifa – called by the view; builds InputData, calls interactor
+// Huzaifa – called by the view; builds InputData, calls interactor - Controller
 package interface_adapter.SinglePlayer;
 
 import entity.DeckManagement.StudyDeck;
