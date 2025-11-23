@@ -256,7 +256,8 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
         }
         SinglePlayerState state = viewModel.getState();
 
-        questionCounterLabel.setText("Q " + state.getCurrentIndex() + "/" + state.getTotal());
+        int qLeft = state.getTotal() - state.getCurrentIndex() + 1;
+        questionCounterLabel.setText("Q " + qLeft + "/" + state.getTotal());
         scoreLabel.setText(String.valueOf(state.getScore()));
 
         questionTextArea.setText(state.getQuestionText());
