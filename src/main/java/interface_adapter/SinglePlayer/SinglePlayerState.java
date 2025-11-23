@@ -20,6 +20,10 @@ public class SinglePlayerState {
     private String error = "";
 
     private List<StudyDeck> decksList;
+    private int correctAnswers = 0;
+
+    public int getCorrectAnswers() { return correctAnswers; }
+    public void setCorrectAnswers(int correctAnswers) { this.correctAnswers = correctAnswers; }
 
     public SinglePlayerState() {}
 
