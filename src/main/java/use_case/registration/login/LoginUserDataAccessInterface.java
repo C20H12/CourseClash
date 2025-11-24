@@ -1,11 +1,9 @@
 /**
  * File: LoginUserDataAccessInterface.java
  * Description: Defines the data access interface for login actions.
- * Author: Albert and Daniel and Mahir
+ * Author: Albert and Daniel
  */
 package use_case.registration.login;
-
-import entity.User;
 import use_case.DataAccessException;
 import java.util.HashMap;
 
@@ -25,11 +23,4 @@ public interface LoginUserDataAccessInterface {
      * Unknown error: {"status": false, "status_message": "other status message"}
      */
     HashMap<String, Object> login(String username, String password) throws DataAccessException;
-    User get(String username);
-
-    boolean existsByName(String identifier);
-
-    void setCurrentUsername(String name);
-
-    String getCurrentUsername();
 }
