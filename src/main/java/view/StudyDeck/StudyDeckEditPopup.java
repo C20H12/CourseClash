@@ -8,11 +8,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Popup window that provides a GUI for editing a {@link StudyDeck}.
@@ -126,22 +123,34 @@ public class StudyDeckEditPopup extends JDialog {
 		answersLabel.setFont(new Font("Helvetica", Font.BOLD, 20));
 		answersPanel.add(answersLabel, BorderLayout.NORTH);
 
-		JPanel choicesPanel = new JPanel(new GridLayout(4, 2, 5, 5));
+		JPanel choicesPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
 		answerFields.clear();
 		answerChoiceButtons.clear();
 		answerButtonGroup.clearSelection();
 		for (int i = 0; i < 4; i++) {
+            // setting the margin between each answer field
+            gbc.gridy = i;
+            gbc.weighty = 1.0;
+            gbc.insets = new Insets(5, 5, 5, 5);
+
+            JRadioButton radioButton = new JRadioButton("");
+            radioButton.setFont(new Font("Helvetica", Font.PLAIN, 20));
+            answerChoiceButtons.add(radioButton);
+            answerButtonGroup.add(radioButton);
+
 			JTextField answerField = new JTextField();
 			answerField.setFont(new Font("Helvetica", Font.PLAIN, 16));
 			answerFields.add(answerField);
 
-			JRadioButton radioButton = new JRadioButton("Choice " + (i + 1));
-			radioButton.setFont(new Font("Helvetica", Font.PLAIN, 15));
-			answerChoiceButtons.add(radioButton);
-			answerButtonGroup.add(radioButton);
+            gbc.gridx = 0;
+            gbc.weightx = 0.1;
+            choicesPanel.add(radioButton,gbc);
 
-			choicesPanel.add(answerField);
-			choicesPanel.add(radioButton);
+            gbc.gridx = 1;
+            gbc.weightx = 1.0;
+			choicesPanel.add(answerField,gbc);
 		}
 		answersPanel.add(choicesPanel, BorderLayout.CENTER);
 		right.add(answersPanel, BorderLayout.CENTER);
@@ -204,7 +213,16 @@ public class StudyDeckEditPopup extends JDialog {
 		});
 		row.add(questionLabel, BorderLayout.CENTER);
 
-		JButton deleteButton = new JButton("X");
+		JButton deleteButton = new JButton();
+        // Set trash can icon for delete
+        ImageIcon rawIcon = new ImageIcon(
+                Objects.requireNonNull(getClass().getResource("/icon/trash_can_black.png"))
+        );
+        // scale to 24×24 (pick size you want)
+        Image scaled = rawIcon.getImage().getScaledInstance(36, 36, Image.SCALE_SMOOTH);
+        ImageIcon trashCanIcon = new ImageIcon(scaled);
+        deleteButton.setIcon(trashCanIcon);
+        deleteButton.setBackground(Color.WHITE);
 		deleteButton.setPreferredSize(new Dimension(50, 40));
 		deleteButton.addActionListener(e -> deleteCard(id));
 		row.add(deleteButton, BorderLayout.EAST);
