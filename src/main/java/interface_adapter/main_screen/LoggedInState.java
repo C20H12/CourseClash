@@ -1,11 +1,13 @@
 package interface_adapter.main_screen;
 
+import interface_adapter.user_session.UserSession;
+
 /**
  * The State information representing the logged-in user.
  */
 public class LoggedInState {
     private String username = "";
-
+    private UserSession userSession;
     private String password = "";
     private String passwordError;
 
@@ -34,6 +36,14 @@ public class LoggedInState {
 
     public String getPassword() {
         return password;
+    }
+
+    public UserSession getUserSession() {
+        return userSession;
+    }
+
+    public void setUserSession(UserSession userSession) {
+        this.userSession = userSession;
     }
 
     public void setPasswordError(String passwordError) {

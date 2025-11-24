@@ -1,9 +1,10 @@
 package app;
+
 import entity.UserFactory;
 import interface_adapter.*;
-import interface_adapter.SinglePlayer.SinglePlayerController;
-import interface_adapter.SinglePlayer.SinglePlayerPresenter;
-import interface_adapter.SinglePlayer.SinglePlayerViewModel;
+//import interface_adapter.SinglePlayer.SinglePlayerController;
+//import interface_adapter.SinglePlayer.SinglePlayerPresenter;
+//import interface_adapter.SinglePlayer.SinglePlayerViewModel;
 import interface_adapter.leaderboard.LeaderboardController;
 import interface_adapter.leaderboard.LeaderboardPresenter;
 import interface_adapter.leaderboard.LeaderboardViewModel;
@@ -16,7 +17,8 @@ import interface_adapter.studyDeck.StudyDeckController;
 import interface_adapter.studyDeck.StudyDeckPresenter;
 import interface_adapter.studyDeck.StudyDeckViewModel;
 import interface_adapter.user_session.UserSession;
-import use_case.SinglePlayer.SinglePlayerInteractor;
+//import use_case.SinglePlayer.SinglePlayerInteractor;
+import use_case.DataAccessException;
 import use_case.leaderboard.LeaderboardInputBoundary;
 import use_case.leaderboard.LeaderboardInteractor;
 import use_case.leaderboard.LeaderboardOutputBoundary;
@@ -86,7 +88,7 @@ public class AppBuilder {
         return this;
     }
 
-    public AppBuilder addMainScreenView() {
+    public AppBuilder addMainScreenView() throws DataAccessException {
         mainScreenViewModel = new MainScreenViewModel();
         studyDeckViewModel = new StudyDeckViewModel();
         leaderboardViewModel = new LeaderboardViewModel();
@@ -116,7 +118,7 @@ public class AppBuilder {
     }
 
     public AppBuilder addSignupUseCase() {
-        final frameworks_and_drivers.DataAccess.SignupUserDataAccessObject signupDAO = new frameworks_and_drivers.DataAccess.SignupUserDataAccessObject();
+        final SignupUserDataAccessObject signupDAO = new SignupUserDataAccessObject();
         final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(viewManagerModel,
                 signupViewModel, loginViewModel);
         final SignupInputBoundary userSignupInteractor = new SignupInteractor(
@@ -137,6 +139,7 @@ public class AppBuilder {
         return this;
     }
 
+
     public AppBuilder addStudyDeckUseCase() {
         final StudyDeckLocalDataAccessObject studyDeckDAO = new StudyDeckLocalDataAccessObject();
         final StudyDeckOutputBoundary studyDeckOutputBoundary = new StudyDeckPresenter(studyDeckViewModel);
@@ -147,8 +150,8 @@ public class AppBuilder {
         return this;
     }
 
-    public AppBuilder addLeaderboardUseCase() {
-        final LeaderboardUserDataAccessObject userDataAccessObject = new LeaderboardUserDataAccessObject(session.getApiKey());
+    public AppBuilder addLeaderboardUseCase() throws DataAccessException {
+        final LeaderboardUserDataAccessObject userDataAccessObject = new LeaderboardUserDataAccessObject(session);
         final LeaderboardOutputBoundary leaderboardOutputBoundary = new LeaderboardPresenter(leaderboardViewModel,
                 viewManagerModel);
         final LeaderboardInputBoundary leaderboardInteractor = new LeaderboardInteractor(

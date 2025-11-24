@@ -114,6 +114,7 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
     }
     private void switchToLeaderboard() {
         viewManagerModel.setState(leaderboardViewModel.getViewName());
+        leaderboardViewModel.firePropertyChange("leaderboard");
         viewManagerModel.firePropertyChange();
     }
     private void switchToSinglePlayer() {
