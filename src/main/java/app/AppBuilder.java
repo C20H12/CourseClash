@@ -177,7 +177,7 @@ public class AppBuilder {
         SinglePlayerViewModel spViewModel = new SinglePlayerViewModel();
         // Presenter
         SinglePlayerPresenter spPresenter = new SinglePlayerPresenter(spViewModel);
-        SinglePlayerDataAccessObject spGateway = new SinglePlayerDataAccessObject();
+        SinglePlayerDataAccessObject spGateway = new SinglePlayerDataAccessObject(session);
         // Interactor
         SinglePlayerInteractor spInteractor =
                 new SinglePlayerInteractor(spPresenter, spGateway);
@@ -186,7 +186,7 @@ public class AppBuilder {
                 new SinglePlayerController(spInteractor);
         // View
         SinglePlayerView spView =
-                new SinglePlayerView(spViewModel, viewManagerModel);
+                new SinglePlayerView(spViewModel, viewManagerModel, session);
         spView.setController(spController);
         // Register the view with the card layout
         cardPanel.add(spView, spView.getViewName());
