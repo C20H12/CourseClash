@@ -1,5 +1,3 @@
-// Entity for Study Cards
-// Archie
 package entity.DeckManagement;
 
 import java.util.ArrayList;
@@ -9,7 +7,6 @@ public class StudyCard {
     private final ArrayList<String> answers;
     private final int solutionId;
 
-    // Defensive copying from Clean Architecture
     public StudyCard(String question, ArrayList<String> answers,  int solutionId) {
         this.question = question;
         this.answers = new ArrayList<>(answers);
@@ -26,5 +23,15 @@ public class StudyCard {
 
     public int getSolutionId() {
         return solutionId;
+    }
+
+    /**
+     * FIX: Returns the correct answer by indexing into the answers list.
+     */
+    public String getCorrectAnswer() {
+        if (answers != null && solutionId >= 0 && solutionId < answers.size()) {
+            return answers.get(solutionId);
+        }
+        return "ERROR: NO ANSWER DEFINED";
     }
 }

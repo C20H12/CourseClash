@@ -3,7 +3,6 @@ package app;
 import use_case.DataAccessException;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class Main {
     public static void main(String[] args) throws DataAccessException {
@@ -18,10 +17,10 @@ public class Main {
                 .addSignupUseCase()
                 .addLeaderboardUseCase()
                 .addSinglePlayerUseCase()
+                .addMultiPlayerUseCase()
                 .addStudyDeckUseCase()
                 .build();
         application.setLocationRelativeTo(null);
         application.setVisible(true);
     }
 }
-

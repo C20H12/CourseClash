@@ -1,10 +1,12 @@
 package app;
-
 import entity.UserFactory;
 import interface_adapter.*;
-//import interface_adapter.SinglePlayer.SinglePlayerController;
-//import interface_adapter.SinglePlayer.SinglePlayerPresenter;
-//import interface_adapter.SinglePlayer.SinglePlayerViewModel;
+import interface_adapter.MultiPlayer.MultiPlayerController;
+import interface_adapter.MultiPlayer.MultiPlayerPresenter;
+import interface_adapter.MultiPlayer.MultiPlayerViewModel;
+import interface_adapter.SinglePlayer.SinglePlayerController;
+import interface_adapter.SinglePlayer.SinglePlayerPresenter;
+import interface_adapter.SinglePlayer.SinglePlayerViewModel;
 import interface_adapter.leaderboard.LeaderboardController;
 import interface_adapter.leaderboard.LeaderboardPresenter;
 import interface_adapter.leaderboard.LeaderboardViewModel;
@@ -17,8 +19,7 @@ import interface_adapter.studyDeck.StudyDeckController;
 import interface_adapter.studyDeck.StudyDeckPresenter;
 import interface_adapter.studyDeck.StudyDeckViewModel;
 import interface_adapter.user_session.UserSession;
-//import use_case.SinglePlayer.SinglePlayerInteractor;
-import use_case.DataAccessException;
+import use_case.SinglePlayer.SinglePlayerInteractor;
 import use_case.leaderboard.LeaderboardInputBoundary;
 import use_case.leaderboard.LeaderboardInteractor;
 import use_case.leaderboard.LeaderboardOutputBoundary;
@@ -30,16 +31,18 @@ import use_case.studyDeck.StudyDeckInputBoundary;
 import use_case.studyDeck.StudyDeckInteractor;
 import use_case.studyDeck.StudyDeckOutputBoundary;
 import view.single.SinglePlayerView;
-import interface_adapter.SinglePlayer.*;
 import frameworks_and_drivers.DataAccess.SinglePlayerDataAccessObject;
 import frameworks_and_drivers.DataAccess.DeckManagement.StudyDeckLocalDataAccessObject;
 import view.leaderboard.LeaderboardView;
 import view.main_screen.MainScreenView;
+import view.multi.MultiPlayerView;
 import view.registration.*;
 import frameworks_and_drivers.DataAccess.*;
 import utility.FontLoader;
+import use_case.MultiPlayer.MultiPlayerInputBoundary;
+import use_case.MultiPlayer.MultiPlayerInteractor;
+import use_case.MultiPlayer.MultiPlayerOutputBoundary;
 import use_case.SinglePlayer.*;
-import frameworks_and_drivers.DataAccess.SinglePlayerDataAccessObject;
 import view.ViewManager;
 import view.StudyDeck.StudyDeckView;
 
@@ -70,6 +73,10 @@ public class AppBuilder {
     private LeaderboardView leaderboardView;
     private SinglePlayerViewModel singlePlayerViewModel;
     private SinglePlayerView singlePlayerView;
+    private MultiPlayerViewModel multiPlayerViewModel;
+    private MultiPlayerView multiPlayerView;
+
+
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
     }
@@ -88,11 +95,13 @@ public class AppBuilder {
         return this;
     }
 
-    public AppBuilder addMainScreenView() throws DataAccessException {
+    public AppBuilder addMainScreenView() {
         mainScreenViewModel = new MainScreenViewModel();
         studyDeckViewModel = new StudyDeckViewModel();
         leaderboardViewModel = new LeaderboardViewModel();
         singlePlayerViewModel = new SinglePlayerViewModel();
+        multiPlayerViewModel = new MultiPlayerViewModel();
+
         mainScreenView = new MainScreenView(mainScreenViewModel,
                 viewManagerModel, studyDeckViewModel, leaderboardViewModel,  singlePlayerViewModel);
         cardPanel.add(mainScreenView, mainScreenView.getViewName());
@@ -105,6 +114,9 @@ public class AppBuilder {
 
         singlePlayerView = new SinglePlayerView(singlePlayerViewModel, viewManagerModel, session);
         cardPanel.add(singlePlayerView, singlePlayerView.getViewName());
+
+        multiPlayerView = new MultiPlayerView(multiPlayerViewModel, viewManagerModel, session);
+        cardPanel.add(multiPlayerView, multiPlayerView.getViewName());
         return this;
 
     }
@@ -118,7 +130,7 @@ public class AppBuilder {
     }
 
     public AppBuilder addSignupUseCase() {
-        final SignupUserDataAccessObject signupDAO = new SignupUserDataAccessObject();
+        final frameworks_and_drivers.DataAccess.SignupUserDataAccessObject signupDAO = new frameworks_and_drivers.DataAccess.SignupUserDataAccessObject();
         final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(viewManagerModel,
                 signupViewModel, loginViewModel);
         final SignupInputBoundary userSignupInteractor = new SignupInteractor(
@@ -139,7 +151,6 @@ public class AppBuilder {
         return this;
     }
 
-
     public AppBuilder addStudyDeckUseCase() {
         final StudyDeckLocalDataAccessObject studyDeckDAO = new StudyDeckLocalDataAccessObject();
         final StudyDeckOutputBoundary studyDeckOutputBoundary = new StudyDeckPresenter(studyDeckViewModel);
@@ -150,8 +161,8 @@ public class AppBuilder {
         return this;
     }
 
-    public AppBuilder addLeaderboardUseCase() throws DataAccessException {
-        final LeaderboardUserDataAccessObject userDataAccessObject = new LeaderboardUserDataAccessObject(session);
+    public AppBuilder addLeaderboardUseCase() {
+        final LeaderboardUserDataAccessObject userDataAccessObject = new LeaderboardUserDataAccessObject(session.getApiKey());
         final LeaderboardOutputBoundary leaderboardOutputBoundary = new LeaderboardPresenter(leaderboardViewModel,
                 viewManagerModel);
         final LeaderboardInputBoundary leaderboardInteractor = new LeaderboardInteractor(
@@ -175,31 +186,19 @@ public class AppBuilder {
         return this;
     }
 
-    public AppBuilder addSinglePlayerView() {
-        // ViewModel
-        SinglePlayerViewModel spViewModel = new SinglePlayerViewModel();
-        // Presenter
-        SinglePlayerPresenter spPresenter = new SinglePlayerPresenter(spViewModel);
-        SinglePlayerDataAccessObject spGateway = new SinglePlayerDataAccessObject(session);
-        // Interactor
-        SinglePlayerInteractor spInteractor =
-                new SinglePlayerInteractor(spPresenter, spGateway);
-        // Controller
-        SinglePlayerController spController =
-                new SinglePlayerController(spInteractor);
-        // View
-        SinglePlayerView spView =
-                new SinglePlayerView(spViewModel, viewManagerModel, session);
-        spView.setController(spController);
-        // Register the view with the card layout
-        cardPanel.add(spView, spView.getViewName());
+    public AppBuilder addMultiPlayerUseCase() {
+        MultiPlayerDataAccessObject mpDAO = new MultiPlayerDataAccessObject(session);
+        MultiPlayerOutputBoundary mpPresenter = new MultiPlayerPresenter(multiPlayerViewModel);
+        MultiPlayerInputBoundary mpInteractor = new MultiPlayerInteractor(mpPresenter, mpDAO);
+        MultiPlayerController mpController = new MultiPlayerController(mpInteractor);
+        multiPlayerView.setMultiPlayerController(mpController);
         return this;
     }
 
     public JFrame build() {
         final JFrame application = new JFrame("CourseClash");
         application.setSize(1200, 800);
-        application.setResizable(true); // Fixed size window
+        application.setResizable(true);
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         FontLoader.registerFonts();
 
@@ -211,4 +210,5 @@ public class AppBuilder {
 
         return application;
     }
+
 }
