@@ -7,5 +7,6 @@ public interface SinglePlayerInputBoundary {
     void startGame(SinglePlayerInputData inputData) throws DataAccessException;
     void submitAnswer(String answer) throws DataAccessException;
     void endGame() throws DataAccessException;
+    void showAllDeckNames() throws DataAccessException;
 }
 

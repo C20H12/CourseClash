@@ -1,5 +1,7 @@
 package use_case.SinglePlayer;
 
+import java.util.List;
+
 import entity.DeckManagement.StudyDeck;
 import use_case.DataAccessException;
 
@@ -33,4 +35,10 @@ public interface SinglePlayerAccessInterface {
             double accuracy,
             double avgResponseTime
     ) throws DataAccessException;
+
+    /**
+     * gets a list of all the decks, for initalization
+     * @return
+     */
+    List<StudyDeck> getAllDecks();
 }
