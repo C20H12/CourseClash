@@ -19,6 +19,7 @@ import interface_adapter.studyDeck.StudyDeckController;
 import interface_adapter.studyDeck.StudyDeckPresenter;
 import interface_adapter.studyDeck.StudyDeckViewModel;
 import interface_adapter.user_session.UserSession;
+import use_case.DataAccessException;
 import use_case.SinglePlayer.SinglePlayerInteractor;
 import use_case.leaderboard.LeaderboardInputBoundary;
 import use_case.leaderboard.LeaderboardInteractor;
@@ -95,12 +96,13 @@ public class AppBuilder {
         return this;
     }
 
-    public AppBuilder addMainScreenView() {
+    public AppBuilder addMainScreenView() throws DataAccessException {
         mainScreenViewModel = new MainScreenViewModel();
         studyDeckViewModel = new StudyDeckViewModel();
         leaderboardViewModel = new LeaderboardViewModel();
         singlePlayerViewModel = new SinglePlayerViewModel();
         multiPlayerViewModel = new MultiPlayerViewModel();
+        leaderboardViewModel = new LeaderboardViewModel();
 
         mainScreenView = new MainScreenView(mainScreenViewModel,
                 viewManagerModel, studyDeckViewModel, leaderboardViewModel,  singlePlayerViewModel);
@@ -117,16 +119,11 @@ public class AppBuilder {
 
         multiPlayerView = new MultiPlayerView(multiPlayerViewModel, viewManagerModel, session);
         cardPanel.add(multiPlayerView, multiPlayerView.getViewName());
-        return this;
-
-    }
-
-    public AppBuilder addLeaderboardView() {
-        leaderboardViewModel = new LeaderboardViewModel();
 
         leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel, mainScreenViewModel);
         cardPanel.add(leaderboardView, leaderboardView.getViewName());
         return this;
+
     }
 
     public AppBuilder addSignupUseCase() {
@@ -161,8 +158,8 @@ public class AppBuilder {
         return this;
     }
 
-    public AppBuilder addLeaderboardUseCase() {
-        final LeaderboardUserDataAccessObject userDataAccessObject = new LeaderboardUserDataAccessObject(session.getApiKey());
+    public AppBuilder addLeaderboardUseCase() throws DataAccessException {
+        final LeaderboardUserDataAccessObject userDataAccessObject = new LeaderboardUserDataAccessObject(session);
         final LeaderboardOutputBoundary leaderboardOutputBoundary = new LeaderboardPresenter(leaderboardViewModel,
                 viewManagerModel);
         final LeaderboardInputBoundary leaderboardInteractor = new LeaderboardInteractor(
