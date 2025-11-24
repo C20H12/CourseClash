@@ -1,6 +1,9 @@
 package app;
 import entity.UserFactory;
 import interface_adapter.*;
+import interface_adapter.MultiPlayer.MultiPlayerController;
+import interface_adapter.MultiPlayer.MultiPlayerPresenter;
+import interface_adapter.MultiPlayer.MultiPlayerViewModel;
 import interface_adapter.SinglePlayer.SinglePlayerController;
 import interface_adapter.SinglePlayer.SinglePlayerPresenter;
 import interface_adapter.SinglePlayer.SinglePlayerViewModel;
@@ -11,12 +14,15 @@ import interface_adapter.leaderboard_as_chart.LeaderboardAsChartController;
 import interface_adapter.leaderboard_as_chart.LeaderboardAsChartPresenter;
 import interface_adapter.leaderboard_as_chart.LeaderboardAsChartViewModel;
 import interface_adapter.main_screen.MainScreenViewModel;
-import interface_adapter.studyset.studyset_browse.BrowseStudySetViewModel;
 import interface_adapter.registration.login.*;
 import interface_adapter.registration.signup.SignupController;
 import interface_adapter.registration.signup.SignupPresenter;
 import interface_adapter.registration.signup.SignupViewModel;
+import interface_adapter.studyDeck.StudyDeckController;
+import interface_adapter.studyDeck.StudyDeckPresenter;
+import interface_adapter.studyDeck.StudyDeckViewModel;
 import interface_adapter.user_session.UserSession;
+import use_case.DataAccessException;
 import use_case.SinglePlayer.SinglePlayerInteractor;
 import use_case.leaderboard.LeaderboardInputBoundary;
 import use_case.leaderboard.LeaderboardInteractor;
@@ -26,20 +32,25 @@ import use_case.registration.login.*;
 import use_case.registration.signup.SignupInputBoundary;
 import use_case.registration.signup.SignupInteractor;
 import use_case.registration.signup.SignupOutputBoundary;
-import view.SinglePlayerView;
-import interface_adapter.SinglePlayer.*;
+import use_case.studyDeck.StudyDeckInputBoundary;
+import use_case.studyDeck.StudyDeckInteractor;
+import use_case.studyDeck.StudyDeckOutputBoundary;
+import view.single.SinglePlayerView;
 import frameworks_and_drivers.DataAccess.SinglePlayerDataAccessObject;
+import frameworks_and_drivers.DataAccess.DeckManagement.StudyDeckLocalDataAccessObject;
 import view.leaderboard.LeaderboardView;
 import view.leaderboard_as_chart.LeaderboardChartView;
 import view.main_screen.MainScreenView;
+import view.multi.MultiPlayerView;
 import view.registration.*;
-import view.study_set.BrowseStudySetView;
 import frameworks_and_drivers.DataAccess.*;
 import utility.FontLoader;
+import use_case.MultiPlayer.MultiPlayerInputBoundary;
+import use_case.MultiPlayer.MultiPlayerInteractor;
+import use_case.MultiPlayer.MultiPlayerOutputBoundary;
 import use_case.SinglePlayer.*;
-import frameworks_and_drivers.DataAccess.SinglePlayerDataAccessObject;
-import view.SinglePlayerView;
 import view.ViewManager;
+import view.StudyDeck.StudyDeckView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -56,26 +67,25 @@ public class AppBuilder {
     // set which data access implementation to use, can be any
     // of the classes from the data_access package
 
-    // DAO version using local file storage
-//    final FileUserDataAccessObject userDataAccessObject = new FileUserDataAccessObject("users.csv", userFactory);
-    // DAO version using a shared external database
-    // final DBUserDataAccessObject userDataAccessObject = new DBUserDataAccessObject(userFactory);
-
     private SignupView signupView;
     private SignupViewModel signupViewModel;
     private LoginViewModel loginViewModel;
     private MainScreenViewModel mainScreenViewModel;
-    private BrowseStudySetViewModel browseStudySetViewModel;
+    private StudyDeckViewModel studyDeckViewModel;
     private LeaderboardViewModel leaderboardViewModel;
     private LoginView loginView;
     private MainScreenView mainScreenView;
-    private BrowseStudySetView browseStudySetView;
+    private StudyDeckView browseStudySetView;
     private LeaderboardView leaderboardView;
     private LeaderboardAsChartViewModel leaderboardChartViewModel;
     private LeaderboardChartView leaderboardChartView;
     private LeaderboardAsChartController leaderboardChartController;
     private SinglePlayerViewModel singlePlayerViewModel;
     private SinglePlayerView singlePlayerView;
+    private MultiPlayerViewModel multiPlayerViewModel;
+    private MultiPlayerView multiPlayerView;
+
+
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
     }
@@ -94,44 +104,41 @@ public class AppBuilder {
         return this;
     }
 
-    public AppBuilder addMainScreenView() {
+    public AppBuilder addMainScreenView() throws DataAccessException {
         mainScreenViewModel = new MainScreenViewModel();
-        browseStudySetViewModel = new BrowseStudySetViewModel();
+        studyDeckViewModel = new StudyDeckViewModel();
         leaderboardViewModel = new LeaderboardViewModel();
         singlePlayerViewModel = new SinglePlayerViewModel();
+        multiPlayerViewModel = new MultiPlayerViewModel();
+        leaderboardViewModel = new LeaderboardViewModel();
+
         mainScreenView = new MainScreenView(mainScreenViewModel,
-                viewManagerModel, browseStudySetViewModel, leaderboardViewModel,  singlePlayerViewModel);
+                viewManagerModel, studyDeckViewModel, leaderboardViewModel,  singlePlayerViewModel);
         cardPanel.add(mainScreenView, mainScreenView.getViewName());
 
-        browseStudySetView = new BrowseStudySetView(browseStudySetViewModel, mainScreenViewModel, viewManagerModel);
+        browseStudySetView = new StudyDeckView(studyDeckViewModel, mainScreenViewModel, viewManagerModel);
         cardPanel.add(browseStudySetView, browseStudySetView.getViewName());
 
         leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel, mainScreenViewModel);
         cardPanel.add(leaderboardView, leaderboardView.getViewName());
 
-        singlePlayerView = new SinglePlayerView(singlePlayerViewModel, viewManagerModel);
+        singlePlayerView = new SinglePlayerView(singlePlayerViewModel, viewManagerModel, session);
         cardPanel.add(singlePlayerView, singlePlayerView.getViewName());
-        return this;
 
-    }
-
-    public AppBuilder addBrowseStudySetView() {
-
-        return this;
-    }
-
-    public AppBuilder addLeaderboardView() {
-        leaderboardViewModel = new LeaderboardViewModel();
+        multiPlayerView = new MultiPlayerView(multiPlayerViewModel, viewManagerModel, session);
+        cardPanel.add(multiPlayerView, multiPlayerView.getViewName());
 
         leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel, mainScreenViewModel);
         cardPanel.add(leaderboardView, leaderboardView.getViewName());
+
         return this;
+
     }
 
     public AppBuilder addLeaderboardChartView() {
         leaderboardChartViewModel = new interface_adapter.leaderboard_as_chart.LeaderboardAsChartViewModel();
         LeaderboardAsChartPresenter chartPresenter = new LeaderboardAsChartPresenter(leaderboardChartViewModel);
-        LeaderboardUserDataAccessObject leaderboardDAO = new LeaderboardUserDataAccessObject(session.getApiKey());
+        LeaderboardUserDataAccessObject leaderboardDAO = new LeaderboardUserDataAccessObject(session);
         LeaderboardAsChartInteractor chartInteractor = new LeaderboardAsChartInteractor(leaderboardDAO, chartPresenter);
         leaderboardChartController = new interface_adapter.leaderboard_as_chart.LeaderboardAsChartController(chartInteractor);
         leaderboardView.setLeaderboardChartController(leaderboardChartController);
@@ -163,8 +170,18 @@ public class AppBuilder {
         return this;
     }
 
-    public AppBuilder addLeaderboardUseCase() {
-        final LeaderboardUserDataAccessObject userDataAccessObject = new LeaderboardUserDataAccessObject(session.getApiKey());
+    public AppBuilder addStudyDeckUseCase() {
+        final StudyDeckLocalDataAccessObject studyDeckDAO = new StudyDeckLocalDataAccessObject();
+        final StudyDeckOutputBoundary studyDeckOutputBoundary = new StudyDeckPresenter(studyDeckViewModel);
+        final StudyDeckInputBoundary studyDeckInteractor = new StudyDeckInteractor(studyDeckDAO, studyDeckOutputBoundary);
+
+        StudyDeckController studyDeckController = new StudyDeckController(studyDeckInteractor);
+        browseStudySetView.setStudySetViewController(studyDeckController);
+        return this;
+    }
+
+    public AppBuilder addLeaderboardUseCase() throws DataAccessException {
+        final LeaderboardUserDataAccessObject userDataAccessObject = new LeaderboardUserDataAccessObject(session);
         final LeaderboardOutputBoundary leaderboardOutputBoundary = new LeaderboardPresenter(leaderboardViewModel,
                 viewManagerModel);
         final LeaderboardInputBoundary leaderboardInteractor = new LeaderboardInteractor(
@@ -174,9 +191,10 @@ public class AppBuilder {
         leaderboardView.setLeaderboardController(leaderboardController);
         return this;
     }
+
     public AppBuilder addSinglePlayerUseCase() {
         // 1) DAO (gateway)
-        SinglePlayerDataAccessObject spDAO = new SinglePlayerDataAccessObject();
+        SinglePlayerDataAccessObject spDAO = new SinglePlayerDataAccessObject(session);
         // 2) Presenter
         SinglePlayerOutputBoundary spPresenter = new SinglePlayerPresenter(singlePlayerViewModel);
         // 3) Interactor
@@ -187,10 +205,19 @@ public class AppBuilder {
         return this;
     }
 
+    public AppBuilder addMultiPlayerUseCase() {
+        MultiPlayerDataAccessObject mpDAO = new MultiPlayerDataAccessObject(session);
+        MultiPlayerOutputBoundary mpPresenter = new MultiPlayerPresenter(multiPlayerViewModel);
+        MultiPlayerInputBoundary mpInteractor = new MultiPlayerInteractor(mpPresenter, mpDAO);
+        MultiPlayerController mpController = new MultiPlayerController(mpInteractor);
+        multiPlayerView.setMultiPlayerController(mpController);
+        return this;
+    }
+
     public JFrame build() {
         final JFrame application = new JFrame("CourseClash");
         application.setSize(1200, 800);
-        application.setResizable(false); // Fixed size window
+        application.setResizable(true);
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         FontLoader.registerFonts();
 
@@ -202,26 +229,5 @@ public class AppBuilder {
 
         return application;
     }
-    public AppBuilder addSinglePlayerView() {
-        // ViewModel
-        SinglePlayerViewModel spViewModel = new SinglePlayerViewModel();
-        // Presenter
-        SinglePlayerPresenter spPresenter = new SinglePlayerPresenter(spViewModel);
-        SinglePlayerDataAccessObject spGateway = new SinglePlayerDataAccessObject();
-        // Interactor
-        SinglePlayerInteractor spInteractor =
-                new SinglePlayerInteractor(spPresenter, spGateway);
-        // Controller
-        SinglePlayerController spController =
-                new SinglePlayerController(spInteractor);
-        // View
-        SinglePlayerView spView =
-                new SinglePlayerView(spViewModel, viewManagerModel);
-        spView.setController(spController);
-        // Register the view with the card layout
-        cardPanel.add(spView, spView.getViewName());
-        return this;
-    }
-
 
 }

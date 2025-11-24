@@ -82,7 +82,7 @@ public class SinglePlayerGame {
         return deck;
     }
     public void incrementScoreCorrect() {
-        this.score += 10;
+        this.score += 5;
         this.correctAnswers += 1;
     }
     public void decrementScore() {

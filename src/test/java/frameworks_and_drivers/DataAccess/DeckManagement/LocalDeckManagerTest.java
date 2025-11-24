@@ -10,21 +10,18 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class LocalDeckManagerTest {
 
-    private LocalDeckManager manager;
+    private StudyDeckLocalDataAccessObject manager;
     private String testStorageDir = System.getProperty("user.home") + "/.CourseClash/local_storage";
 
     @BeforeEach
     void setUp() {
-        manager = new LocalDeckManager();
+        manager = new StudyDeckLocalDataAccessObject();
         // Clean up all JSON files before each test
         File storageDir = new File(testStorageDir);
         File[] files = storageDir.listFiles();
@@ -55,7 +52,7 @@ class LocalDeckManagerTest {
     @DisplayName("Test LocalDeckManager constructor executes without error")
     void testConstructor() {
         // Verify the constructor runs without throwing exceptions
-        assertDoesNotThrow(() -> new LocalDeckManager());
+        assertDoesNotThrow(() -> new StudyDeckLocalDataAccessObject());
     }
 
     @Test

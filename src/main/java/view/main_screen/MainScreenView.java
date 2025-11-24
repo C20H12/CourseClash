@@ -3,7 +3,7 @@ package view.main_screen;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.leaderboard.LeaderboardViewModel;
 import interface_adapter.main_screen.MainScreenViewModel;
-import interface_adapter.studyset.studyset_browse.BrowseStudySetViewModel;
+import interface_adapter.studyDeck.StudyDeckViewModel;
 import view.ViewManager;
 import view.leaderboard.LeaderboardView;
 
@@ -18,13 +18,13 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
     private final String viewName = "main screen";
     private final MainScreenViewModel mainScreenViewModel;
     private final ViewManagerModel viewManagerModel;
-    private final BrowseStudySetViewModel browseStudySetViewModel;
+    private final StudyDeckViewModel browseStudySetViewModel;
     private final LeaderboardViewModel leaderboardViewModel;
     private final interface_adapter.SinglePlayer.SinglePlayerViewModel singlePlayerViewModel;
 
     public MainScreenView(MainScreenViewModel mainScreenViewModel,
                           ViewManagerModel viewManagerModel,
-                          BrowseStudySetViewModel browseStudySetViewModel, LeaderboardViewModel leaderboardViewModel,
+                          StudyDeckViewModel browseStudySetViewModel, LeaderboardViewModel leaderboardViewModel,
                           interface_adapter.SinglePlayer.SinglePlayerViewModel singlePlayerViewModel) {
         this.mainScreenViewModel = mainScreenViewModel;
         this.viewManagerModel = viewManagerModel;
@@ -81,6 +81,9 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
                 if ("Single Player".equals(button.getText())) {
                     button.addActionListener(e -> switchToSinglePlayer());
                 }
+                if ("Multiplayer".equals(button.getText())) {
+                    button.addActionListener(e -> switchToMultiPlayer());
+                }
 
                 c.gridx = col;
                 c.gridy = row;
@@ -91,7 +94,6 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
 
         this.add(buttonPanel, BorderLayout.CENTER);
     }
-
 
 
     public String getViewName() {
@@ -114,10 +116,15 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
     }
     private void switchToLeaderboard() {
         viewManagerModel.setState(leaderboardViewModel.getViewName());
+        leaderboardViewModel.firePropertyChange("leaderboard");
         viewManagerModel.firePropertyChange();
     }
     private void switchToSinglePlayer() {
         viewManagerModel.setState(singlePlayerViewModel.getViewName());
+        viewManagerModel.firePropertyChange();
+    }
+    private void switchToMultiPlayer() {
+        viewManagerModel.setState("multi player");
         viewManagerModel.firePropertyChange();
     }
 }
