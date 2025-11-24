@@ -1,6 +1,9 @@
 package app;
 import entity.UserFactory;
 import interface_adapter.*;
+import interface_adapter.MultiPlayer.MultiPlayerController;
+import interface_adapter.MultiPlayer.MultiPlayerPresenter;
+import interface_adapter.MultiPlayer.MultiPlayerViewModel;
 import interface_adapter.SinglePlayer.SinglePlayerController;
 import interface_adapter.SinglePlayer.SinglePlayerPresenter;
 import interface_adapter.SinglePlayer.SinglePlayerViewModel;
@@ -28,16 +31,18 @@ import use_case.studyDeck.StudyDeckInputBoundary;
 import use_case.studyDeck.StudyDeckInteractor;
 import use_case.studyDeck.StudyDeckOutputBoundary;
 import view.single.SinglePlayerView;
-import interface_adapter.SinglePlayer.*;
 import frameworks_and_drivers.DataAccess.SinglePlayerDataAccessObject;
 import frameworks_and_drivers.DataAccess.DeckManagement.StudyDeckLocalDataAccessObject;
 import view.leaderboard.LeaderboardView;
 import view.main_screen.MainScreenView;
+import view.multi.MultiPlayerView;
 import view.registration.*;
 import frameworks_and_drivers.DataAccess.*;
 import utility.FontLoader;
+import use_case.MultiPlayer.MultiPlayerInputBoundary;
+import use_case.MultiPlayer.MultiPlayerInteractor;
+import use_case.MultiPlayer.MultiPlayerOutputBoundary;
 import use_case.SinglePlayer.*;
-import frameworks_and_drivers.DataAccess.SinglePlayerDataAccessObject;
 import view.ViewManager;
 import view.StudyDeck.StudyDeckView;
 
@@ -56,6 +61,11 @@ public class AppBuilder {
     // set which data access implementation to use, can be any
     // of the classes from the data_access package
 
+    // DAO version using local file storage
+//    final FileUserDataAccessObject userDataAccessObject = new FileUserDataAccessObject("users.csv", userFactory);
+    // DAO version using a shared external database
+    // final DBUserDataAccessObject userDataAccessObject = new DBUserDataAccessObject(userFactory);
+
     private SignupView signupView;
     private SignupViewModel signupViewModel;
     private LoginViewModel loginViewModel;
@@ -68,6 +78,10 @@ public class AppBuilder {
     private LeaderboardView leaderboardView;
     private SinglePlayerViewModel singlePlayerViewModel;
     private SinglePlayerView singlePlayerView;
+    private MultiPlayerViewModel multiPlayerViewModel;
+    private MultiPlayerView multiPlayerView;
+
+
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
     }
@@ -91,6 +105,8 @@ public class AppBuilder {
         studyDeckViewModel = new StudyDeckViewModel();
         leaderboardViewModel = new LeaderboardViewModel();
         singlePlayerViewModel = new SinglePlayerViewModel();
+        multiPlayerViewModel = new MultiPlayerViewModel();
+        
         mainScreenView = new MainScreenView(mainScreenViewModel,
                 viewManagerModel, studyDeckViewModel, leaderboardViewModel,  singlePlayerViewModel);
         cardPanel.add(mainScreenView, mainScreenView.getViewName());
@@ -103,10 +119,13 @@ public class AppBuilder {
 
         singlePlayerView = new SinglePlayerView(singlePlayerViewModel, viewManagerModel, session);
         cardPanel.add(singlePlayerView, singlePlayerView.getViewName());
+
+        multiPlayerView = new MultiPlayerView(multiPlayerViewModel, viewManagerModel, session);
+        cardPanel.add(multiPlayerView, multiPlayerView.getViewName());
         return this;
 
     }
-
+    
     public AppBuilder addLeaderboardView() {
         leaderboardViewModel = new LeaderboardViewModel();
 
@@ -172,31 +191,19 @@ public class AppBuilder {
         return this;
     }
 
-    public AppBuilder addSinglePlayerView() {
-        // ViewModel
-        SinglePlayerViewModel spViewModel = new SinglePlayerViewModel();
-        // Presenter
-        SinglePlayerPresenter spPresenter = new SinglePlayerPresenter(spViewModel);
-        SinglePlayerDataAccessObject spGateway = new SinglePlayerDataAccessObject(session);
-        // Interactor
-        SinglePlayerInteractor spInteractor =
-                new SinglePlayerInteractor(spPresenter, spGateway);
-        // Controller
-        SinglePlayerController spController =
-                new SinglePlayerController(spInteractor);
-        // View
-        SinglePlayerView spView =
-                new SinglePlayerView(spViewModel, viewManagerModel, session);
-        spView.setController(spController);
-        // Register the view with the card layout
-        cardPanel.add(spView, spView.getViewName());
+    public AppBuilder addMultiPlayerUseCase() {
+        MultiPlayerDataAccessObject mpDAO = new MultiPlayerDataAccessObject(session);
+        MultiPlayerOutputBoundary mpPresenter = new MultiPlayerPresenter(multiPlayerViewModel);
+        MultiPlayerInputBoundary mpInteractor = new MultiPlayerInteractor(mpPresenter, mpDAO);
+        MultiPlayerController mpController = new MultiPlayerController(mpInteractor);
+        multiPlayerView.setMultiPlayerController(mpController);
         return this;
     }
 
     public JFrame build() {
         final JFrame application = new JFrame("CourseClash");
         application.setSize(1200, 800);
-        application.setResizable(true); // Fixed size window
+        application.setResizable(true); 
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         FontLoader.registerFonts();
 
@@ -208,4 +215,5 @@ public class AppBuilder {
 
         return application;
     }
+
 }

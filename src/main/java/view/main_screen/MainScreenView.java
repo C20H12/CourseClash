@@ -81,6 +81,9 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
                 if ("Single Player".equals(button.getText())) {
                     button.addActionListener(e -> switchToSinglePlayer());
                 }
+                if ("Multiplayer".equals(button.getText())) {
+                    button.addActionListener(e -> switchToMultiPlayer());
+                }
 
                 c.gridx = col;
                 c.gridy = row;
@@ -91,7 +94,6 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
 
         this.add(buttonPanel, BorderLayout.CENTER);
     }
-
 
 
     public String getViewName() {
@@ -118,6 +120,10 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
     }
     private void switchToSinglePlayer() {
         viewManagerModel.setState(singlePlayerViewModel.getViewName());
+        viewManagerModel.firePropertyChange();
+    }
+    private void switchToMultiPlayer() {
+        viewManagerModel.setState("multi player");
         viewManagerModel.firePropertyChange();
     }
 }

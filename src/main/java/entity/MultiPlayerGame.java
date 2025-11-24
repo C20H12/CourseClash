@@ -1,80 +1,88 @@
 //Entity for multiplayer gameplay
-//Mahir
+//Mahir + luhan updates
 package entity;
 
+import java.util.List;
+
+import entity.DeckManagement.StudyCard;
 import entity.DeckManagement.StudyDeck;
 
 public class MultiPlayerGame {
-    private final User playerA;
-    private final User playerB;
-    private final StudyDeck deck;
+  private final User host;
+  private final User guest;
 
-    private int currentQuestionIndex;
-    private User currentTurn;
-    private boolean isFinished;
+  private final StudyDeck deck;
+  private int currentCardIndex;
+  private int hostScore;
+  private int guestScore;
 
-    private int scoreA;
-    private int scoreB;
+  public MultiPlayerGame(User playerA, User playerB, StudyDeck deck) {
+    this.host = playerA;
+    this.guest = playerB;
+    this.deck = deck;
+    this.currentCardIndex = 0;
+    this.hostScore = 0;
+    this.guestScore = 0;
+  }
 
-    public MultiPlayerGame(User playerA, User playerB, StudyDeck deck) {
-        this.playerA = playerA;
-        this.playerB = playerB;
-        this.deck = deck;
-        this.currentQuestionIndex = 0;
-        this.currentTurn = playerA;
-        this.isFinished = false;
-        this.scoreA = 0;
-        this.scoreB = 0;
+  public void incrementScoreFor(String username) {
+    if (username.equals(host.getUserName())) {
+      hostScore++;
+    } else if (username.equals(guest.getUserName())) {
+      guestScore++;
     }
+  }
 
-
-    public User getPlayerA() {
-        return playerA;
+  public StudyCard getCurrentCard() {
+    List<StudyCard> cards = deck.getDeck();
+    if (currentCardIndex < cards.size()) {
+      return cards.get(currentCardIndex);
     }
+    return null;
+  }
 
-    public User getPlayerB() {
-        return playerB;
-    }
+  public void advanceCard() {
+    currentCardIndex++;
+  }
 
-    public int getCurrentQuestionIndex() {
-        return currentQuestionIndex;
-    }
+  public boolean isGameOver() {
+    return currentCardIndex >= deck.getDeck().size();
+  }
 
-    public void setCurrentQuestionIndex(int index) {
-        this.currentQuestionIndex = index;
-    }
+  public User getHost() {
+    return host;
+  }
 
-    public StudyDeck getDeck() {return deck;}
+  public User getGuest() {
+    return guest;
+  }
 
-    public User getCurrentTurn() {
-        return currentTurn;
-    }
+  public StudyDeck getDeck() {
+    return deck;
+  }
 
-    public void setCurrentTurn(User currentTurn) {
-        this.currentTurn = currentTurn;
-    }
+  public int getHostScore() {
+    return hostScore;
+  }
 
-    public boolean isFinished() {
-        return isFinished;
-    }
+  public void setHostScore(int scoreA) {
+    this.hostScore = scoreA;
+  }
 
-    public void setFinished(boolean finished) {
-        this.isFinished = finished;
-    }
+  public int getGuestScore() {
+    return guestScore;
+  }
 
-    public int getScoreA() {
-        return scoreA;
-    }
+  public void setGuestScore(int scoreB) {
+    this.guestScore = scoreB;
+  }
 
-    public void setScoreA(int scoreA) {
-        this.scoreA = scoreA;
-    }
+  public int getCardIndex() {
+    return currentCardIndex;
+  }
 
-    public int getScoreB() {
-        return scoreB;
-    }
+  public void setCardIndex(int index) {
+    this.currentCardIndex = index;
+  }
 
-    public void setScoreB(int scoreB) {
-        this.scoreB = scoreB;
-    }
 }

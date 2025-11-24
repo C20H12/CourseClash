@@ -1,7 +1,6 @@
 package app;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -15,10 +14,10 @@ public class Main {
                 .addSignupUseCase()
                 .addLeaderboardUseCase()
                 .addSinglePlayerUseCase()
+                .addMultiPlayerUseCase()
                 .addStudyDeckUseCase()
                 .build();
         application.setLocationRelativeTo(null);
         application.setVisible(true);
     }
 }
-

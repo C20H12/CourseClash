@@ -1,4 +1,13 @@
 package use_case.Player;
 
-public class PlayerDataAccessInterface {
+import entity.User;
+
+public interface PlayerDataAccessInterface {
+
+    boolean existsByName(String username);
+
+    User getUser(String username);
+
+    void saveUser(User user);
 }
+
