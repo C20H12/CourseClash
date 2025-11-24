@@ -1,18 +1,24 @@
-package view;
+package view.single;
 
-
+// UI for single player
 import interface_adapter.SinglePlayer.SinglePlayerController;
 import interface_adapter.SinglePlayer.SinglePlayerState;
 import interface_adapter.SinglePlayer.SinglePlayerViewModel;
+import interface_adapter.user_session.UserSession;
 import interface_adapter.ViewManagerModel;
 import use_case.DataAccessException;
 import javax.swing.*;
+
+import entity.User;
+import entity.DeckManagement.StudyDeck;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
+import java.util.Map;
 
 public class SinglePlayerView extends JPanel implements ActionListener, PropertyChangeListener {
 
@@ -21,6 +27,8 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
     private final SinglePlayerViewModel viewModel;
     private final ViewManagerModel viewManagerModel;
     private SinglePlayerController controller;
+
+    private UserSession session;
 
     // --- Top bar ---
     private final JLabel questionCounterLabel = new JLabel("Q 0/0");
@@ -38,26 +46,49 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
     private final JLabel messageLabel = new JLabel(" ");
     private final JLabel accuracyLabel = new JLabel(" ");
     private final JLabel avgTimeLabel = new JLabel(" ");
+    private static final int BASE_FONT_SIZE = 18;
+    private static final Font TITLE_FONT = new Font("SansSerif", Font.BOLD, 22);
+    private static final Font LABEL_FONT = new Font("SansSerif", Font.PLAIN, BASE_FONT_SIZE);
+    private static final Font BUTTON_FONT = new Font("SansSerif", Font.BOLD, 16);
 
-    public SinglePlayerView(SinglePlayerViewModel viewModel, ViewManagerModel viewManagerModel) {
+    public SinglePlayerView(SinglePlayerViewModel viewModel, ViewManagerModel viewManagerModel, UserSession session) {
         this.viewModel = viewModel;
         this.viewManagerModel = viewManagerModel;
 
+        this.session = session;
+
         this.viewModel.addPropertyChangeListener(this);
+        setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
+
+        // when this first loads
+        this.viewManagerModel.addPropertyChangeListener(new PropertyChangeListener() {
+
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (evt.getNewValue().equals(viewName)) {
+                    // show a dialog with all the decks for selection
+                    controller.showAllDecks();
+                }
+            }
+        });
 
         setLayout(new BorderLayout());
         buildTopBar();
         buildQuestionArea();
         buildBottomBar();
+
     }
 
     private void buildTopBar() {
-        JPanel top = new JPanel();
-        top.setLayout(new GridLayout(1, 3));
+        JPanel top = new JPanel(new GridLayout(1, 3, 20, 0));
 
         questionCounterLabel.setHorizontalAlignment(SwingConstants.CENTER);
         scoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
         timerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        questionCounterLabel.setFont(TITLE_FONT);
+        scoreLabel.setFont(TITLE_FONT);
+        timerLabel.setFont(TITLE_FONT);
 
         top.add(wrapWithTitle("Questions Left", questionCounterLabel));
         top.add(wrapWithTitle("Total Score", scoreLabel));
@@ -69,57 +100,74 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
     private JPanel wrapWithTitle(String title, JComponent content) {
         JPanel panel = new JPanel(new BorderLayout());
         JLabel label = new JLabel(title, SwingConstants.CENTER);
-        label.setFont(label.getFont().deriveFont(Font.BOLD));
+        label.setFont(new Font("SansSerif", Font.BOLD, 14));
+        panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         panel.add(label, BorderLayout.NORTH);
         panel.add(content, BorderLayout.CENTER);
         return panel;
     }
 
     private void buildQuestionArea() {
-        JPanel center = new JPanel();
-        center.setLayout(new BorderLayout());
+        JPanel center = new JPanel(new BorderLayout());
+        center.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
 
         questionTextArea.setLineWrap(true);
         questionTextArea.setWrapStyleWord(true);
         questionTextArea.setEditable(false);
-        questionTextArea.setFont(questionTextArea.getFont().deriveFont(16f));
+        questionTextArea.setFont(new Font("SansSerif", Font.PLAIN, 20));
+        questionTextArea.setOpaque(false);
+        questionTextArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
 
         JScrollPane questionScroll = new JScrollPane(questionTextArea);
+        questionScroll.setBorder(null);
+        questionScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         center.add(questionScroll, BorderLayout.NORTH);
 
         JPanel optionsPanel = new JPanel();
-        optionsPanel.setLayout(new GridLayout(4, 1, 2, 2));
+        optionsPanel.setLayout(new GridLayout(4, 1, 10, 10));
+        optionsPanel.setBorder(BorderFactory.createEmptyBorder(10, 40, 10, 40));
 
         for (int i = 0; i < optionButtons.length; i++) {
             optionButtons[i] = new JRadioButton("Option " + (i + 1));
+            optionButtons[i].setFont(LABEL_FONT);
+            optionButtons[i].setFocusPainted(false);
             optionsGroup.add(optionButtons[i]);
             optionsPanel.add(optionButtons[i]);
-        }
-
+    }
         center.add(optionsPanel, BorderLayout.CENTER);
         add(center, BorderLayout.CENTER);
     }
-
     private void buildBottomBar() {
-        JPanel bottom = new JPanel();
-        bottom.setLayout(new BorderLayout());
+            JPanel bottom = new JPanel(new BorderLayout());
+            bottom.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
-        JPanel buttonsPanel = new JPanel();
-        buttonsPanel.add(submitButton);
-        buttonsPanel.add(endGameButton);
+            JPanel buttonsPanel = new JPanel();
+            submitButton.setFont(BUTTON_FONT);
+            endGameButton.setFont(BUTTON_FONT);
 
-        submitButton.addActionListener(this);
-        endGameButton.addActionListener(this);
+            submitButton.setPreferredSize(new Dimension(120, 35));
+            endGameButton.setPreferredSize(new Dimension(120, 35));
 
-        JPanel statsPanel = new JPanel(new GridLayout(3, 1));
-        statsPanel.add(messageLabel);
-        statsPanel.add(accuracyLabel);
-        statsPanel.add(avgTimeLabel);
+            buttonsPanel.add(submitButton);
+            buttonsPanel.add(endGameButton);
 
-        bottom.add(buttonsPanel, BorderLayout.NORTH);
-        bottom.add(statsPanel, BorderLayout.CENTER);
+            submitButton.addActionListener(this);
+            endGameButton.addActionListener(this);
 
-        add(bottom, BorderLayout.SOUTH);
+            JPanel statsPanel = new JPanel(new GridLayout(3, 1));
+            statsPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+            messageLabel.setFont(LABEL_FONT);
+            accuracyLabel.setFont(LABEL_FONT);
+            avgTimeLabel.setFont(LABEL_FONT);
+
+            statsPanel.add(messageLabel);
+            statsPanel.add(accuracyLabel);
+            statsPanel.add(avgTimeLabel);
+
+            bottom.add(buttonsPanel, BorderLayout.NORTH);
+            bottom.add(statsPanel, BorderLayout.CENTER);
+
+            add(bottom, BorderLayout.SOUTH);
     }
 
     public String getViewName() {
@@ -134,7 +182,7 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
      * Called by MainScreen or BrowseStudySetView to start the game.
      */
     public void startGame(String deckTitle,
-                          entity.User user,
+                          User user,
                           int timerPerQuestion,
                           boolean shuffle,
                           int numQuestions) throws DataAccessException {
@@ -164,7 +212,11 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
 
         } else if (e.getSource() == endGameButton) {
             try {
-                controller.endGame();
+                if (!viewModel.getState().isGameOver()){
+                    controller.endGame();
+                }
+                viewManagerModel.setState("main screen");
+                viewManagerModel.firePropertyChange();
             } catch (DataAccessException ex) {
                 throw new RuntimeException(ex);
             }
@@ -182,9 +234,30 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals("initShowAllDeckNames")) {
+            List<StudyDeck> allDecks = viewModel.getState().getDecksList();
+            SinglePlayerSelectSetPopup popup = new SinglePlayerSelectSetPopup(allDecks);
+            popup.setVisible(true);
+            popup.setModalityType(Dialog.DEFAULT_MODALITY_TYPE);
+            StudyDeck selectedDeck = popup.getSelectedDeck();
+            if (selectedDeck != null) {
+                try {
+                    // start game with selected deck
+                    startGame(selectedDeck.getTitle(), session.getUser(), 10, false, selectedDeck.getCardCount());
+                }
+                catch (DataAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                viewManagerModel.setState("main screen");
+                viewManagerModel.firePropertyChange();
+            }
+            return;
+        }
         SinglePlayerState state = viewModel.getState();
 
-        questionCounterLabel.setText("Q " + state.getCurrentIndex() + "/" + state.getTotal());
+        int qLeft = state.getTotal() - state.getCurrentIndex() + 1;
+        questionCounterLabel.setText("Q " + qLeft + "/" + state.getTotal());
         scoreLabel.setText(String.valueOf(state.getScore()));
 
         questionTextArea.setText(state.getQuestionText());
