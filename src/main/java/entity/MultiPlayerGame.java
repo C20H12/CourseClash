@@ -1,92 +1,88 @@
-//Mahir
+//Entity for multiplayer gameplay
+//Mahir + luhan updates
 package entity;
+
+import java.util.List;
 
 import entity.DeckManagement.StudyCard;
 import entity.DeckManagement.StudyDeck;
 
-import java.util.List;
-
 public class MultiPlayerGame {
-    private final User playerA;
-    private final User playerB;
-    private final StudyDeck deck;
+  private final User host;
+  private final User guest;
 
-    private int currentCardIndex;
-    private User currentTurn;
-    private int currentCardAnswersSubmitted;
-    private boolean isFinished;
-    private int scoreA;
-    private int scoreB;
+  private final StudyDeck deck;
+  private int currentCardIndex;
+  private int hostScore;
+  private int guestScore;
 
-    public MultiPlayerGame(User playerA, User playerB, StudyDeck deck) {
-        this.playerA = playerA;
-        this.playerB = playerB;
-        this.deck = deck;
-        this.currentCardIndex = 0;
-        this.currentTurn = playerA;
-        this.isFinished = false;
-        this.scoreA = 0;
-        this.scoreB = 0;
-        this.currentCardAnswersSubmitted = 0;
+  public MultiPlayerGame(User playerA, User playerB, StudyDeck deck) {
+    this.host = playerA;
+    this.guest = playerB;
+    this.deck = deck;
+    this.currentCardIndex = 0;
+    this.hostScore = 0;
+    this.guestScore = 0;
+  }
+
+  public void incrementScoreFor(String username) {
+    if (username.equals(host.getUserName())) {
+      hostScore++;
+    } else if (username.equals(guest.getUserName())) {
+      guestScore++;
     }
+  }
 
-
-    public boolean recordAnswerAndIsReadyToAdvance() {
-        this.currentCardAnswersSubmitted++;
-        return this.currentCardAnswersSubmitted >= 2;
+  public StudyCard getCurrentCard() {
+    List<StudyCard> cards = deck.getDeck();
+    if (currentCardIndex < cards.size()) {
+      return cards.get(currentCardIndex);
     }
+    return null;
+  }
 
-    public void advanceCardAndResetCounter() {
-        this.currentCardIndex++;
-        this.currentCardAnswersSubmitted = 0;
-    }
+  public void advanceCard() {
+    currentCardIndex++;
+  }
 
+  public boolean isGameOver() {
+    return currentCardIndex >= deck.getDeck().size();
+  }
 
-    public void switchTurn() {
-        if (currentTurn.getUserName().equals(playerA.getUserName())) {
-            currentTurn = playerB;
-        } else {
-            currentTurn = playerA;
-        }
-    }
+  public User getHost() {
+    return host;
+  }
 
-    public void incrementScoreFor(String username) {
-        if (username.equals(playerA.getUserName())) {
-            scoreA++;
-        } else if (username.equals(playerB.getUserName())) {
-            scoreB++;
-        }
-    }
+  public User getGuest() {
+    return guest;
+  }
 
-    public StudyCard getCurrentCard() {
-        List<StudyCard> cards = deck.getDeck();
-        if (currentCardIndex < cards.size()) {
-            return cards.get(currentCardIndex);
-        }
-        return null;
-    }
+  public StudyDeck getDeck() {
+    return deck;
+  }
 
-    public boolean isGameOver() {
-        return currentCardIndex >= deck.getDeck().size();
-    }
+  public int getHostScore() {
+    return hostScore;
+  }
 
+  public void setHostScore(int scoreA) {
+    this.hostScore = scoreA;
+  }
 
-    public User getPlayerA() { return playerA; }
-    public User getPlayerB() { return playerB; }
-    public StudyDeck getDeck() { return deck; }
+  public int getGuestScore() {
+    return guestScore;
+  }
 
-    public User getCurrentTurn() { return currentTurn; }
-    public void setCurrentTurn(User currentTurn) { this.currentTurn = currentTurn; }
+  public void setGuestScore(int scoreB) {
+    this.guestScore = scoreB;
+  }
 
-    public int getScoreA() { return scoreA; }
-    public void setScoreA(int scoreA) { this.scoreA = scoreA; }
+  public int getCardIndex() {
+    return currentCardIndex;
+  }
 
-    public int getScoreB() { return scoreB; }
-    public void setScoreB(int scoreB) { this.scoreB = scoreB; }
+  public void setCardIndex(int index) {
+    this.currentCardIndex = index;
+  }
 
-    public int getCardIndex() { return currentCardIndex; }
-    public void setCardIndex(int index) { this.currentCardIndex = index; }
-
-    public int getCurrentCardAnswersSubmitted() { return currentCardAnswersSubmitted; }
-    public void setCurrentCardAnswersSubmitted(int count) { this.currentCardAnswersSubmitted = count; }
 }

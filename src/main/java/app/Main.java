@@ -9,15 +9,15 @@ public class Main {
                 .addLoginView()
                 .addSignupView()
                 .addMainScreenView()
+                .addLeaderboardView()
                 .addLoginUseCase()
-                .addMultiPlayerUseCase()
                 .addSignupUseCase()
                 .addLeaderboardUseCase()
                 .addSinglePlayerUseCase()
+                .addMultiPlayerUseCase()
+                .addStudyDeckUseCase()
                 .build();
-
         application.setLocationRelativeTo(null);
         application.setVisible(true);
     }
 }
-

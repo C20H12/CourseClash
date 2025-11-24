@@ -1,0 +1,40 @@
+Nov 23, 2025 7:28:15 PM entity.peer.PeerConnection logPeerConncetionInfo
+INFO: Creating offer...
+Nov 23, 2025 7:28:15 PM entity.peer.PeerConnection logPeerConncetionInfo
+INFO: Peer connection created
+Nov 23, 2025 7:28:15 PM entity.peer.PeerConnection logPeerConncetionInfo
+INFO: Data channel created: myDataChannel
+Nov 23, 2025 7:28:15 PM entity.peer.PeerConnection logPeerConncetionInfo
+INFO: Host init finished, code: 9f97d47f-44d2-42b3-92a7-0b36d04461da
+Nov 23, 2025 7:28:15 PM entity.peer.PeerConnection logPeerConncetionInfo
+INFO: Offer created successfully
+Nov 23, 2025 7:28:15 PM entity.peer.PeerConnection logPeerConncetionInfo
+INFO: Local description set - ICE gathering started
+Nov 23, 2025 7:28:15 PM entity.peer.PeerConnection logPeerConncetionInfo
+INFO: ICE Gathering State: GATHERING
+Nov 23, 2025 7:28:15 PM entity.peer.PeerConnection logPeerConncetionInfo
+INFO: ICE Candidate for offer generated: 0
+Nov 23, 2025 7:28:16 PM entity.peer.PeerConnection logPeerConncetionInfo
+INFO: ICE Candidate for offer generated: 0
+Nov 23, 2025 7:28:16 PM entity.peer.PeerConnection logPeerConncetionInfo
+INFO: ICE Candidate for offer generated: 0
+Nov 23, 2025 7:28:16 PM entity.peer.PeerConnection logPeerConncetionInfo
+INFO: ICE Candidate for offer generated: 0
+Nov 23, 2025 7:28:16 PM entity.peer.PeerConnection logPeerConncetionInfo
+INFO: ICE Candidate for offer generated: 0
+Nov 23, 2025 7:28:16 PM entity.peer.PeerConnection logPeerConncetionInfo
+INFO: ICE Candidate for offer generated: 0
+Nov 23, 2025 7:28:16 PM entity.peer.PeerConnection logPeerConncetionInfo
+INFO: ICE Candidate for offer generated: 0
+Nov 23, 2025 7:28:16 PM entity.peer.PeerConnection logPeerConncetionInfo
+INFO: ICE Candidate for offer generated: 0
+Nov 23, 2025 7:28:16 PM entity.peer.PeerConnection logPeerConncetionInfo
+INFO: ICE Candidate for offer generated: 0
+Nov 23, 2025 7:28:16 PM entity.peer.PeerConnection logPeerConncetionInfo
+INFO: ICE Candidate for offer generated: 0
+Nov 23, 2025 7:28:16 PM entity.peer.PeerConnection logPeerConncetionInfo
+INFO: ICE Candidate for offer generated: 0
+Nov 23, 2025 7:28:16 PM entity.peer.PeerConnection logPeerConncetionInfo
+INFO: ICE Candidate for offer generated: 0
+Nov 23, 2025 7:28:16 PM entity.peer.PeerConnection logPeerConncetionInfo
+INFO: ICE Candidate for offer generated: 0

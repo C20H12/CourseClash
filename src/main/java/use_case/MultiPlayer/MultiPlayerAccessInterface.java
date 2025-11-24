@@ -1,8 +1,12 @@
 //Mahir
 package use_case.MultiPlayer;
 
-import entity.MultiPlayerGame;
+import java.util.List;
+
+import entity.DeckManagement.StudyDeck;
+import interface_adapter.user_session.UserSession;
 
 public interface MultiPlayerAccessInterface {
-    void save(MultiPlayerGame game);
+  List<StudyDeck> getAllDecks();
+  UserSession getSession();
 }
