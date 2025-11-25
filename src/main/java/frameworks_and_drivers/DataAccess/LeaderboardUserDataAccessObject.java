@@ -24,7 +24,7 @@ public class LeaderboardUserDataAccessObject implements LeaderboardUserDataAcces
     }
 
     public int getTotalUserCount() throws DataAccessException {
-        final String method = "/api/get-total-user-count";
+        final String method = "/api/get-user-count";
         JSONObject response = makeApiRequest("GET", method, new HashMap<>(), session.getApiKey());
         return response.getInt("total-user-count");
     }

@@ -6,6 +6,7 @@ import use_case.leaderboard.LeaderboardType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class LeaderboardViewModel extends ViewModel<LeaderboardState> {
@@ -22,10 +23,10 @@ public class LeaderboardViewModel extends ViewModel<LeaderboardState> {
 
     public static final int LEADERBOARD_ENTRY_COUNT = 5;
 
-    public ArrayList<Object> getLeaderboardByType(LeaderboardType leaderboardType) {
-        Map<LeaderboardType, ArrayList<Object>> converted = new HashMap<>();
+    public ArrayList<ArrayList<Object>> getLeaderboardByType(LeaderboardType leaderboardType) {
+        Map<LeaderboardType, ArrayList<ArrayList<Object>>> converted = new HashMap<>();
         for (LeaderboardType t : LeaderboardType.values()) {
-            ArrayList<Object> rows = new ArrayList<>();
+            ArrayList<ArrayList<Object>> rows = new ArrayList<>();
             ArrayList<User> users = leaderboard.get(t);
             if (users != null) {
                 for (int i = 0; i < users.size(); i++) {
