@@ -12,20 +12,30 @@ public class LeaderboardChartPanel extends JPanel {
 
     private Map<LeaderboardType, List<User>> scores;
     private LeaderboardType currentType = LeaderboardType.LEVEL;
+    private int topN = 10; // default top N
 
+    // ---------- Set leaderboard scores ----------
     public void setScores(Map<LeaderboardType, List<User>> scores) {
         this.scores = scores;
         repaint();
     }
 
+    // ---------- Set current metric type ----------
     public void setCurrentType(LeaderboardType type) {
         this.currentType = type;
+        repaint();
+    }
+
+    // ---------- Set Top N users ----------
+    public void setTopN(int topN) {
+        this.topN = topN;
         repaint();
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+
         if (scores == null || !scores.containsKey(currentType)) return;
 
         List<User> users = scores.get(currentType);
@@ -33,7 +43,12 @@ public class LeaderboardChartPanel extends JPanel {
 
         int width = getWidth();
         int height = getHeight();
-        int barWidth = width / (users.size() * 2);
+
+        // Determine how many users to display
+        int displayCount = Math.min(topN, users.size());
+        int barWidth = width / (displayCount * 2);
+
+        // Determine max value to scale bars
         int maxValue = users.stream()
                 .mapToInt(u -> switch (currentType) {
                     case LEVEL -> u.getLevel();
@@ -43,23 +58,23 @@ public class LeaderboardChartPanel extends JPanel {
                 })
                 .max().orElse(1);
 
-        g.setColor(Color.BLUE);
-        g.setFont(new Font("Helvetica", Font.PLAIN, 14));
-
-        for (int i = 0; i < users.size(); i++) {
+        // Draw bars and labels
+        for (int i = 0; i < displayCount; i++) {
             User u = users.get(i);
+
             int value = switch (currentType) {
                 case LEVEL -> u.getLevel();
                 case EXPERIENCE_POINTS -> u.getExperiencePoints();
                 case QUESTIONS_ANSWERED -> u.getQuestionsAnswered();
                 case QUESTIONS_CORRECT -> u.getQuestionsCorrect();
             };
-            int barHeight = (int) (((double) value / maxValue) * (height - 50));
+
+            int barHeight = (int) (((double) value / maxValue) * (height - 60));
             int x = i * 2 * barWidth + barWidth / 2;
             int y = height - barHeight - 30;
 
             // Draw bar
-            g.setColor(Color.BLUE);
+            g.setColor(getBarColor(currentType));
             g.fillRect(x, y, barWidth, barHeight);
 
             // Draw value above bar
@@ -73,5 +88,24 @@ public class LeaderboardChartPanel extends JPanel {
             int nameWidth = g.getFontMetrics().stringWidth(username);
             g.drawString(username, x + (barWidth - nameWidth) / 2, height - 10);
         }
+
+        // Optional: show message if fewer users than top N
+        if (displayCount < topN) {
+            g.setColor(Color.RED.darker());
+            g.setFont(new Font("Helvetica", Font.BOLD, 16));
+            String msg = "Only " + displayCount + " users available";
+            int msgWidth = g.getFontMetrics().stringWidth(msg);
+            g.drawString(msg, (width - msgWidth) / 2, 20);
+        }
+    }
+
+    // ---------- Get color based on leaderboard type ----------
+    private Color getBarColor(LeaderboardType type) {
+        return switch (type) {
+            case LEVEL -> new Color(70, 130, 180); // blue
+            case EXPERIENCE_POINTS -> new Color(34, 139, 34); // green
+            case QUESTIONS_ANSWERED -> new Color(255, 165, 0); // orange
+            case QUESTIONS_CORRECT -> new Color(220, 20, 60); // crimson
+        };
     }
 }

@@ -29,8 +29,8 @@ public class LeaderboardChartView extends JPanel implements PropertyChangeListen
 
         setLayout(new BorderLayout());
 
-        // ---------- Top Panel for Buttons and Type Selector ----------
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
+        // ---------- Top Panel for Buttons and Selectors ----------
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
         topPanel.setBackground(new Color(245, 245, 245));
 
         // Back button
@@ -52,7 +52,19 @@ public class LeaderboardChartView extends JPanel implements PropertyChangeListen
             };
             chartPanel.setCurrentType(type);
         });
+        topPanel.add(new JLabel("Metric:"));
         topPanel.add(typeSelector);
+
+        // Combo box for Top N users
+        Integer[] topOptions = {5, 10, 20, 50};
+        JComboBox<Integer> topSelector = new JComboBox<>(topOptions);
+        topSelector.setFont(new Font("Helvetica", Font.BOLD, 16));
+        topSelector.addActionListener(e -> {
+            int topN = (Integer) topSelector.getSelectedItem();
+            chartPanel.setTopN(topN);
+        });
+        topPanel.add(new JLabel("Top Users:"));
+        topPanel.add(topSelector);
 
         add(topPanel, BorderLayout.NORTH);
 

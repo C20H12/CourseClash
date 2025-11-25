@@ -25,7 +25,7 @@ public class LeaderboardAsChartInteractor implements LeaderboardAsChartInputBoun
         // Get top users for all types
         Map<LeaderboardType, List<User>> chartData = new HashMap<>();
         for (LeaderboardType type : LeaderboardType.values()) {
-            chartData.put(type, new ArrayList<>(dao.getTopUsers(5).get(type)));
+            chartData.put(type, new ArrayList<>(dao.getTopUsers(50).get(type)));
         }
         LeaderboardAsChartOutputData outputData = new LeaderboardAsChartOutputData(chartData);
         presenter.present(outputData);
