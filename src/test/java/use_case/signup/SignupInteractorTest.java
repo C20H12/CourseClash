@@ -34,7 +34,7 @@ class SignupInteractorTest {
 
             @Override
             public void switchToLoginView() {
-                // idk what to check?
+                fail("Switch to login view is unexpected.");
             }
         };
         SignupInputData inputData = new SignupInputData(testUser.getUserName(), testUser.getPassword(), repeatedPassword);
