@@ -23,6 +23,12 @@ public class LeaderboardUserDataAccessObject implements LeaderboardUserDataAcces
 
     }
 
+    public int getTotalUserCount() throws DataAccessException {
+        final String method = "/api/get-total-user-count";
+        JSONObject response = makeApiRequest("GET", method, new HashMap<>(), session.getApiKey());
+        return response.getInt("total-user-count");
+    }
+
     @Override
     public Map<LeaderboardType, ArrayList<User>> getTopUsers(int topN) throws DataAccessException {
         final String method = "/api/get-top-user";

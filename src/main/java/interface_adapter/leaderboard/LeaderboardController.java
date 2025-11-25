@@ -12,8 +12,8 @@ public class LeaderboardController {
         this.leaderboardInputBoundary = leaderboardInputBoundary;
     }
 
-    public void loadLeaderboard() throws DataAccessException {
-        LeaderboardInputData inputData = new LeaderboardInputData();
+    public void loadLeaderboard(int leaderboardEntryCount) throws DataAccessException {
+        LeaderboardInputData inputData = new LeaderboardInputData(leaderboardEntryCount);
         leaderboardInputBoundary.execute(inputData);
     }
 }

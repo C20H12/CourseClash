@@ -99,7 +99,7 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
             }
         };
         if (leaderboardController != null)
-            leaderboardController.loadLeaderboard();
+            leaderboardController.loadLeaderboard(leaderboardViewModel.LEADERBOARD_ENTRY_COUNT);
         // get the leaderboard
         ArrayList<Object> leaderboardAsArray = leaderboardViewModel.getLeaderboardByType(leaderboardType);
         for (Object obj : leaderboardAsArray) {

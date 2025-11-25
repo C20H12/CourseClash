@@ -8,6 +8,15 @@ import java.util.Map;
 
 public interface LeaderboardUserDataAccessInterface {
 
+
+    /**
+     * Get the total number of users in the database.
+     *
+     * @return total user count
+     * @throws DataAccessException Exception when data access fails
+     */
+    int getTotalUserCount() throws DataAccessException;
+
     /**
      * Get the top ranking user information. Note: user password will be null.
      * @param topN specify the nth top user
