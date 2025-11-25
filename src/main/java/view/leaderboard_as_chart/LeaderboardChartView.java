@@ -3,6 +3,7 @@ package view.leaderboard_as_chart;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.leaderboard_as_chart.LeaderboardAsChartController;
 import interface_adapter.leaderboard_as_chart.LeaderboardAsChartViewModel;
+import use_case.leaderboard.LeaderboardType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +15,7 @@ public class LeaderboardChartView extends JPanel implements PropertyChangeListen
     private final String viewName = "LeaderboardChartView";
     private final LeaderboardAsChartController controller;
     private final LeaderboardAsChartViewModel viewModel;
-    private ViewManagerModel viewManagerModel; // to switch views
+    private final ViewManagerModel viewManagerModel;
     private final LeaderboardChartPanel chartPanel = new LeaderboardChartPanel();
 
     public LeaderboardChartView(LeaderboardAsChartController controller,
@@ -28,16 +29,32 @@ public class LeaderboardChartView extends JPanel implements PropertyChangeListen
 
         setLayout(new BorderLayout());
 
-        // ---------- Top Panel for Buttons ----------
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
-        buttonPanel.setBackground(new Color(245, 245, 245));
+        // ---------- Top Panel for Buttons and Type Selector ----------
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
+        topPanel.setBackground(new Color(245, 245, 245));
 
-        // Back to Table button
+        // Back button
         JButton backButton = createStyledButton("Back to Table");
         backButton.addActionListener(e -> switchToLeaderboardTable());
-        buttonPanel.add(backButton);
+        topPanel.add(backButton);
 
-        add(buttonPanel, BorderLayout.NORTH);
+        // Combo box for leaderboard type
+        String[] leaderboardTypes = {"Level", "Experience Points", "Questions Answered", "Questions Correct"};
+        JComboBox<String> typeSelector = new JComboBox<>(leaderboardTypes);
+        typeSelector.setFont(new Font("Helvetica", Font.BOLD, 16));
+        typeSelector.addActionListener(e -> {
+            int selectedIndex = typeSelector.getSelectedIndex();
+            LeaderboardType type = switch (selectedIndex) {
+                case 1 -> LeaderboardType.EXPERIENCE_POINTS;
+                case 2 -> LeaderboardType.QUESTIONS_ANSWERED;
+                case 3 -> LeaderboardType.QUESTIONS_CORRECT;
+                default -> LeaderboardType.LEVEL;
+            };
+            chartPanel.setCurrentType(type);
+        });
+        topPanel.add(typeSelector);
+
+        add(topPanel, BorderLayout.NORTH);
 
         // ---------- Chart Panel ----------
         JPanel chartContainer = new JPanel(new BorderLayout());
@@ -45,7 +62,7 @@ public class LeaderboardChartView extends JPanel implements PropertyChangeListen
         add(chartContainer, BorderLayout.CENTER);
     }
 
-    // ---------- Styled Button Method ----------
+    // ---------- Styled Button ----------
     private JButton createStyledButton(String text) {
         JButton button = new JButton(text);
         button.setFont(new Font("Helvetica", Font.BOLD, 18));
@@ -57,7 +74,7 @@ public class LeaderboardChartView extends JPanel implements PropertyChangeListen
         return button;
     }
 
-    // ---------- Switch Back to Table ----------
+    // ---------- Switch back to table view ----------
     private void switchToLeaderboardTable() {
         if (viewManagerModel != null) {
             viewManagerModel.setState("leaderboard"); // must match LeaderboardView.getViewName()
@@ -69,8 +86,9 @@ public class LeaderboardChartView extends JPanel implements PropertyChangeListen
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        // Update chart when ViewModel changes
         var state = viewModel.getState();
-        chartPanel.setScores(state.getScores()); // update chart when ViewModel changes
+        chartPanel.setScores(state.getScores());
         chartPanel.repaint();
     }
 

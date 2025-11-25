@@ -44,6 +44,7 @@ public class LeaderboardChartPanel extends JPanel {
                 .max().orElse(1);
 
         g.setColor(Color.BLUE);
+        g.setFont(new Font("Helvetica", Font.PLAIN, 14));
 
         for (int i = 0; i < users.size(); i++) {
             User u = users.get(i);
@@ -57,10 +58,20 @@ public class LeaderboardChartPanel extends JPanel {
             int x = i * 2 * barWidth + barWidth / 2;
             int y = height - barHeight - 30;
 
-            g.fillRect(x, y, barWidth, barHeight);
-            g.setColor(Color.BLACK);
-            g.drawString(u.getUserName(), x, height - 10);
+            // Draw bar
             g.setColor(Color.BLUE);
+            g.fillRect(x, y, barWidth, barHeight);
+
+            // Draw value above bar
+            g.setColor(Color.BLACK);
+            String valueStr = String.valueOf(value);
+            int strWidth = g.getFontMetrics().stringWidth(valueStr);
+            g.drawString(valueStr, x + (barWidth - strWidth) / 2, y - 5);
+
+            // Draw username below bar
+            String username = u.getUserName();
+            int nameWidth = g.getFontMetrics().stringWidth(username);
+            g.drawString(username, x + (barWidth - nameWidth) / 2, height - 10);
         }
     }
 }
