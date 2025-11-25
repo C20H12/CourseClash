@@ -32,6 +32,10 @@ public class LeaderboardChartPanel extends JPanel {
         repaint();
     }
 
+    public int getTopN() {
+        return topN;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

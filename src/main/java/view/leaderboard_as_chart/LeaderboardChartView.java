@@ -59,6 +59,7 @@ public class LeaderboardChartView extends JPanel implements PropertyChangeListen
         Integer[] topOptions = {5, 10, 20, 50};
         JComboBox<Integer> topSelector = new JComboBox<>(topOptions);
         topSelector.setFont(new Font("Helvetica", Font.BOLD, 16));
+        topSelector.setSelectedItem(chartPanel.getTopN());
         topSelector.addActionListener(e -> {
             int topN = (Integer) topSelector.getSelectedItem();
             chartPanel.setTopN(topN);
