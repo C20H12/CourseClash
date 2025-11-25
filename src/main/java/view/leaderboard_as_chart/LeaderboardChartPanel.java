@@ -9,10 +9,23 @@ import java.util.List;
 import java.util.Map;
 
 public class LeaderboardChartPanel extends JPanel {
+    // Constants
+    private static final int DEFAULT_TOP_N = 10;
+    private static final int TOP_PADDING = 30;
+    private static final int BOTTOM_PADDING = 30;
+    private static final int USERNAME_BOTTOM_PADDING = 10;
+    private static final int VALUE_LABEL_PADDING = 5;
+    private static final int MESSAGE_Y = 20;
+    private static final int BAR_SPACING_FACTOR = 2;
+    private static final double BAR_OFFSET_FACTOR = 0.5;
+    private static final String FONT_FAMILY = "Helvetica";
+    private static final int LABEL_FONT_SIZE = 14;
+    private static final int MESSAGE_FONT_SIZE = 16;
+
 
     private Map<LeaderboardType, List<User>> scores;
     private LeaderboardType currentType = LeaderboardType.LEVEL;
-    private int topN = 10; // default top N
+    private int topN = DEFAULT_TOP_N; // default top N
 
     // ---------- Set leaderboard scores ----------
     public void setScores(Map<LeaderboardType, List<User>> scores) {
@@ -32,6 +45,7 @@ public class LeaderboardChartPanel extends JPanel {
         repaint();
     }
 
+    // ---------- Get Top N users ----------
     public int getTopN() {
         return topN;
     }
@@ -50,7 +64,7 @@ public class LeaderboardChartPanel extends JPanel {
 
         // Determine how many users to display
         int displayCount = Math.min(topN, users.size());
-        int barWidth = width / (displayCount * 2);
+        int barWidth = width / (displayCount * BAR_SPACING_FACTOR);
 
         // Determine max value to scale bars
         int maxValue = users.stream()
@@ -73,11 +87,12 @@ public class LeaderboardChartPanel extends JPanel {
                 case QUESTIONS_CORRECT -> u.getQuestionsCorrect();
             };
 
-            int barHeight = (int) (((double) value / maxValue) * (height - 60));
-            int x = i * 2 * barWidth + barWidth / 2;
-            int y = height - barHeight - 30;
+            int barHeight = (int) (((double) value / maxValue) * (height - TOP_PADDING - BOTTOM_PADDING));
+            int x = (int) (i * 2 * barWidth + barWidth * BAR_OFFSET_FACTOR);
+            int y = height - barHeight - BOTTOM_PADDING;
 
             // Draw bar
+            g.setFont(new Font(FONT_FAMILY, Font.PLAIN, LABEL_FONT_SIZE));
             g.setColor(getBarColor(currentType));
             g.fillRect(x, y, barWidth, barHeight);
 
@@ -85,21 +100,21 @@ public class LeaderboardChartPanel extends JPanel {
             g.setColor(Color.BLACK);
             String valueStr = String.valueOf(value);
             int strWidth = g.getFontMetrics().stringWidth(valueStr);
-            g.drawString(valueStr, x + (barWidth - strWidth) / 2, y - 5);
+            g.drawString(valueStr, x + (barWidth - strWidth) / 2, y - VALUE_LABEL_PADDING);
 
             // Draw username below bar
             String username = u.getUserName();
             int nameWidth = g.getFontMetrics().stringWidth(username);
-            g.drawString(username, x + (barWidth - nameWidth) / 2, height - 10);
+            g.drawString(username, x + (barWidth - nameWidth) / 2, height - USERNAME_BOTTOM_PADDING);
         }
 
-        // Optional: show message if fewer users than top N
+        // Show message if fewer users than top N
         if (displayCount < topN) {
             g.setColor(Color.RED.darker());
-            g.setFont(new Font("Helvetica", Font.BOLD, 16));
+            g.setFont(new Font(FONT_FAMILY, Font.BOLD, MESSAGE_FONT_SIZE));
             String msg = "Only " + displayCount + " users available";
             int msgWidth = g.getFontMetrics().stringWidth(msg);
-            g.drawString(msg, (width - msgWidth) / 2, 20);
+            g.drawString(msg, (width - msgWidth) / 2, MESSAGE_Y);
         }
     }
 
