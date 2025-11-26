@@ -23,6 +23,8 @@ public class StudyCard {
 
     public int getSolutionId() {
         return solutionId;
+
+        // TODO merge the check into here from the getCorrectAnswer and straight up nuke it.
     }
 
     /**
