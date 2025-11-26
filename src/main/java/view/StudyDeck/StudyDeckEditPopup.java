@@ -2,6 +2,7 @@ package view.StudyDeck;
 
 import entity.DeckManagement.StudyCard;
 import entity.DeckManagement.StudyDeck;
+import interface_adapter.studyDeck.StudyDeckController;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -18,8 +19,9 @@ import java.util.List;
  */
 public class StudyDeckEditPopup extends JDialog {
 
+	private static final Color SELECTED_CARD_COLOR = new Color(220, 235, 250);
+
 	private final StudyDeck originalDeck;
-	private final Map<Integer, StudyCard> cardStateMap = new LinkedHashMap<>();
 
 	private JPanel cardListPanel;
 	private JTextArea questionArea;
@@ -27,26 +29,26 @@ public class StudyDeckEditPopup extends JDialog {
 	private final List<JRadioButton> answerChoiceButtons = new ArrayList<>();
 	private final ButtonGroup answerButtonGroup = new ButtonGroup();
 
-	private int nextCardId = 1;
 	private int selectedCardId = -1;
 
-	public StudyDeckEditPopup(StudyDeck deck) {
+	private StudyDeckController controller;
+
+	public StudyDeckEditPopup(StudyDeck deck, StudyDeckController controller) {
 		this.originalDeck = deck;
+		this.controller = controller;
 
 		setTitle("Study Set Editor - " + deck.getTitle());
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setSize(1100, 650);
 		setLocationRelativeTo(null);
 
-		List<StudyCard> deckCards = deck.getDeck();
-		for (StudyCard card : deckCards) {
-			addNewStudyCard(card.getQuestion(), card.getAnswers(), card.getSolutionId());
-		}
-    
+		controller.initEdit(deck);
+
     initUi();
-		if (!cardStateMap.isEmpty()) {
-			selectedCardId = cardStateMap.keySet().iterator().next();
-			loadCardIntoEditor(selectedCardId);
+		StudyCard firstCard = controller.getFirstCardInCurrentEditedDeck();
+		if (null != firstCard) {
+			selectedCardId = 0;
+			loadCardIntoEditor(firstCard);
 		} else {
 			toggleCardFieldsEnable(false);
 		}
@@ -92,10 +94,9 @@ public class StudyDeckEditPopup extends JDialog {
 		addButton.setPreferredSize(new Dimension(130, 50));
 		addButton.addActionListener(e -> {
 			persistCurrentCard();
-			int newId = addNewStudyCard("", Arrays.asList("", "", "", ""), 0);
-			selectedCardId = newId;
+			selectedCardId = controller.addNewCardToEdit();
 			refreshCardListUi();
-			loadCardIntoEditor(newId);
+			loadCardIntoEditor(controller.getCardByIndex(selectedCardId));
 		});
 		JPanel addButtonWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		addButtonWrapper.add(addButton);
@@ -168,29 +169,23 @@ public class StudyDeckEditPopup extends JDialog {
 		return right;
 	}
 
-  // ============ crud ==============
-
-	private int addNewStudyCard(String question, List<String> answers, int solutionIndex) {
-		ArrayList<String> normalizedAnswers = new ArrayList<>();
-		for (int i = 0; i < 4; i++) {
-			if (i < answers.size()) {
-				normalizedAnswers.add(answers.get(i));
-			} else {
-				normalizedAnswers.add("");
-			}
-		}
-		int id = nextCardId++;
-		cardStateMap.put(id, new StudyCard(question, normalizedAnswers, clampSolutionIndex(solutionIndex)));
-		return id;
-	}
-
 	private void refreshCardListUi() {
 		if (cardListPanel == null) {
 			return;
 		}
 		cardListPanel.removeAll();
-		for (Map.Entry<Integer, StudyCard> entry : cardStateMap.entrySet()) {
-			cardListPanel.add(createCardRow(entry.getKey(), entry.getValue()));
+		List<StudyCard> allCards = controller.getAllCards();
+		for (int i = 0; i < allCards.size(); i++) {
+			cardListPanel.add(createCardRow(i, allCards.get(i)));
+		}
+
+		Component[] rows = cardListPanel.getComponents();
+		for (int i = 0; i < rows.length; i++) {
+			if (rows[i] instanceof JPanel) {
+				JPanel panel = (JPanel) rows[i];
+				panel.setBackground(i == selectedCardId ? SELECTED_CARD_COLOR : Color.WHITE);
+				panel.repaint();
+			}
 		}
 		cardListPanel.revalidate();
 		cardListPanel.repaint();
@@ -200,7 +195,7 @@ public class StudyDeckEditPopup extends JDialog {
 		JPanel row = new JPanel(new BorderLayout());
 		row.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
 		row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
-		row.setBackground(id == selectedCardId ? new Color(220, 235, 250) : Color.WHITE);
+		row.setBackground(id == selectedCardId ? SELECTED_CARD_COLOR : Color.WHITE);
 
 		JLabel questionLabel = new JLabel(state.getQuestion()); 
 		questionLabel.setFont(new Font("Helvetica", Font.PLAIN, 16));
@@ -208,7 +203,13 @@ public class StudyDeckEditPopup extends JDialog {
 		questionLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				selectCard(id);
+				if (selectedCardId == id) {
+					return;
+				}
+				persistCurrentCard();
+				selectedCardId = id;
+				refreshCardListUi();
+				loadCardIntoEditor(controller.getCardByIndex(id));
 			}
 		});
 		row.add(questionLabel, BorderLayout.CENTER);
@@ -230,33 +231,24 @@ public class StudyDeckEditPopup extends JDialog {
 		return row;
 	}
 
-	private void selectCard(int id) {
-		if (selectedCardId == id) {
-			return;
-		}
-		selectedCardId = id;
-		loadCardIntoEditor(id);
-	}
-
-	private void loadCardIntoEditor(int id) {
-		StudyCard state = cardStateMap.get(id);
-		if (state == null) {
+	private void loadCardIntoEditor(StudyCard card) {
+		if (card == null) {
 			return;
 		}
 		toggleCardFieldsEnable(true);
-		questionArea.setText(state.getQuestion());
-		for (int i = 0; i < answerFields.size(); i++) {
-			answerFields.get(i).setText(state.getAnswers().get(i));
+		questionArea.setText(card.getQuestion());
+		for (int i = 0; i < card.getAnswers().size(); i++) {
+			answerFields.get(i).setText(card.getAnswers().get(i));
 		}
-		if (state.getSolutionId() >= 0 && state.getSolutionId() < answerChoiceButtons.size()) {
-			answerChoiceButtons.get(state.getSolutionId()).setSelected(true);
+		if (card.getSolutionId() >= 0 && card.getSolutionId() < answerChoiceButtons.size()) {
+			answerChoiceButtons.get(card.getSolutionId()).setSelected(true);
 		} else {
 			answerButtonGroup.clearSelection();
 		}
 	}
 
 	private void persistCurrentCard() {
-		if (selectedCardId == -1 || !cardStateMap.containsKey(selectedCardId)) {
+		if (selectedCardId == -1 || controller.getAllCards().size() < selectedCardId) {
 			return;
 		}
 		String question = questionArea.getText().trim();
@@ -271,33 +263,22 @@ public class StudyDeckEditPopup extends JDialog {
 				break;
 			}
 		}
-    StudyCard card = new StudyCard(question, answers, solutionIndex);
-    cardStateMap.put(selectedCardId, card);
+		controller.updateCardInCurrentDeck(selectedCardId, question, answers, solutionIndex);
 	}
 
 	private void deleteCard(int id) {
-		if (!cardStateMap.containsKey(id)) {
+		if (selectedCardId == -1 || controller.getAllCards().size() < selectedCardId) {
 			return;
 		}
-		cardStateMap.remove(id);
-		if (cardStateMap.isEmpty()) {
-			selectedCardId = -1;
+		controller.removeCardFromCurrentDeck(id);
+		StudyCard firstCard = controller.getFirstCardInCurrentEditedDeck();
+		if (null != firstCard) {
+			selectedCardId = 0;
+			loadCardIntoEditor(firstCard);
+		} else {
 			toggleCardFieldsEnable(false);
-		} else if (selectedCardId == id) {
-			selectedCardId = cardStateMap.keySet().iterator().next();
-			loadCardIntoEditor(selectedCardId);
 		}
 		refreshCardListUi();
-	}
-
-	private int clampSolutionIndex(int idx) {
-		if (idx < 0) {
-			return 0;
-		}
-		if (idx > 3) {
-			return 3;
-		}
-		return idx;
 	}
 
 	private void toggleCardFieldsEnable(boolean enab) {
@@ -318,32 +299,6 @@ public class StudyDeckEditPopup extends JDialog {
 	 */
 	public StudyDeck getUpdatedStudyDeck() {
 		persistCurrentCard();
-		ArrayList<StudyCard> newCards = new ArrayList<>();
-		for (StudyCard state : cardStateMap.values()) {
-			ArrayList<String> answersCopy = new ArrayList<>();
-      // ensure only non blank answers are added
-      for (String ans : state.getAnswers()) {
-        if (ans.isBlank()) {
-          continue;
-        }
-        answersCopy.add(ans);
-      }
-			// Ensure there is always a selection
-			int solutionIndex = clampSolutionIndex(state.getSolutionId());
-
-			newCards.add(new StudyCard(state.getQuestion(), answersCopy, solutionIndex));
-		}
-		return new StudyDeck(originalDeck.getTitle(), originalDeck.getDescription(), newCards, originalDeck.getId());
+		return controller.getCurrentDeck();
 	}
-
-  public static void main(String[] args) {
-    new StudyDeckEditPopup(
-        new StudyDeck(
-            "Sample Deck",
-            "This is a sample study deck.",
-            new ArrayList<>(),
-            1
-        )
-    ).setVisible(true);
-  }
 }
