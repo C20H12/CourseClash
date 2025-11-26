@@ -137,7 +137,7 @@ public class StudyDeckInteractor implements StudyDeckInputBoundary {
         }
         // If deck doesn't exist, currentDeck remains unchanged
     }
-    
+
     // unload deck
     public void unloadDeck() {
         this.currentDeck = null;
