@@ -61,7 +61,14 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
         }
         final StudyCard current = cards.get(idx);
 
-        boolean correct = current.getAnswers().get(current.getSolutionId()).equalsIgnoreCase(answer);
+        StudyCard currentCard = current;
+        String correctAnswer;
+        if (currentCard.getSolutionId() < 0 || currentCard.getSolutionId() >= currentCard.getAnswers().size()) {
+            correctAnswer = "";
+        } else {
+            correctAnswer = currentCard.getAnswers().get(currentCard.getSolutionId());
+        }
+        boolean correct = correctAnswer.equalsIgnoreCase(answer);
         if (correct) {
             game.incrementScoreCorrect();
         } else {
