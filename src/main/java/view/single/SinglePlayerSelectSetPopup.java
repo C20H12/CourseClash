@@ -18,7 +18,6 @@ public class SinglePlayerSelectSetPopup extends JDialog {
   public SinglePlayerSelectSetPopup(List<StudyDeck> decks) {
     setTitle("Select Deck");
     setModal(true);
-    setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
     setLayout(new BorderLayout());
 
     // Create the list

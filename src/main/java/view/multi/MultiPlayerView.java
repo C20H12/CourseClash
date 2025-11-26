@@ -14,6 +14,8 @@ import interface_adapter.MultiPlayer.MultiPlayerViewModel;
 import interface_adapter.user_session.UserSession;
 
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
@@ -225,7 +227,16 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
         if (window != null) {
             popup.setLocationRelativeTo(window);
         }
-        popup.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        popup.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        popup.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                if (popup.getPeerConnection() == null || popup.getMode() == null) {
+                    viewManagerModel.setState("main screen");
+                    viewManagerModel.firePropertyChange();
+                }
+            }
+        });
         popup.setModalityType(Dialog.DEFAULT_MODALITY_TYPE);
         popup.pack();
         popup.setVisible(true);
