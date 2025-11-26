@@ -150,13 +150,6 @@ public class StudyDeckView extends JPanel implements PropertyChangeListener {
     JLabel label = new JLabel("[" + deck.getTitle() + "] " + deck.getDescription());
     label.setFont(new Font("Helvetica", Font.PLAIN, 18));
 
-    // error decks do not have buttons
-    if (deck.getTitle().contains("Error")) {
-      label.setForeground(Color.RED);
-      card.add(label, BorderLayout.CENTER);
-      return card;
-    }
-
     // ---------- Right Icons ----------
     JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
     actionPanel.setBackground(Color.WHITE);
@@ -194,10 +187,9 @@ public class StudyDeckView extends JPanel implements PropertyChangeListener {
     });
 
     editButton.addActionListener(e -> {
-      StudyDeckEditPopup editPopup = new StudyDeckEditPopup(deck);
+      StudyDeckEditPopup editPopup = new StudyDeckEditPopup(deck, studyDeckController);
       editPopup.setModalityType(Dialog.DEFAULT_MODALITY_TYPE);
       editPopup.setVisible(true);
-      // System.out.println(1);
 
       StudyDeck updatedDeck = editPopup.getUpdatedStudyDeck();
       studyDeckController.execute(updatedDeck, StudyDeckAction.EDIT_DECK);
@@ -301,6 +293,9 @@ public class StudyDeckView extends JPanel implements PropertyChangeListener {
           || (desc != null && desc.toLowerCase().contains(normalized));
 
       if (matches) {
+        if (deck.getTitle().contains("Error")) {
+          continue;
+        }
         listPanel.add(createStudySetCard(deck));
       }
     }
