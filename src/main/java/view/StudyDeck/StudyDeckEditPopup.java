@@ -254,7 +254,9 @@ public class StudyDeckEditPopup extends JDialog {
 		String question = questionArea.getText().trim();
     ArrayList<String> answers = new ArrayList<>();
 		for (int i = 0; i < answerFields.size(); i++) {
-			answers.add(answerFields.get(i).getText().trim());
+			String ansText = answerFields.get(i).getText().trim();
+			if (ansText.isEmpty()) continue;
+			answers.add(ansText);
 		}
     int solutionIndex = 0;
 		for (int i = 0; i < answerChoiceButtons.size(); i++) {
@@ -263,6 +265,7 @@ public class StudyDeckEditPopup extends JDialog {
 				break;
 			}
 		}
+		if (question.isEmpty() && answers.size() == 0) return;
 		controller.updateCardInCurrentDeck(selectedCardId, question, answers, solutionIndex);
 	}
 

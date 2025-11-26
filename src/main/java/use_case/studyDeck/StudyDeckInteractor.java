@@ -116,7 +116,11 @@ public class StudyDeckInteractor implements StudyDeckInputBoundary {
     public void loadDeck(String deckName) {
         StudyDeck loadedDeck = studyDeckDataAccessObject.getDeck(deckName);
         if (loadedDeck != null) {
-            this.currentDeck = loadedDeck;
+            List<StudyCard> cards = loadedDeck.getDeck();
+            cards.removeIf(card -> card.getQuestion().contains("Error: Question not found"));
+            this.currentDeck = new StudyDeck(
+                loadedDeck.getTitle(), loadedDeck.getDescription(),
+                new ArrayList<>(cards), loadedDeck.getId());
         }
         // If deck doesn't exist, currentDeck remains unchanged
     }
