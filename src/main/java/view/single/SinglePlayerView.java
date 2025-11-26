@@ -15,6 +15,8 @@ import entity.DeckManagement.StudyDeck;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
@@ -237,8 +239,15 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
         if (evt.getPropertyName().equals("initShowAllDeckNames")) {
             List<StudyDeck> allDecks = viewModel.getState().getDecksList();
             SinglePlayerSelectSetPopup popup = new SinglePlayerSelectSetPopup(allDecks);
+            popup.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            popup.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    viewManagerModel.setState("main screen");
+                    viewManagerModel.firePropertyChange();
+                }
+            });
             popup.setVisible(true);
-            popup.setModalityType(Dialog.DEFAULT_MODALITY_TYPE);
             StudyDeck selectedDeck = popup.getSelectedDeck();
             if (selectedDeck != null) {
                 try {
