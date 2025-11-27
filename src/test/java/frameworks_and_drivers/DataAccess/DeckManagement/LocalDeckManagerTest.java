@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class LocalDeckManagerTest {
 
     private StudyDeckLocalDataAccessObject manager;
-    private String testStorageDir = Path.of("").toAbsolutePath().toString() + "src/test/java/frameworks_and_drivers/DataAccess/DeckManagement/JSON/testing_storage";
+    private String testStorageDir = Path.of("").toAbsolutePath().toString() + "/src/test/java/frameworks_and_drivers/DataAccess/DeckManagement/JSON/testing_storage";
 
     @BeforeEach
     void setUp() {
