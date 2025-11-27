@@ -177,6 +177,25 @@ public class SinglePlayerInteractorTest {
         assertEquals("Finished", state.getMessage());
     }
 
+    @Test
+    void accuracyIsCalculatedCorrectly() throws Exception {
+        dao.setTestDeck(firstDeck());
+
+        SinglePlayerInputData input = new SinglePlayerInputData(
+                dao.getSession().getUser(),
+                firstDeck().getTitle(),
+                10,
+                false,
+                3
+        );
+        interactor.startGame(input);
+        interactor.submitAnswer("Paris");       // correct
+        interactor.submitAnswer("WRONG");       // wrong
+        interactor.submitAnswer("Tokyo");       // correct
+        SinglePlayerState state = viewModel.getState();
+        assertEquals(10, state.getScore());
+        assertEquals( (2 * 100.0) / 3, state.getAccuracy(), 0.001 );
+    }
     private StudyDeck firstDeck() {
         ArrayList<StudyCard> cards = new ArrayList<>();
         cards.add(new StudyCard("What is the capital of France?",

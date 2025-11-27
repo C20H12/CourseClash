@@ -46,7 +46,9 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
         presenter.presentQuestion(new SinglePlayerOutputData(
                 first.getQuestion(), first.getAnswers(),
                 1, cards.size(),
-                0, 0.0, 0.0, game.getCorrectAnswers(), false,
+                game.getScore(),
+                (game.getCorrectAnswers() * 100.0) / (idx + 1),
+                game.getAverageResponseTime(), game.getCorrectAnswers(), false,
                 "Game started"
         ));
     }
@@ -62,9 +64,6 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
         boolean correct = current.getAnswers().get(current.getSolutionId()).equalsIgnoreCase(answer);
         if (correct) {
             game.incrementScoreCorrect();
-            game.setCorrectAnswers(game.getCorrectAnswers());
-        } else {
-            game.decrementScore();
         }
 
         idx++;
@@ -89,12 +88,13 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
                     game.getAverageResponseTime()
             );
         } else {
+            double accuracy = (game.getCorrectAnswers() * 100.0) / (idx);
             final StudyCard next = cards.get(idx);
             presenter.presentQuestion(new SinglePlayerOutputData(
                     next.getQuestion(), next.getAnswers(),
                     idx + 1, cards.size(),
                     game.getScore(),
-                    game.getCorrectAnswers() * 100.0 / cards.size(),
+                    accuracy,
                     game.getAverageResponseTime(),
                     game.getCorrectAnswers(), false,
                     "Next"
@@ -127,7 +127,7 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
     }
 
     @Override
-    public void showAllDeckNames() throws DataAccessException {
+    public void showAllDeckNames() {
         List<StudyDeck> decks = gateway.getAllDecks();
         presenter.presentAllDecks(decks);
     }
