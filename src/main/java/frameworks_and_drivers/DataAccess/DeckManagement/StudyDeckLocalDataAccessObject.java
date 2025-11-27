@@ -20,6 +20,9 @@ public class StudyDeckLocalDataAccessObject implements StudyDeckDataAccessInterf
     public StudyDeckLocalDataAccessObject(String dir) {
         this.sysFileHandler = new StudyDeckJSONFileHandler(dir);
     }
+    public StudyDeckLocalDataAccessObject(String dir) {
+        this.fileHandler = new StudyDeckJSONFileHandler(dir);
+    }
 
     // Save a StudyDeck object to local storage using SysFileHandler.
     // @param deck The StudyDeck object to save.
