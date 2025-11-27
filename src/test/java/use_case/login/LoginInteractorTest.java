@@ -28,7 +28,7 @@ class LoginInteractorTest {
     @Test
     void successTest() throws DataAccessException {
         // Create a new user
-        User testUser = new User("login_test_user", "123");
+        User testUser = new User(System.currentTimeMillis() + "_login_test_user", "123");
         // Add this user to DB
         SignupUserDataAccessInterface signupDAO = new SignupUserDataAccessObject();
         signupDAO.create(testUser);
@@ -58,7 +58,7 @@ class LoginInteractorTest {
     @Test
     void failurePasswordMismatchTest() throws DataAccessException {
         // Create a new user
-        User testUser = new User("login_test_user", "123");
+        User testUser = new User(System.currentTimeMillis() + "_login_test_user", "123");
         // Add this user to DB
         SignupUserDataAccessInterface signupDAO = new SignupUserDataAccessObject();
         signupDAO.create(testUser);
@@ -89,7 +89,7 @@ class LoginInteractorTest {
     @Test
     void failureUserDoesNotExistTest() throws DataAccessException {
         // Create a new user, but we don't add to DB
-        User testUser = new User("login_test_user", "123");
+        User testUser = new User(System.currentTimeMillis() + "_login_nonexistent_user", "123");
 
         // This creates a presenter that tests whether the test case is as we expect.
         LoginOutputBoundary failurePresenter = new LoginOutputBoundary() {
@@ -101,7 +101,7 @@ class LoginInteractorTest {
 
             @Override
             public void prepareFailView(String error) {
-                assertEquals("login_test_user: Account does not exist.", error);
+                assertEquals(testUser.getUserName() + ": Account does not exist.", error);
             }
         };
 
