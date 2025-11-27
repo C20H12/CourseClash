@@ -69,6 +69,9 @@ public class SinglePlayerDataAccessObject implements SinglePlayerAccessInterface
     // -----------------------------------------------------------
     @Override
     public StudyDeck loadDeck(String deckTitle) throws DataAccessException {
+        if (testDeck != null && testDeck.getTitle().equals(deckTitle)) {
+            return testDeck;      // <-- use injected test deck
+        }
         return new StudyDeckLocalDataAccessObject().getDeck(deckTitle);
     }
     // @Override
@@ -123,13 +126,18 @@ public class SinglePlayerDataAccessObject implements SinglePlayerAccessInterface
     // -----------------------------------------------------------
     // 3. Save single-player results to backend
     // -----------------------------------------------------------
-
+    public UserSession getSession() {
+        return session;
+    }
     @Override
     public void saveSinglePlayerResult(String username,
                                        String deckTitle,
                                        int score,
                                        double accuracy,
                                        double avgResponseTime) throws DataAccessException {
+        if (testDeck != null) {
+            return;
+        }
 
         final String method = "/api/save-singleplayer-result";
 
@@ -141,5 +149,9 @@ public class SinglePlayerDataAccessObject implements SinglePlayerAccessInterface
         params.put("avgTime", String.valueOf(avgResponseTime));
 
         makeApiRequest("POST", method, params, session.getApiKey());
+    }
+    private StudyDeck testDeck;
+    public void setTestDeck(StudyDeck deck) {
+        this.testDeck = deck;
     }
 }

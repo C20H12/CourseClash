@@ -85,7 +85,6 @@ public class SinglePlayerGame {
         this.score += 5;
         this.correctAnswers += 1;
     }
-    public void decrementScore() {
-        this.score = Math.max(0, this.score - 5);
+
     }
-}
+

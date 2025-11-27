@@ -45,6 +45,7 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
     private final JButton endGameButton = new JButton("End Game");
     private final JLabel messageLabel = new JLabel(" ");
     private final JLabel accuracyLabel = new JLabel(" ");
+    private final JLabel answerlabel = new JLabel(" ");
     private final JLabel avgTimeLabel = new JLabel(" ");
     private static final int BASE_FONT_SIZE = 18;
     private static final Font TITLE_FONT = new Font("SansSerif", Font.BOLD, 22);
@@ -277,6 +278,7 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
         messageLabel.setText(state.getMessage() != null ? state.getMessage() : " ");
 
         if (state.isGameOver()) {
+            answerlabel.setText(String.format("Correct Answers:", state.getCorrectAnswers()));
             accuracyLabel.setText(String.format("Accuracy: %.1f%%", state.getAccuracy()));
             avgTimeLabel.setText(String.format("Avg. response time: %.2f s", state.getAvgResponseTime()));
             submitButton.setEnabled(false);
