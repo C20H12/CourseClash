@@ -19,6 +19,7 @@ public class StudyDeckController {
     }
 
     public void execute(StudyDeck studyDeck, StudyDeckAction action) {
+        studyDeckInteractor.unloadDeck();
         StudyDeckInputData studyDeckInputData = new StudyDeckInputData(studyDeck);
         studyDeckInteractor.execute(studyDeckInputData, action);
     }

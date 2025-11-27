@@ -105,6 +105,44 @@ class StudyDeckInteractorTest {
 		assertEquals("Final Name", interactor.getCurrentDeck().getTitle());
 	}
 
+	@Test
+	void unloadDeck_clearsCurrentDeckButKeepsStoredDeck() {
+		interactor.createNewDeck("Spanish", "Basics");
+		interactor.saveCurrentDeck();
+		assertNotNull(interactor.getCurrentDeck());
+
+		interactor.unloadDeck();
+
+		assertNull(interactor.getCurrentDeck());
+		assertNotNull(gateway.getDeck("Spanish"));
+	}
+
+	@Test
+	void deleteDeck_removesDeckAndClearsCurrentReference() {
+		interactor.createNewDeck("Art", "Styles");
+		interactor.saveCurrentDeck();
+		assertNotNull(gateway.getDeck("Art"));
+
+		interactor.deleteDeck("Art");
+
+		assertNull(gateway.getDeck("Art"));
+		assertNull(interactor.getCurrentDeck());
+	}
+
+	@Test
+	void switchToDeck_setsCurrentDeckWhenDeckExists() {
+		StudyDeck geography = sampleDeck("Geography");
+		gateway.saveDeck(geography);
+		assertNull(interactor.getCurrentDeck());
+
+		interactor.switchToDeck("Geography");
+
+		StudyDeck current = interactor.getCurrentDeck();
+		assertNotNull(current);
+		assertEquals("Geography", current.getTitle());
+		assertEquals(geography.getDeck().size(), current.getDeck().size());
+	}
+
 	private StudyDeck sampleDeck(String title) {
 		ArrayList<StudyCard> cards = new ArrayList<>();
 		cards.add(new StudyCard(title + " Q1", sampleAnswers(title + "-1"), 0));
