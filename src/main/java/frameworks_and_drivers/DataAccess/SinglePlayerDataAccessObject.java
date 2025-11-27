@@ -135,6 +135,9 @@ public class SinglePlayerDataAccessObject implements SinglePlayerAccessInterface
                                        int score,
                                        double accuracy,
                                        double avgResponseTime) throws DataAccessException {
+        if (testDeck != null) {
+            return;
+        }
 
         final String method = "/api/save-singleplayer-result";
 

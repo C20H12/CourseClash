@@ -78,7 +78,104 @@ public class SinglePlayerInteractorTest {
         assertFalse(state.isGameOver());
         assertEquals(5, state.getScore());
     }
+    @Test
+    void submitIncorrectAnswersUpdatesScoreCorrectly() throws Exception {
+        dao.setTestDeck(firstDeck());
+        SinglePlayerInputData input = new SinglePlayerInputData(
+                dao.getSession().getUser(),
+                "World Capitals",
+                10,
+                false,
+                3
+        );
+        interactor.startGame(input);
+        firedEvents.clear(); // reset after first question
+        interactor.submitAnswer("Wrong Answer");
+        assertEquals(List.of("question"), firedEvents);
 
+        SinglePlayerState state = viewModel.getState();
+        //question 2 :
+        assertEquals("Which city is the capital of Canada?", state.getQuestionText());
+        assertEquals(2, state.getCurrentIndex());
+        // INCORRECT ANSWER => decrementScore() → score remains 0
+        assertEquals(0, state.getScore());
+        assertFalse(state.isGameOver());
+    }
+    @Test
+    void submitAnswersMovesToNextQuestion() throws Exception {
+        dao.setTestDeck(firstDeck());
+        SinglePlayerInputData input = new SinglePlayerInputData(
+                dao.getSession().getUser(),
+                "World Capitals",
+                10,
+                false,
+                3
+        );
+        interactor.startGame(input);
+        firedEvents.clear();
+        // Submit correct → moves to question 2
+        interactor.submitAnswer("Paris");
+        assertEquals(List.of("question"), firedEvents);
+        SinglePlayerState state = viewModel.getState();
+        assertEquals("Which city is the capital of Canada?", state.getQuestionText());
+        assertEquals(2, state.getCurrentIndex());
+    }
+    @Test
+    void endingGamePublishesEndEvent() throws Exception {
+        dao.setTestDeck(firstDeck());
+
+        SinglePlayerInputData input = new SinglePlayerInputData(
+                dao.getSession().getUser(),
+                "World Capitals",
+                10,
+                false,
+                3
+        );
+        interactor.startGame(input);
+        firedEvents.clear();
+        interactor.endGame();
+        assertEquals(List.of("end"), firedEvents);
+        SinglePlayerState state = viewModel.getState();
+        assertTrue(state.isGameOver());
+        assertEquals("Ended by user", state.getMessage());
+    }
+    @Test
+    void errorwhenDeckMissing() throws Exception{
+        dao.setTestDeck(null); // Simulating no deck available/missing
+
+        SinglePlayerInputData input = new SinglePlayerInputData(
+                dao.getSession().getUser(),
+                "MissingDeck",
+                10,
+                false,
+                3
+        );
+        interactor.startGame(input);
+        assertEquals(List.of("error"), firedEvents);
+        SinglePlayerState state = viewModel.getState();
+        assertEquals("Could not load deck: MissingDeck", state.getError());
+    }
+    @Test
+    void finishingLastQuestionPublishesEndEvent() throws Exception {
+        dao.setTestDeck(firstDeck());
+        SinglePlayerInputData input = new SinglePlayerInputData(
+                dao.getSession().getUser(),
+                "World Capitals",
+                10,
+                false,
+                3
+        );
+        interactor.startGame(input);
+        firedEvents.clear();
+        interactor.submitAnswer("Paris");     // Q1
+        interactor.submitAnswer("Ottawa");    // Q2
+        firedEvents.clear();
+        interactor.submitAnswer("Tokyo");     // Q3 → auto end
+        assertEquals(List.of("end"), firedEvents);
+        SinglePlayerState state = viewModel.getState();
+        assertTrue(state.isGameOver());
+        assertEquals("Finished", state.getMessage());
+    }
 
     private StudyDeck firstDeck() {
         ArrayList<StudyCard> cards = new ArrayList<>();
