@@ -20,12 +20,13 @@ public class SinglePlayerSelectSetPopup extends JDialog {
     setModal(true);
     setLayout(new BorderLayout());
 
+    List<StudyDeck> validDecks = new ArrayList<>(decks);
+    validDecks.removeIf(deck -> deck.getTitle().contains("Error"));
+
     // Create the list
     List<String> rowTextList = new ArrayList<>();
-    for (StudyDeck deck : decks) {
-      if (deck.getTitle().contains("Error")) continue;
-
-      rowTextList.add("[ " + deck.getTitle() + "] " + deck.getDescription() + " (" + deck.getCardCount() + " cards)");
+    for (StudyDeck deck : validDecks) {
+      rowTextList.add("[ " + deck.getTitle() + " ] " + deck.getDescription() + " (" + deck.getCardCount() + " cards)");
     }
     deckList = new JList<>(rowTextList.toArray(new String[0]));
     deckList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -39,7 +40,7 @@ public class SinglePlayerSelectSetPopup extends JDialog {
       public void actionPerformed(ActionEvent e) {
         int selectedIndex = deckList.getSelectedIndex();
         if (selectedIndex != -1) {
-          selectedDeck = decks.get(selectedIndex);
+          selectedDeck = validDecks.get(selectedIndex);
           dispose();
         } else {
           JOptionPane.showMessageDialog(SinglePlayerSelectSetPopup.this,
