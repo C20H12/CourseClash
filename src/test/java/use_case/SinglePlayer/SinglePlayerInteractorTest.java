@@ -54,10 +54,30 @@ public class SinglePlayerInteractorTest {
         SinglePlayerState state = viewModel.getState();
         assertEquals("What is the capital of France?", state.getQuestionText());
         assertEquals(3, state.getTotal());
-        assertEquals(3, state.getCurrentIndex());
+        assertEquals(1, state.getCurrentIndex());
         assertFalse(state.isGameOver());
     }
+    @Test
+    void submittingCorrectAnswerMovesToNextQuestion() throws Exception {
+        dao.setTestDeck(firstDeck());
+        SinglePlayerInputData input = new SinglePlayerInputData(
+                dao.getSession().getUser(),
+                firstDeck().getTitle(),
+                10,
+                false,
+                3
+        );
+        interactor.startGame(input);
+        firedEvents.clear(); // reset events after first question
+        interactor.submitAnswer("Paris");
 
+        assertEquals(List.of("question"), firedEvents);
+        SinglePlayerState state = viewModel.getState();
+        assertEquals("Which city is the capital of Canada?", state.getQuestionText());
+        assertEquals(2, state.getCurrentIndex());
+        assertFalse(state.isGameOver());
+        assertEquals(5, state.getScore());
+    }
 
 
     private StudyDeck firstDeck() {
