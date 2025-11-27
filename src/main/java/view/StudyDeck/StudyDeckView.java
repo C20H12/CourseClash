@@ -238,16 +238,24 @@ public class StudyDeckView extends JPanel implements PropertyChangeListener {
     if (result == JOptionPane.OK_OPTION) {
       String deckTitle = nameField.getText().trim();
       String description = descField.getText().trim();
-      if (!deckTitle.isEmpty()) {
-        try {
-          int newId = (int) Math.floor(Math.random() * 99999);
-          StudyDeck newDeck = new StudyDeck(deckTitle, description, new ArrayList<>(), newId);
-          studyDeckController.execute(newDeck, StudyDeckAction.ADD_DECK);
-        } catch (Exception ex) {
-          JOptionPane.showMessageDialog(this, "Failed to create study set: " + ex.getMessage());
-        }
-      } else {
+      if (deckTitle.isEmpty()) {
         JOptionPane.showMessageDialog(this, "Name cannot be empty.");
+        return;
+      }
+      if (deckTitle.contains("Error")) {
+        JOptionPane.showMessageDialog(this, "Name cannot contain the word 'Error'.");
+        return;
+      }
+      if (!deckTitle.matches("^[\\w\\-. ]+$")) {
+        JOptionPane.showMessageDialog(this, "Name contains invalid characters.");
+        return;
+      }
+      try {
+        int newId = (int) Math.floor(Math.random() * 99999);
+        StudyDeck newDeck = new StudyDeck(deckTitle, description, new ArrayList<>(), newId);
+        studyDeckController.execute(newDeck, StudyDeckAction.ADD_DECK);
+      } catch (Exception ex) {
+        JOptionPane.showMessageDialog(this, "Failed to create study set: " + ex.getMessage());
       }
     }
   }
