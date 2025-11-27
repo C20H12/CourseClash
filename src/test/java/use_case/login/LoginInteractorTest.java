@@ -7,11 +7,23 @@ import use_case.DataAccessException;
 import use_case.registration.login.*;
 import entity.User;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterEach;
 import use_case.registration.signup.SignupUserDataAccessInterface;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class LoginInteractorTest {
+
+    private User createdUser = null;  // Register user for cleanup
+
+    @AfterEach
+    void cleanup() throws DataAccessException {
+        if (createdUser != null) {
+            LoginSignupTestDataAccessObject deleteDAO = new LoginSignupTestDataAccessObject();
+            deleteDAO.delete(createdUser);
+            createdUser = null;
+        }
+    }
 
     @Test
     void successTest() throws DataAccessException {
@@ -20,6 +32,7 @@ class LoginInteractorTest {
         // Add this user to DB
         SignupUserDataAccessInterface signupDAO = new SignupUserDataAccessObject();
         signupDAO.create(testUser);
+        createdUser = testUser;
 
 
         // This creates a successPresenter that tests whether the test case is as we expect.
@@ -39,10 +52,6 @@ class LoginInteractorTest {
         LoginUserDataAccessInterface loginDAO = new LoginUserDataAccessObject();
         LoginInputBoundary interactor = new LoginInteractor(loginDAO, successPresenter);
         interactor.execute(inputData);
-
-        // Remove this test user
-        LoginSignupTestDataAccessObject deleteDAO = new LoginSignupTestDataAccessObject();
-        deleteDAO.delete(testUser);
     }
 
 
@@ -53,6 +62,7 @@ class LoginInteractorTest {
         // Add this user to DB
         SignupUserDataAccessInterface signupDAO = new SignupUserDataAccessObject();
         signupDAO.create(testUser);
+        createdUser = testUser;
 
         // This creates a presenter that tests whether the test case is as we expect.
         LoginOutputBoundary failurePresenter = new LoginOutputBoundary() {
@@ -74,10 +84,6 @@ class LoginInteractorTest {
         LoginUserDataAccessInterface loginDAO = new LoginUserDataAccessObject();
         LoginInputBoundary interactor = new LoginInteractor(loginDAO, failurePresenter);
         interactor.execute(inputData);
-
-        // Remove this test user
-        LoginSignupTestDataAccessObject deleteDAO = new LoginSignupTestDataAccessObject();
-        deleteDAO.delete(testUser);
     }
 
     @Test
