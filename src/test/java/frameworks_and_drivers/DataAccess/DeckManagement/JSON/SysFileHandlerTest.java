@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SysFileHandlerTest {
 
     private StudyDeckJSONFileHandler handler;
-    private String testStorageDir = Path.of("").toAbsolutePath().toString() + "src/test/java/frameworks_and_drivers/DataAccess/DeckManagement/JSON/testing_storage";
+    private String testStorageDir = Path.of("").toAbsolutePath().toString() + "/src/test/java/frameworks_and_drivers/DataAccess/DeckManagement/JSON/testing_storage";
     private String testFileName = testStorageDir + "/Test_Deck.json";
 
     @BeforeEach
