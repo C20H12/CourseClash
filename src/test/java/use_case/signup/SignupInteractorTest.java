@@ -3,6 +3,7 @@ package use_case.signup;
 import entity.UserFactory;
 import frameworks_and_drivers.DataAccess.LoginSignupTestDataAccessObject;
 import frameworks_and_drivers.DataAccess.SignupUserDataAccessObject;
+import org.junit.jupiter.api.AfterEach;
 import use_case.DataAccessException;
 import use_case.registration.login.*;
 import entity.User;
@@ -13,18 +14,24 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SignupInteractorTest {
 
-    @Test
-    void successTest() throws DataAccessException {
-        // Create a new user
-        User testUser = new User("login_test_user", "123");
-        // Repeated password matches
-        final String repeatedPassword = testUser.getPassword();
+    private User createdUser = null;
+    final private UserFactory userFactory = new UserFactory();
 
-        // This creates a successPresenter that tests whether the test case is as we expect.
-        SignupOutputBoundary successPresenter = new SignupOutputBoundary() {
+    @AfterEach
+    void cleanup() throws DataAccessException {
+        if (createdUser != null) {
+            LoginSignupTestDataAccessObject deleteDAO = new LoginSignupTestDataAccessObject();
+            deleteDAO.delete(createdUser);
+            createdUser = null;
+        }
+    }
+
+    // Helper method for success presenter
+    private SignupOutputBoundary successPresenter(User expectedUser) {
+        return new SignupOutputBoundary() {
             @Override
             public void prepareSuccessView(SignupOutputData outputData) {
-                assertEquals(testUser.getUserName(), outputData.getUsername());
+                assertEquals(expectedUser.getUserName(), outputData.getUsername());
             }
 
             @Override
@@ -37,144 +44,103 @@ class SignupInteractorTest {
                 fail("Switch to login view is unexpected.");
             }
         };
-        SignupInputData inputData = new SignupInputData(testUser.getUserName(), testUser.getPassword(), repeatedPassword);
-        SignupUserDataAccessObject signupDAO = new SignupUserDataAccessObject();
-        SignupInputBoundary interactor = new SignupInteractor(signupDAO, successPresenter, new UserFactory());
-        interactor.execute(inputData);
-
-        // Remove this test user
-        LoginSignupTestDataAccessObject deleteDAO = new LoginSignupTestDataAccessObject();
-        deleteDAO.delete(testUser);
     }
 
+    // Helper method for failure presenter
+    private SignupOutputBoundary failurePresenter(String expectedError) {
+        return new SignupOutputBoundary() {
+            @Override
+            public void prepareSuccessView(SignupOutputData outputData) {
+                fail("Use case success is unexpected.");
+            }
+
+            @Override
+            public void prepareFailView(String error) {
+                assertEquals(expectedError, error);
+            }
+
+            @Override
+            public void switchToLoginView() {
+                fail("Switch to login view is unexpected.");
+            }
+        };
+    }
+
+    @Test
+    void successTest() throws DataAccessException {
+        // Create a new user
+        User testUser = userFactory.create(System.currentTimeMillis() + "login_test_user", "123");
+        createdUser = testUser;
+        // Repeated password matches
+        final String repeatedPassword = testUser.getPassword();
+
+        SignupInputData inputData = new SignupInputData(
+                testUser.getUserName(), testUser.getPassword(), repeatedPassword);
+        SignupUserDataAccessObject signupDAO = new SignupUserDataAccessObject();
+        SignupInputBoundary interactor = new SignupInteractor(signupDAO, successPresenter(testUser), userFactory);
+        interactor.execute(inputData);
+    }
 
     @Test
     void failurePasswordMismatchTest() throws DataAccessException {
         // Create a new user
-        User testUser = new User("login_test_user", "123");
+        User testUser = userFactory.create(System.currentTimeMillis() + "_login_test_user", "123");
         // Repeated password does not match
         final String repeatedPassword = testUser.getPassword() + "haha";
 
-        // This creates a successPresenter that tests whether the test case is as we expect.
-        SignupOutputBoundary successPresenter = new SignupOutputBoundary() {
-            @Override
-            public void prepareSuccessView(SignupOutputData outputData) {
-                fail("Use case success is unexpected.");
-            }
-
-            @Override
-            public void prepareFailView(String error) {
-                assertEquals("Passwords don't match.", error);
-            }
-
-            @Override
-            public void switchToLoginView() {
-                fail("Should never call switchToLoginView when repeated password doesn't match.");
-            }
-        };
-        SignupInputData inputData = new SignupInputData(testUser.getUserName(), testUser.getPassword(), repeatedPassword);
+        SignupInputData inputData = new SignupInputData(
+                testUser.getUserName(), testUser.getPassword(), repeatedPassword);
         SignupUserDataAccessObject signupDAO = new SignupUserDataAccessObject();
-        SignupInputBoundary interactor = new SignupInteractor(signupDAO, successPresenter, new UserFactory());
+        SignupInputBoundary interactor = new SignupInteractor(signupDAO,
+                failurePresenter("Passwords don't match."), userFactory);
         interactor.execute(inputData);
     }
+
     @Test
     void failureEmptyPasswordTest() throws DataAccessException {
         // Create a new user with empty password
-        User testUser = new User("empty_pass_user", "");
+        User testUser = userFactory.create("empty_pass_user", "");
         final String repeatedPassword = "";
 
-        SignupOutputBoundary presenter = new SignupOutputBoundary() {
-            @Override
-            public void prepareSuccessView(SignupOutputData outputData) {
-                fail("Use case success is unexpected.");
-            }
-
-            @Override
-            public void prepareFailView(String error) {
-                assertEquals("New password cannot be empty", error);
-            }
-
-            @Override
-            public void switchToLoginView() {
-                fail("Should never switch to login view when password is empty.");
-            }
-        };
-
-        SignupInputData inputData = new SignupInputData(testUser.getUserName(), testUser.getPassword(), repeatedPassword);
-
+        SignupInputData inputData = new SignupInputData(
+                testUser.getUserName(), testUser.getPassword(), repeatedPassword);
         SignupUserDataAccessObject signupDAO = new SignupUserDataAccessObject();
-        SignupInputBoundary interactor = new SignupInteractor(signupDAO, presenter, new UserFactory());
-
+        SignupInputBoundary interactor = new SignupInteractor(signupDAO,
+                failurePresenter("New password cannot be empty"), userFactory);
         interactor.execute(inputData);
     }
+
     @Test
     void failureEmptyUsernameTest() throws DataAccessException {
         // Create user with empty username
-        User testUser = new User("", "123");
+        User testUser = userFactory.create("", "123");
         final String repeatedPassword = "123";
 
-        SignupOutputBoundary presenter = new SignupOutputBoundary() {
-            @Override
-            public void prepareSuccessView(SignupOutputData outputData) {
-                fail("Use case success is unexpected.");
-            }
-
-            @Override
-            public void prepareFailView(String error) {
-                assertEquals("Username cannot be empty", error);
-            }
-
-            @Override
-            public void switchToLoginView() {
-                fail("Should never switch to login view when username is empty.");
-            }
-        };
-
-        SignupInputData inputData =
-                new SignupInputData(testUser.getUserName(), testUser.getPassword(), repeatedPassword);
-
+        SignupInputData inputData = new SignupInputData(
+                testUser.getUserName(), testUser.getPassword(), repeatedPassword);
         SignupUserDataAccessObject signupDAO = new SignupUserDataAccessObject();
-        SignupInputBoundary interactor =
-                new SignupInteractor(signupDAO, presenter, new UserFactory());
-
+        SignupInputBoundary interactor = new SignupInteractor(signupDAO,
+                failurePresenter("Username cannot be empty"), userFactory);
         interactor.execute(inputData);
     }
+
     @Test
     void failureUserAlreadyExistsTest() throws DataAccessException {
         // Existing username
-        User existingUser = new User("signup_test_user", "123");
+        User existingUser = userFactory.create(System.currentTimeMillis() + "_login_test_user", "123");
+        createdUser = existingUser;
         final String repeatedPassword = "123";
 
         // First create the user manually
         SignupUserDataAccessObject signupDAOSetup = new SignupUserDataAccessObject();
         signupDAOSetup.create(existingUser);
 
-        SignupOutputBoundary presenter = new SignupOutputBoundary() {
-            @Override
-            public void prepareSuccessView(SignupOutputData outputData) {
-                fail("Use case success is unexpected when username is already taken.");
-            }
-
-            @Override
-            public void prepareFailView(String error) {
-                assertEquals("User already exists.", error);
-            }
-
-            @Override
-            public void switchToLoginView() {
-                fail("Should never switch to login view when user already exists.");
-            }
-        };
-
-        // Attempt to create another user with the same username
-        SignupInputData inputData = new SignupInputData(existingUser.getUserName(), existingUser.getPassword(), repeatedPassword);
+        SignupInputData inputData = new SignupInputData(
+                existingUser.getUserName(), existingUser.getPassword(), repeatedPassword);
         SignupUserDataAccessObject signupDAO = new SignupUserDataAccessObject();
-        SignupInputBoundary interactor = new SignupInteractor(signupDAO, presenter, new UserFactory());
+        SignupInputBoundary interactor = new SignupInteractor(signupDAO,
+                failurePresenter("User already exists."), userFactory);
         interactor.execute(inputData);
-
-        // Remove the test user
-        LoginSignupTestDataAccessObject deleteDAO = new LoginSignupTestDataAccessObject();
-        deleteDAO.delete(existingUser);
     }
 
 
