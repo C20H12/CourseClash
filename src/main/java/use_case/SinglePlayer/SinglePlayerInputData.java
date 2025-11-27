@@ -12,7 +12,8 @@ public class SinglePlayerInputData {
     private final boolean shuffle;
     private final int numQuestions;
 
-    public SinglePlayerInputData(User player, String deckTitle, int timerPerQuestion, boolean shuffle, int numQuestions) {
+    public SinglePlayerInputData(User player, String deckTitle,
+                                 int timerPerQuestion, boolean shuffle, int numQuestions) {
         this.player = player;
         this.deckTitle = deckTitle;
         this.timerPerQuestion = timerPerQuestion;

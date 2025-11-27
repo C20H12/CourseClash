@@ -37,8 +37,10 @@ public class SinglePlayerPresenter implements SinglePlayerOutputBoundary {
         state.setAvgResponseTime(data.getAvgResponseTime());
         state.setGameOver(data.isGameOver());
         state.setMessage(data.getMessage());
-        state.setError(null); // clear previous errors when loading next question
-        viewModel.firePropertyChange();
+        state.setError(null);
+
+        viewModel.setState(state);
+        viewModel.firePropertyChange("question");
     }
     @Override
     public void presentResults(SinglePlayerOutputData data) {
@@ -48,20 +50,20 @@ public class SinglePlayerPresenter implements SinglePlayerOutputBoundary {
         state.setAvgResponseTime(data.getAvgResponseTime());
         state.setMessage(data.getMessage());
         state.setGameOver(true);
-        viewModel.firePropertyChange();
+        viewModel.firePropertyChange("end");
     }
     @Override
     public void presentError(String message) {
         SinglePlayerState state = viewModel.getState();
         state.setError(message);
         state.setMessage(message);
-        viewModel.firePropertyChange();
+        viewModel.firePropertyChange("error");
     }
 
     @Override
     public void presentAllDecks(List<StudyDeck> names) {
         SinglePlayerState state = viewModel.getState();
         state.setDecksList(names);
-        viewModel.firePropertyChange("initShowAllDeckNames");
+        viewModel.firePropertyChange("init");
     }
 }
