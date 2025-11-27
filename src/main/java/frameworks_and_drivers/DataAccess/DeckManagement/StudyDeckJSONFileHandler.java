@@ -13,16 +13,21 @@ import java.util.List;
 
 public class StudyDeckJSONFileHandler  {
     private final String STORAGE_DIRECTORY = "src/main/local_storage";
+    private String activeStorageDirectory = STORAGE_DIRECTORY;
 
     // Init directories via constructor when none present
     public StudyDeckJSONFileHandler() {
-        new File(STORAGE_DIRECTORY).mkdirs();
+        new File(activeStorageDirectory).mkdirs();
+    }
+    public StudyDeckJSONFileHandler(String storageDir) {
+        this.activeStorageDirectory = storageDir;
+        new File(activeStorageDirectory).mkdirs();
     }
 
     // Save StudyDeck object as a JSON file in local storage dir
     // @param deck The StudyDeck object to save.
     public void saveDeck(StudyDeck deck) {
-        String fileName = STORAGE_DIRECTORY + "/" + deck.getTitle().replace(" ", "_") + ".json";
+        String fileName = activeStorageDirectory + "/" + deck.getTitle().replace(" ", "_") + ".json";
 
         try (FileWriter writer = new FileWriter(fileName)) {
             writer.write(deckToJson(deck));
@@ -35,7 +40,7 @@ public class StudyDeckJSONFileHandler  {
     // @return A List of StudyDeck objects loaded from the directory.
     public List<StudyDeck> loadAllDecks() {
         List<StudyDeck> decks = new ArrayList<>();
-        File folder = new File(STORAGE_DIRECTORY);
+        File folder = new File(activeStorageDirectory);
 
         // Return empty list if directory doesn't exist
         if (!folder.exists()) {
@@ -66,7 +71,7 @@ public class StudyDeckJSONFileHandler  {
     // @param deckName The name of the deck file (without extension).
     // @return The loaded StudyDeck object, or null if not found.
     public StudyDeck loadDeck(String deckName) {
-        String fileName = STORAGE_DIRECTORY + "/" + deckName.replace(" ", "_") + ".json";
+        String fileName = activeStorageDirectory + "/" + deckName.replace(" ", "_") + ".json";
         File file = new File(fileName);
 
         if (!file.exists()) {
@@ -85,7 +90,7 @@ public class StudyDeckJSONFileHandler  {
     // Delete StudyDeck file from local storage
     // @param deckName The name of the deck file (without extension) to delete.
     public void deleteDeck(String deckName) {
-        String fileName = STORAGE_DIRECTORY + "/" + deckName.replace(" ", "_") + ".json";
+        String fileName = activeStorageDirectory + "/" + deckName.replace(" ", "_") + ".json";
         File file = new File(fileName);
 
         if (file.exists()) {
@@ -97,7 +102,7 @@ public class StudyDeckJSONFileHandler  {
     // @param deckName The name of the deck to check.
     // @return True if the file exists, false otherwise.
     public boolean deckExists(String deckName) {
-        String fileName = STORAGE_DIRECTORY + "/" + deckName.replace(" ", "_") + ".json";
+        String fileName = activeStorageDirectory + "/" + deckName.replace(" ", "_") + ".json";
         File file = new File(fileName);
         return file.exists();
     }

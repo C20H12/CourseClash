@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,11 +18,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class LocalDeckManagerTest {
 
     private StudyDeckLocalDataAccessObject manager;
-    private String testStorageDir = System.getProperty("user.home") + "/.CourseClash/local_storage";
+    private String testStorageDir = Path.of("").toAbsolutePath().toString() + "src/test/java/frameworks_and_drivers/DataAccess/DeckManagement/JSON/testing_storage";
 
     @BeforeEach
     void setUp() {
-        manager = new StudyDeckLocalDataAccessObject();
+        manager = new StudyDeckLocalDataAccessObject(testStorageDir);
         // Clean up all JSON files before each test
         File storageDir = new File(testStorageDir);
         File[] files = storageDir.listFiles();
