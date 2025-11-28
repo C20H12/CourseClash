@@ -59,7 +59,7 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
         scoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
         timerLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        top.add(wrapWithTitle("Questions Left", questionCounterLabel));
+        top.add(wrapWithTitle("Question", questionCounterLabel));
         top.add(wrapWithTitle("Total Score", scoreLabel));
         top.add(wrapWithTitle("Question Timer", timerLabel));
 
