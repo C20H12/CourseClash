@@ -10,10 +10,8 @@ import use_case.DataAccessException;
 import java.util.List;
 
 public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
-
     private final SinglePlayerOutputBoundary presenter;
     private final SinglePlayerAccessInterface gateway;
-
     private SinglePlayerGame game;
     private List<StudyCard> cards;
     private int idx = 0;
@@ -23,7 +21,6 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
         this.presenter = presenter;
         this.gateway = gateway;
     }
-
     @Override
     public void startGame(SinglePlayerInputData in) throws DataAccessException {
         final User player = in.getPlayer();
@@ -52,7 +49,6 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
                 "Game started"
         ));
     }
-
     @Override
     public void submitAnswer(String answer) throws DataAccessException {
         if (game == null) {
@@ -60,15 +56,12 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
             return;
         }
         final StudyCard current = cards.get(idx);
-
         boolean correct = current.getAnswers().get(current.getSolutionId()).equalsIgnoreCase(answer);
         if (correct) {
             game.incrementScoreCorrect();
         }
-
         idx++;
         final boolean finished = idx >= cards.size();
-
         if (finished) {
             game.endGame();
             presenter.presentResults(new SinglePlayerOutputData(
