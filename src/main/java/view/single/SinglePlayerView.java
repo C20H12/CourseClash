@@ -90,7 +90,7 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
         scoreLabel.setFont(TITLE_FONT);
         timerLabel.setFont(TITLE_FONT);
 
-        top.add(wrapWithTitle("Questions Left", questionCounterLabel));
+        top.add(wrapWithTitle("Question", questionCounterLabel));
         top.add(wrapWithTitle("Total Score", scoreLabel));
         top.add(wrapWithTitle("Question Timer", timerLabel));
 
