@@ -59,6 +59,6 @@
         public void presentAllDecks(List<StudyDeck> names) {
             SinglePlayerState state = viewModel.getState();
             state.setDecksList(names);
-            viewModel.firePropertyChange("init");
+            viewModel.firePropertyChange("initShowAllDeckNames");
         }
     }
