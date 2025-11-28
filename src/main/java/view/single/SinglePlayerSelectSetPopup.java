@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SinglePlayerSelectSetPopup extends JDialog {
-  private final JList<String> deckList;
+  private  JList<String> deckList;
   private JButton confirmButton;
   private StudyDeck selectedDeck = null;
 
