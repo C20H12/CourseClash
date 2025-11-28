@@ -114,9 +114,10 @@ public class MultiPlayerInteractorTest {
   @Test
   void chooseAnswerIgnoredWhenGameIsOver() {
     interactor.startGame(firstDeck(), gateway.getSession().getUser(), new User("guest", "guest"));
-    interactor.advance();
-    interactor.advance();
-    interactor.advance(); // triggers end
+    // triggers end
+    for(int i = 0; i < firstDeck().getCardCount(); i++) {
+      interactor.advance();
+    }
     assertTrue(viewModel.getState().isGameOver(), "Game should be over before retrying answer");
     firedEvents.clear();
 
@@ -193,7 +194,7 @@ public class MultiPlayerInteractorTest {
 
     assertEquals(List.of("end"), firedEvents);
     MultiPlayerGameState state = viewModel.getState();
-    assertTrue(state.isGameOver());
+    assertTrue(state.isGameOver(), "game ended");
     assertEquals("Host ended the match.", state.getMessage());
     assertEquals("Host ended the match.", state.getRoundResult());
   }

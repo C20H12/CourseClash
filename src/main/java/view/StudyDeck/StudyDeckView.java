@@ -251,7 +251,7 @@ public class StudyDeckView extends JPanel implements PropertyChangeListener {
         return;
       }
       try {
-        int newId = (int) Math.floor(Math.random() * 99999);
+        int newId = (int) System.currentTimeMillis();
         StudyDeck newDeck = new StudyDeck(deckTitle, description, new ArrayList<>(), newId);
         studyDeckController.execute(newDeck, StudyDeckAction.ADD_DECK);
       } catch (Exception ex) {
