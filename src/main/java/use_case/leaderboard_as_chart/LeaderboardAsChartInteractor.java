@@ -22,15 +22,15 @@ public class LeaderboardAsChartInteractor implements LeaderboardAsChartInputBoun
 
     @Override
     public void execute(LeaderboardAsChartInputData inputData) throws DataAccessException {
-        // Get top users for all types
+        Map<LeaderboardType, ArrayList<User>> daoData = dao.getTopUsers(inputData.getLeaderboardEntryCount());
         Map<LeaderboardType, List<User>> chartData = new HashMap<>();
 
-        Map<LeaderboardType, ArrayList<User>> daoData = dao.getTopUsers(50);
-
         for (LeaderboardType type : LeaderboardType.values()) {
-            chartData.put(type, new ArrayList<>(dao.getTopUsers(inputData.getLeaderboardEntryCount()).get(type)));
+            List<User> users = daoData.getOrDefault(type, new ArrayList<>());
+            chartData.put(type, new ArrayList<>(users));
         }
         LeaderboardAsChartOutputData outputData = new LeaderboardAsChartOutputData(chartData);
         presenter.present(outputData);
     }
+
 }
