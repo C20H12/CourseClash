@@ -1,4 +1,5 @@
 // Huzaifa - hosting the session
+
 package use_case.SinglePlayer;
 
 import entity.User;
@@ -21,6 +22,7 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
         this.presenter = presenter;
         this.gateway = gateway;
     }
+
     @Override
     public void startGame(SinglePlayerInputData in) throws DataAccessException {
         final User player = in.getPlayer();
@@ -49,6 +51,7 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
                 "Game started"
         ));
     }
+
     @Override
     public void submitAnswer(String answer) throws DataAccessException {
         if (game == null) {
@@ -81,7 +84,7 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
                     game.getAverageResponseTime()
             );
         } else {
-            double accuracy = (game.getCorrectAnswers() * 100.0) / (idx);
+            double accuracy = (game.getCorrectAnswers() * 100.0) / idx;
             final StudyCard next = cards.get(idx);
             presenter.presentQuestion(new SinglePlayerOutputData(
                     next.getQuestion(), next.getAnswers(),
