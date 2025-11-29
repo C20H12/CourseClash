@@ -1,27 +1,24 @@
 package utility;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
+import java.awt.Font;
 import java.io.IOException;
 import java.io.InputStream;
 
-//import javax.swing.*;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-/**
- * Utility class for loading and registering custom fonts,
- * and configuring global UI settings for consistent styling.
- */
 public class FontLoader {
 
     /**
-     * Registers custom fonts and configures global UI styles.
-     * Loads the Helvetica font from resources and registers it with the system.
-     * Also sets cross-platform Look and Feel and button styling to ensure
-     * consistent appearance across operating systems.
+     * Registers custom fonts and sets UI look and feel.
+     * This method loads the Helvetica font from the resources and registers it
+     * with the local graphics environment. It also sets a cross-platform look and feel
+     * for consistent UI appearance across different operating systems.
+     * @throws IOException if the font file cannot be read
+     * @throws FontFormatException if the font file is not in the correct format
      */
     public static void registerFonts() {
         try {
@@ -45,8 +42,8 @@ public class FontLoader {
             UIManager.put("Button.contentAreaFilled", true);
             UIManager.put("Button.background", Color.GRAY);
             UIManager.put("Button.foreground", Color.WHITE);
-        } catch (ClassNotFoundException | InstantiationException |
-                 IllegalAccessException | UnsupportedLookAndFeelException e) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
+                 UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }
     }
