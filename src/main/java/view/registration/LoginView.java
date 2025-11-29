@@ -39,11 +39,12 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
         final LabelTextPanel passwordInfo = new LabelTextPanel(
                 new JLabel("Password"), passwordInputField);
 
+
         final JPanel buttons = new JPanel();
-        login = new JButton("log in");
+        JButton toSignup = new JButton("Go to Sign up");
+        buttons.add(toSignup);
+        login = new JButton("Log in");
         buttons.add(login);
-        // cancel = new JButton("cancel");
-        // buttons.add(cancel);
 
         login.addActionListener(
                 evt -> {
@@ -61,7 +62,8 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
                     }
                 }
         );
-        // cancel.addActionListener(this);
+
+        toSignup.addActionListener(evt -> loginController.switchToSignupView());
 
         usernameInputField.getDocument().addDocumentListener(new DocumentListener() {
 

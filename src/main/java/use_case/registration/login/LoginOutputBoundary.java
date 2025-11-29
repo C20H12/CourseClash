@@ -20,4 +20,9 @@ public interface LoginOutputBoundary {
      * @param errorMessage the explanation of the failure
      */
     void prepareFailView(String errorMessage);
+
+    /**
+     * Switches to the Signup View.
+     */
+    void switchToSignupView();
 }

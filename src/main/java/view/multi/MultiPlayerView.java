@@ -193,6 +193,7 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
                     "Game Over",
                     JOptionPane.INFORMATION_MESSAGE
             );
+            peerConnection.dispose();
             viewManagerModel.setState("main screen");
             viewManagerModel.firePropertyChange();
         }
