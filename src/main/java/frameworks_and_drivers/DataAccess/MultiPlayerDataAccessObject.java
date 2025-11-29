@@ -1,34 +1,23 @@
 // Multi dao, overhalled
 // authored by luhan
+
 package frameworks_and_drivers.DataAccess;
 
-import entity.DeckManagement.StudyCard;
+import java.util.List;
+
 import entity.DeckManagement.StudyDeck;
 import frameworks_and_drivers.DataAccess.DeckManagement.StudyDeckLocalDataAccessObject;
 import interface_adapter.user_session.UserSession;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import use_case.DataAccessException;
 import use_case.MultiPlayer.MultiPlayerAccessInterface;
-
-import java.util.*;
-
-/**
- * Data access object for Multi Player mode.
- * Loads decks from backend and saves results to leaderboard.
- */
-import static frameworks_and_drivers.DataAccess.StaticMethods.makeApiRequest;
 
 public class MultiPlayerDataAccessObject implements MultiPlayerAccessInterface {
 
-
-    private UserSession session;   // set when user logs in
+    // set when user logs in
+    private UserSession session;
 
     public MultiPlayerDataAccessObject(UserSession ses) {
         this.session = ses;
     }
-
 
     @Override
     public List<StudyDeck> getAllDecks() {
@@ -36,6 +25,6 @@ public class MultiPlayerDataAccessObject implements MultiPlayerAccessInterface {
     }
 
     public UserSession getSession() {
-      return session;
+        return session;
     }
 }
