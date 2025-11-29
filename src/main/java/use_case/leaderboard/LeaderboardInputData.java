@@ -1,24 +1,17 @@
 package use_case.leaderboard;
 
-import entity.User;
-
 /**
  * The Input Data for the Leaderboard.
  */
 
 public class LeaderboardInputData {
-//    private User user = null;
-//    // private LeaderboardType leaderboardType = null;
-//    // I am making the use case to return all leaderboard types at once.
-//
-//    public LeaderboardInputData(User user) {
-//        this.user = user;
-//    }
-//
-//    public User getUser() {
-//        return this.user;
-//    }
-    public static final LeaderboardInputData INSTANCE = new LeaderboardInputData();
+    private final int leaderboardEntryCount;
 
-    public LeaderboardInputData() { }
+    public LeaderboardInputData(int leaderboardEntryCount) {
+        this.leaderboardEntryCount = leaderboardEntryCount;
+    }
+
+    public int getLeaderboardEntryCount() {
+        return leaderboardEntryCount;
+    }
 }

@@ -3,13 +3,13 @@
  * Description: The interactor for login actions.
  * Author: Albert and Daniel
  */
+
 package use_case.registration.login;
+
+import java.util.Map;
 
 import entity.User;
 import use_case.DataAccessException;
-
-import java.util.HashMap;
-import java.util.Objects;
 
 /**
  * The Login Interactor.
@@ -29,20 +29,20 @@ public class LoginInteractor implements LoginInputBoundary {
         final String username = loginInputData.getUsername();
         final String password = loginInputData.getPassword();
 
-        HashMap<String, Object> loginResponse = loginDAO.login(username, password);
+        Map<String, Object> loginResponse = loginDAO.login(username, password);
         // Return a <key, val> with <"status", bool> and <"status_message", String> in key
         boolean isLoggedIn = (boolean) loginResponse.get("status");
         String message = (String) loginResponse.get("status_message");
 
         // Case: user DNE
-        if (!isLoggedIn && message.equals("username dne")) {
+        if (!isLoggedIn && "username dne".equals(message)) {
             loginPresenter.prepareFailView(username + ": Account does not exist.");
             return;
 
         }
 
         // Case: unmatched username and password
-        else if (!isLoggedIn && message.equals("invalid cred")) {
+        else if (!isLoggedIn && "invalid cred".equals(message)) {
             loginPresenter.prepareFailView("Incorrect password for \"" + username + "\".");
             return;
         }

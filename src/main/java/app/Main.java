@@ -1,6 +1,7 @@
 package app;
 
 import javax.swing.*;
+import java.awt.*;
 
 import use_case.DataAccessException;
 
@@ -20,6 +21,7 @@ public class Main {
                 .addLoginView()
                 .addSignupView()
                 .addMainScreenView()
+                .addLeaderboardChartView()
                 .addLoginUseCase()
                 .addSignupUseCase()
                 .addLeaderboardUseCase()
@@ -31,3 +33,4 @@ public class Main {
         application.setVisible(true);
     }
 }
+

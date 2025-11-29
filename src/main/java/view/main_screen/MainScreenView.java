@@ -1,18 +1,28 @@
 package view.main_screen;
 
-import interface_adapter.ViewManagerModel;
-import interface_adapter.leaderboard.LeaderboardViewModel;
-import interface_adapter.main_screen.MainScreenViewModel;
-import interface_adapter.studyDeck.StudyDeckViewModel;
-import view.ViewManager;
-import view.leaderboard.LeaderboardView;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import interface_adapter.ViewManagerModel;
+import interface_adapter.leaderboard.LeaderboardViewModel;
+import interface_adapter.main_screen.MainScreenViewModel;
+import interface_adapter.studyDeck.StudyDeckViewModel;
 
 public class MainScreenView extends JPanel implements ActionListener, PropertyChangeListener {
     private final String viewName = "main screen";
@@ -41,7 +51,7 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
         int titleImageWidth = originalTitleImage.getIconWidth();
         int titleImageHeight = originalTitleImage.getIconHeight();
         Image titleImage = originalTitleImage.getImage()
-                .getScaledInstance((int)(titleImageWidth*0.9), (int)(titleImageHeight*0.9), Image.SCALE_SMOOTH);
+                .getScaledInstance((int) (titleImageWidth * 0.9), (int) (titleImageHeight * 0.9), Image.SCALE_SMOOTH);
         ImageIcon scaledIcon = new ImageIcon(titleImage);
 
         JLabel imageLabel = new JLabel(scaledIcon);
@@ -63,7 +73,7 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
 
         JButton[][] buttons = {
                 {new JButton("Single Player"), new JButton("Multiplayer")},
-                {new JButton("Manage Study Set"), new JButton("Leaderboard")}
+                {new JButton("Manage Study Set"), new JButton("Leaderboard")},
         };
 
         for (int row = 0; row < buttons.length; row++) {
@@ -95,7 +105,6 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
         this.add(buttonPanel, BorderLayout.CENTER);
     }
 
-
     public String getViewName() {
         return viewName;
     }
@@ -114,15 +123,18 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
         viewManagerModel.setState(browseStudySetViewModel.getViewName());
         viewManagerModel.firePropertyChange();
     }
+
     private void switchToLeaderboard() {
         viewManagerModel.setState(leaderboardViewModel.getViewName());
         leaderboardViewModel.firePropertyChange("leaderboard");
         viewManagerModel.firePropertyChange();
     }
+
     private void switchToSinglePlayer() {
         viewManagerModel.setState(singlePlayerViewModel.getViewName());
         viewManagerModel.firePropertyChange();
     }
+
     private void switchToMultiPlayer() {
         viewManagerModel.setState("multi player");
         viewManagerModel.firePropertyChange();

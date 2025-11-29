@@ -3,6 +3,7 @@
  * Description: Defines the input boundary for login actions.
  * Author: Albert
  */
+
 package use_case.registration.login;
 
 import use_case.DataAccessException;

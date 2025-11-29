@@ -1,15 +1,18 @@
 package frameworks_and_drivers.DataAccess;
 
-import okhttp3.*;
-import org.json.JSONException;
-import org.json.JSONObject;
-import use_case.DataAccessException;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static frameworks_and_drivers.DataAccess.Constants.*;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.FormBody;
+import okhttp3.Response;
+import use_case.DataAccessException;
 
 /**
  * Utility class for making HTTP requests to the API.
@@ -18,7 +21,7 @@ import static frameworks_and_drivers.DataAccess.Constants.*;
  */
 public class StaticMethods {
 
-    private static final OkHttpClient client = new OkHttpClient();
+    private static final OkHttpClient CLIENT = new OkHttpClient();
 
     /**
      * Make a request to the API using GET or POST.
@@ -26,20 +29,23 @@ public class StaticMethods {
      *
      * @param requestType "GET" or "POST"
      * @param method      The endpoint path (e.g., "/test-api")
-     * @param params      Map of request parameters (key-value pairs), can be null
+     * @param parameters      Map of request parameters (key-value pairs), can be null
      * @param apiKey      The API key for authentication
      * @return JSONObject parsed from the API response
      * @throws DataAccessException if request fails or API returns an error
+     * @throws IllegalArgumentException if request type is illegal
      */
     public static JSONObject makeApiRequest(
             String requestType,
             String method,
-            Map<String, String> params,
+            Map<String, String> parameters,
             String apiKey
     ) throws DataAccessException {
-
+        Map<String, String> params = parameters;
         // Ensure params map exists and includes API key
-        if (params == null) params = new HashMap<>();
+        if (params == null) {
+            params = new HashMap<>();
+        }
         params.put("key", apiKey);
 
         Request request;
@@ -50,11 +56,11 @@ public class StaticMethods {
             if (!params.isEmpty()) {
                 query.append("?");
                 params.forEach((k, v) -> query.append(k).append("=").append(v).append("&"));
-                query.setLength(query.length() - 1); // remove trailing &
+                query.setLength(query.length() - 1);
             }
 
             request = new Request.Builder()
-                    .url(API_URL + method + query)
+                    .url(Constants.API_URL + method + query)
                     .get()
                     .build();
 
@@ -69,12 +75,11 @@ public class StaticMethods {
             if (!params.isEmpty()) {
                 query.append("?");
                 params.forEach((k, v) -> query.append(k).append("=").append(v).append("&"));
-                query.setLength(query.length() - 1); // remove trailing &
+                query.setLength(query.length() - 1);
             }
 
-
             request = new Request.Builder()
-                    .url(API_URL + method + query)
+                    .url(Constants.API_URL + method + query)
                     .post(formBody)
                     .build();
 
@@ -83,23 +88,23 @@ public class StaticMethods {
         }
 
         // Execute request
-        try (Response response = client.newCall(request).execute()) {
+        try (Response response = CLIENT.newCall(request).execute()) {
             String responseBody = response.body().string();
             JSONObject responseJSON = new JSONObject(responseBody);
             int statusCode = response.code();
 
             // If Statement
-            if (statusCode == SUCCESS_CODE) {
+            if (statusCode == Constants.SUCCESS_CODE) {
                 return responseJSON;
-            } else if (statusCode == API_KEY_ERROR) {
+            } else if (statusCode == Constants.API_KEY_ERROR) {
                 throw new DataAccessException("API Key Error: " +
-                        responseJSON.optString(ERROR_MESSAGE, "Unknown key error"));
-            } else if (statusCode == BAD_REQUEST) {
+                        responseJSON.optString(Constants.ERROR_MESSAGE, "Unknown key error"));
+            } else if (statusCode == Constants.BAD_REQUEST) {
                 throw new DataAccessException("Bad Request: " +
-                        responseJSON.optString(ERROR_MESSAGE, "Unknown request error"));
+                        responseJSON.optString(Constants.ERROR_MESSAGE, "Unknown request error"));
             } else {
                 throw new DataAccessException("API error: " +
-                        responseJSON.optString(ERROR_MESSAGE, "Unknown API error"));
+                        responseJSON.optString(Constants.ERROR_MESSAGE, "Unknown API error"));
             }
         } catch (IOException | JSONException e) {
             throw new DataAccessException("Request failed: " + e.getMessage());
