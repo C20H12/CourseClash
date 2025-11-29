@@ -58,7 +58,7 @@ public class MultiPlayerInteractorTest {
 
     interactor.chooseAnswer("Paris", true);
 
-    assertEquals(List.of("update"), firedEvents, "Choosing an answer should emit update" );
+    assertEquals(List.of("submitAnswer"), firedEvents, "Choosing an answer should emit update" );
     MultiPlayerGameState state = viewModel.getState();
     assertEquals(1, state.getScoreA(), "Host score increments on correct answer");
     assertEquals(0, state.getScoreB());
@@ -72,7 +72,7 @@ public class MultiPlayerInteractorTest {
 
     interactor.chooseAnswer("Paris", false);
 
-    assertEquals(List.of("update"), firedEvents);
+    assertEquals(List.of("submitAnswer"), firedEvents);
     MultiPlayerGameState state = viewModel.getState();
     assertEquals(0, state.getScoreA());
     assertEquals(1, state.getScoreB());
@@ -135,7 +135,7 @@ public class MultiPlayerInteractorTest {
 
     interactor.chooseAnswer("Any", true);
 
-    assertEquals(List.of("update"), firedEvents);
+    assertEquals(List.of("submitAnswer"), firedEvents);
     MultiPlayerGameState state = viewModel.getState();
     assertEquals("Incorrect! The correct answer was: ", state.getRoundResult());
     assertEquals(0, state.getScoreA());
@@ -144,7 +144,7 @@ public class MultiPlayerInteractorTest {
     interactor.advance();
     firedEvents.clear();
     interactor.chooseAnswer("Any", true);
-    assertEquals(List.of("update"), firedEvents);
+    assertEquals(List.of("submitAnswer"), firedEvents);
     state = viewModel.getState();
     assertEquals("Incorrect! The correct answer was: ", state.getRoundResult());
     assertEquals(0, state.getScoreA());
@@ -155,7 +155,7 @@ public class MultiPlayerInteractorTest {
   void updateOtherPlayerScoreWithGuestFlagSetsHostScore() {
     interactor.startGame(firstDeck(), gateway.getSession().getUser(), new User("guest", "guest"));
 
-    interactor.updateOtherPlayerScore(5, false);
+    interactor.updateScore(5, 0);
     interactor.endGame();
 
     assertEquals(5, viewModel.getState().getScoreA());
@@ -170,7 +170,7 @@ public class MultiPlayerInteractorTest {
     interactor.advance(); // end game
     assertTrue(viewModel.getState().isGameOver());
 
-    interactor.updateOtherPlayerScore(7, true);
+    interactor.updateScore(7, 0);
     interactor.endGame();
 
     assertEquals(0, viewModel.getState().getScoreA());
@@ -179,7 +179,7 @@ public class MultiPlayerInteractorTest {
 
   @Test
   void updateOtherPlayerScoreBeforeGameStartsDoesNothing() {
-    interactor.updateOtherPlayerScore(4, true);
+    interactor.updateScore(4, 9);
 
     assertEquals(0, viewModel.getState().getScoreA());
     assertEquals(0, viewModel.getState().getScoreB());
@@ -217,8 +217,8 @@ public class MultiPlayerInteractorTest {
     User guest = new User("guest", "guest");
     interactor.startGame(firstDeck(), host, guest);
 
-    interactor.updateOtherPlayerScore(2, true);  // host tells guest score
-    interactor.updateOtherPlayerScore(3, false); // guest tells host score
+    interactor.updateScore(3, 0);  // host tells guest score
+    interactor.updateScore(3, 2); // guest tells host score
     firedEvents.clear();
 
     interactor.endGame();
