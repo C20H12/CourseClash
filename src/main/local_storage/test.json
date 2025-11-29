@@ -1,0 +1,37 @@
+{
+  "title": "test",
+  "description": "abc",
+  "id": 64444,
+  "deck": [
+    {
+      "question": "What is your name",
+      "answers": [
+        "Huzaifa",
+        "Daniel",
+        "Mahir",
+        "Luhan"
+      ],
+      "solutionId": 0
+    },
+    {
+      "question": "What is your age?",
+      "answers": [
+        "17",
+        "18",
+        "19",
+        "20"
+      ],
+      "solutionId": 2
+    },
+    {
+      "question": "Where are you from?",
+      "answers": [
+        "Germany",
+        "Canada",
+        "Pakistan",
+        "Bangladesh"
+      ],
+      "solutionId": 2
+    }
+  ]
+}

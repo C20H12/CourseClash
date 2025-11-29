@@ -15,7 +15,7 @@ public class SinglePlayerOutputData {
     private final String message;
 
     public SinglePlayerOutputData(String questionText, List<String> options, int currentIndex, int total,
-                                  int score, double accuracy, double avgResponseTime, boolean gameOver, String message) {
+                                  int score, double accuracy, double avgResponseTime, int correctAnswers, boolean gameOver, String message) {
         this.questionText = questionText;
         this.options = options;
         this.currentIndex = currentIndex;

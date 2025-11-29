@@ -10,10 +10,8 @@ import use_case.DataAccessException;
 import java.util.List;
 
 public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
-
     private final SinglePlayerOutputBoundary presenter;
     private final SinglePlayerAccessInterface gateway;
-
     private SinglePlayerGame game;
     private List<StudyCard> cards;
     private int idx = 0;
@@ -23,7 +21,6 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
         this.presenter = presenter;
         this.gateway = gateway;
     }
-
     @Override
     public void startGame(SinglePlayerInputData in) throws DataAccessException {
         final User player = in.getPlayer();
@@ -33,12 +30,10 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
             presenter.presentError("Could not load deck: " + deckTitle);
             return;
         }
-
         this.game = new SinglePlayerGame(player, deck, in.getTimerPerQuestion(), in.isShuffle());
         this.game.startGame();
         this.idx = 0;
         this.cards = deck.getDeck();
-
         final int limit = Math.min(in.getNumQuestions(), cards.size());
         if (limit < cards.size()) {
             this.cards = this.cards.subList(0, limit);
@@ -48,11 +43,12 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
         presenter.presentQuestion(new SinglePlayerOutputData(
                 first.getQuestion(), first.getAnswers(),
                 1, cards.size(),
-                0, 0.0, 0.0, false,
+                game.getScore(),
+                (game.getCorrectAnswers() * 100.0) / (idx + 1),
+                game.getAverageResponseTime(), game.getCorrectAnswers(), false,
                 "Game started"
         ));
     }
-
     @Override
     public void submitAnswer(String answer) throws DataAccessException {
         if (game == null) {
@@ -60,17 +56,12 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
             return;
         }
         final StudyCard current = cards.get(idx);
-
         boolean correct = current.getAnswers().get(current.getSolutionId()).equalsIgnoreCase(answer);
         if (correct) {
             game.incrementScoreCorrect();
-        } else {
-            game.decrementScore();
         }
-
         idx++;
         final boolean finished = idx >= cards.size();
-
         if (finished) {
             game.endGame();
             presenter.presentResults(new SinglePlayerOutputData(
@@ -78,6 +69,7 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
                     game.getScore(),
                     game.getCorrectAnswers() * 100.0 / cards.size(),
                     game.getAverageResponseTime(),
+                    game.getCorrectAnswers(),
                     true,
                     "Finished"
             ));
@@ -89,14 +81,15 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
                     game.getAverageResponseTime()
             );
         } else {
+            double accuracy = (game.getCorrectAnswers() * 100.0) / (idx);
             final StudyCard next = cards.get(idx);
             presenter.presentQuestion(new SinglePlayerOutputData(
                     next.getQuestion(), next.getAnswers(),
                     idx + 1, cards.size(),
                     game.getScore(),
-                    game.getCorrectAnswers() * 100.0 / cards.size(),
+                    accuracy,
                     game.getAverageResponseTime(),
-                    false,
+                    game.getCorrectAnswers(), false,
                     "Next"
             ));
         }
@@ -121,13 +114,13 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
                 game.getScore(),
                 game.getCorrectAnswers() * 100.0 / cards.size(),
                 game.getAverageResponseTime(),
-                true,
+                game.getCorrectAnswers(), true,
                 "Ended by user"
         ));
     }
 
     @Override
-    public void showAllDeckNames() throws DataAccessException {
+    public void showAllDeckNames() {
         List<StudyDeck> decks = gateway.getAllDecks();
         presenter.presentAllDecks(decks);
     }
