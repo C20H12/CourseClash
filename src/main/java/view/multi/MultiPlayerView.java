@@ -33,6 +33,11 @@ import interface_adapter.MultiPlayer.MultiPlayerViewModel;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.user_session.UserSession;
 
+/**
+ * The main Swing panel for the multiplayer game mode.
+ * Handles UI rendering, user input, and synchronizes state via the ViewModel and PeerConnection.
+ * Implements PropertyChangeListener to react to ViewModel updates.
+ */
 public class MultiPlayerView extends JPanel implements PropertyChangeListener {
 
     private static final String EVENT_ADVANCE = "ADVANCE";
@@ -65,6 +70,12 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
     private volatile boolean countdownActive;
     private int secondsPerQuestion = -1;
 
+    /**
+     * Constructs the MultiPlayerView and sets up initial listeners.
+     * @param viewModel The view model containing the multiplayer game state.
+     * @param viewManagerModel The manager for switching between different views.
+     * @param userSession The current user's session data.
+     */
     public MultiPlayerView(MultiPlayerViewModel viewModel, ViewManagerModel viewManagerModel, UserSession userSession) {
         this.viewModel = viewModel;
         this.viewManagerModel = viewManagerModel;
@@ -88,6 +99,9 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
         });
     }
 
+    /**
+     * Initializes the UI components and layout constraints.
+     */
     private void initUi() {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -145,16 +159,27 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
         add(controlRow, gbc);
     }
 
+    /**
+     * Cleans up resources (e.g., stopping threads) when the component is removed.
+     */
     @Override
     public void removeNotify() {
         stopCountdownThread();
         super.removeNotify();
     }
 
+    /**
+     * Sets the controller for handling user actions.
+     * @param controller The MultiPlayerController instance.
+     */
     public void setMultiPlayerController(MultiPlayerController controller) {
         this.multiPlayerController = controller;
     }
 
+    /**
+     * Responds to property changes from the ViewModel to update the UI.
+     * @param evt The property change event containing the new state.
+     */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if ("init".equals(evt.getPropertyName()) && !pregameFlowStarted) {
@@ -228,6 +253,10 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
 
     // pregame
 
+    /**
+     * Displays the pre-game setup dialog to select decks and establish peer connection.
+     * @param decks The list of available study decks.
+     */
     private void showPregameDialog(List<StudyDeck> decks) {
         if (decks.isEmpty()) {
             messageLabel.setText("No study decks available.");
@@ -252,7 +281,7 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
         StudyDeck selectedDeck = popup.getSelectedDeck();
         Map<String, Object> popupSettings = popup.getSettings();
         secondsPerQuestion = extractSecondsPerQuestion(popupSettings);
-        
+
         hostMode = "host".equalsIgnoreCase(popup.getMode());
         advanceButton.setEnabled(hostMode);
         endGameButton.setEnabled(hostMode);
@@ -268,6 +297,10 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
 
     // actions
 
+    /**
+     * Handles the 'Advance' button click (Host only).
+     * Sends the advance signal to the guest and updates the local controller.
+     */
     private void handleAdvanceButton() {
         if (!hostMode) {
             return;
@@ -278,6 +311,10 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
         sendPeerEvent(EVENT_ADVANCE);
     }
 
+    /**
+     * Handles the 'End Game' button click (Host only).
+     * Sends the end signal to the guest and terminates the local game.
+     */
     private void handleLocalEndGame() {
         if (!hostMode) {
             return;
@@ -287,21 +324,35 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
         sendPeerEvent(EVENT_END);
     }
 
+    /**
+     * Handles the 'Advance' signal received from the host.
+     */
     private void handleRemoteAdvance() {
         stopCountdownThread();
         multiPlayerController.advance();
     }
 
+    /**
+     * Handles the 'End Game' signal received from the host.
+     */
     private void handleRemoteEndGame() {
         stopCountdownThread();
         multiPlayerController.endGame();
     }
 
+    /**
+     * Sends the local player's score to the connected peer.
+     * @param score The current score to transmit.
+     */
     private void sendScoreUpdate(int score) {
         String payload = EVENT_SCORE + ":" + score;
         peerConnection.sendData(payload);
     }
 
+    /**
+     * Updates the UI with the score received from the peer.
+     * @param scoreString The raw score string received (e.g., "SCORE:5").
+     */
     private void updatePeerScore(String scoreString) {
         String[] parts = scoreString.split(":", 2);
         if (hostMode) {
@@ -322,6 +373,10 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
 
     // countdown
 
+    /**
+     * Starts the countdown timer for the current question.
+     * @param seconds The number of seconds for the countdown.
+     */
     private void startCountdownThread(int seconds) {
         countdownActive = true;
         countdownLabel.setText(formatCountdown(seconds));
@@ -336,7 +391,7 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
                     final int value = remaining;
                     SwingUtilities.invokeLater(() -> {
                         countdownLabel.setText(formatCountdown(value));
-                        countdownProgress.setValue(seconds - value);  
+                        countdownProgress.setValue(seconds - value);
                     });
                 }
             } catch (InterruptedException ignored) {
@@ -357,6 +412,9 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
         countdownThread.start();
     }
 
+    /**
+     * Stops the currently running countdown thread.
+     */
     private void stopCountdownThread() {
         countdownActive = false;
         if (countdownThread != null) {
@@ -367,6 +425,10 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
 
     // peer
 
+    /**
+     * Processes incoming data messages from the peer connection.
+     * @param rawMessage The raw string message received.
+     */
     private void handlePeerMessage(String rawMessage) {
         if (rawMessage == null) {
             return;
@@ -394,6 +456,10 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
         }
     }
 
+    /**
+     * Sends a control event string to the connected peer.
+     * @param event The event string (e.g., ADVANCE, END).
+     */
     private void sendPeerEvent(String event) {
         if (peerConnection != null) {
             peerConnection.sendData(event);
@@ -402,16 +468,29 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
 
     // utils
 
+    /**
+     * Disables all answer option buttons in the UI.
+     */
     private void disableOptionButtons() {
         for (Component c : optionButtonPanel.getComponents()) {
             c.setEnabled(false);
         }
     }
 
+    /**
+     * Formats the countdown seconds into a displayable string.
+     * @param value The seconds remaining.
+     * @return The formatted string (e.g., "Time Remaining: 05s").
+     */
     private String formatCountdown(int value) {
         return String.format("Time Remaining: %02ds", Math.max(0, value));
     }
 
+    /**
+     * Parses the 'secondsPerQuestion' setting from the map, dealing with type safety.
+     * @param settings The map of settings.
+     * @return The integer value for seconds per question, defaulting to 10.
+     */
     private int extractSecondsPerQuestion(Map<String, Object> settings) {
         if (settings == null || settings.isEmpty()) {
             return 10;
@@ -430,6 +509,10 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
         return 10;
     }
 
+    /**
+     * Retrieves the name associated with this view.
+     * @return The view name string.
+     */
     public String getViewName() {
         return viewName;
     }
