@@ -7,76 +7,140 @@ import entity.DeckManagement.StudyCard;
  */
 public class MultiPlayerOutputData {
 
-	private String playerA;
-	private String playerB;
-	private int scoreA;
-	private int scoreB;
-	private String message;
-	private StudyCard currentCard;
-	private String roundResult;
-	private boolean gameOver;
+    private String playerA;
+    private String playerB;
+    private int scoreA;
+    private int scoreB;
+    private String message;
+    private StudyCard currentCard;
+    private String roundResult;
+    private boolean gameOver;
 
-	public String getPlayerA() {
-		return playerA;
-	}
+    /**
+     * Retrieves the username or identifier for Player A.
+     * @return The string representing Player A.
+     */
+    public String getPlayerA() {
+        return playerA;
+    }
 
-	public void setPlayerA(String playerA) {
-		this.playerA = playerA;
-	}
+    /**
+     * Sets the username or identifier for Player A.
+     * @param playerA The string to set as Player A.
+     */
+    public void setPlayerA(String playerA) {
+        this.playerA = playerA;
+    }
 
-	public String getPlayerB() {
-		return playerB;
-	}
+    /**
+     * Retrieves the username or identifier for Player B.
+     * @return The string representing Player B.
+     */
+    public String getPlayerB() {
+        return playerB;
+    }
 
-	public void setPlayerB(String playerB) {
-		this.playerB = playerB;
-	}
+    /**
+     * Sets the username or identifier for Player B.
+     * @param playerB The string to set as Player B.
+     */
+    public void setPlayerB(String playerB) {
+        this.playerB = playerB;
+    }
 
-	public int getScoreA() {
-		return scoreA;
-	}
+    /**
+     * Retrieves the current score for Player A.
+     * @return The integer score of Player A.
+     */
+    public int getScoreA() {
+        return scoreA;
+    }
 
-	public void setScoreA(int scoreA) {
-		this.scoreA = scoreA;
-	}
+    /**
+     * Updates the current score for Player A.
+     * @param scoreA The new score to set.
+     */
+    public void setScoreA(int scoreA) {
+        this.scoreA = scoreA;
+    }
 
-	public int getScoreB() {
-		return scoreB;
-	}
+    /**
+     * Retrieves the current score for Player B.
+     * @return The integer score of Player B.
+     */
+    public int getScoreB() {
+        return scoreB;
+    }
 
-	public void setScoreB(int scoreB) {
-		this.scoreB = scoreB;
-	}
+    /**
+     * Updates the current score for Player B.
+     * @param scoreB The new score to set.
+     */
+    public void setScoreB(int scoreB) {
+        this.scoreB = scoreB;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    /**
+     * Retrieves the system or game status message.
+     * @return A string containing the message.
+     */
+    public String getMessage() {
+        return message;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    /**
+     * Sets a message regarding the game state or errors.
+     * @param message The message string to display or store.
+     */
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	public StudyCard getCurrentCard() {
-		return currentCard;
-	}
+    /**
+     * Retrieves the StudyCard currently being played in this round.
+     * @return The current StudyCard object.
+     */
+    public StudyCard getCurrentCard() {
+        return currentCard;
+    }
 
-	public void setCurrentCard(StudyCard currentCard) {
-		this.currentCard = currentCard;
-	}
+    /**
+     * Sets the StudyCard for the current round.
+     * @param currentCard The StudyCard object to be used.
+     */
+    public void setCurrentCard(StudyCard currentCard) {
+        this.currentCard = currentCard;
+    }
 
-	public String getRoundResult() {
-		return roundResult;
-	}
+    /**
+     * Retrieves the result of the specific round (e.g., who won or if the answer was correct).
+     * @return A string describing the round outcome.
+     */
+    public String getRoundResult() {
+        return roundResult;
+    }
 
-	public void setRoundResult(String roundResult) {
-		this.roundResult = roundResult;
-	}
+    /**
+     * Sets the result description for the specific round.
+     * @param roundResult The string describing the round outcome.
+     */
+    public void setRoundResult(String roundResult) {
+        this.roundResult = roundResult;
+    }
 
-	public boolean isGameOver() {
-		return gameOver;
-	}
+    /**
+     * Checks if the game session has concluded.
+     * @return True if the game is over, false otherwise.
+     */
+    public boolean isGameOver() {
+        return gameOver;
+    }
 
-	public void setGameOver(boolean gameOver) {
-		this.gameOver = gameOver;
-	}
+    /**
+     * Updates the game completion status.
+     * @param gameOver True to mark the game as ended, false otherwise.
+     */
+    public void setGameOver(boolean gameOver) {
+        this.gameOver = gameOver;
+    }
 }
