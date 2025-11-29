@@ -1,9 +1,9 @@
 package use_case.studyDeck;
 
+import java.util.List;
+
 import entity.DeckManagement.StudyCard;
 import entity.DeckManagement.StudyDeck;
-
-import java.util.List;
 
 public interface StudyDeckDataAccessInterface {
     // Save a StudyDeck object to local storage using SysFileHandler.
