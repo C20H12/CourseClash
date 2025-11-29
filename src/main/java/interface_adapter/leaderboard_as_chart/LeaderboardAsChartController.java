@@ -12,8 +12,8 @@ public class LeaderboardAsChartController {
         this.interactor = interactor;
     }
 
-    public void requestChart() throws DataAccessException {
-        LeaderboardAsChartInputData inputData = new LeaderboardAsChartInputData("chart");
+    public void requestChart(int leaderboardEntryCount) throws DataAccessException {
+        LeaderboardAsChartInputData inputData = new LeaderboardAsChartInputData("chart", leaderboardEntryCount);
         interactor.execute();
     }
 }
