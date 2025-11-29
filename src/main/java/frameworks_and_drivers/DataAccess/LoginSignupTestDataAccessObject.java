@@ -1,16 +1,22 @@
 package frameworks_and_drivers.DataAccess;
 
-import entity.User;
-import org.json.JSONObject;
-import use_case.DataAccessException;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.json.JSONObject;
+
+import entity.User;
+import use_case.DataAccessException;
 
 import static frameworks_and_drivers.DataAccess.StaticMethods.makeApiRequest;
 
 public class LoginSignupTestDataAccessObject {
-
+    /**
+     * Deletes a test user from the system.
+     *
+     * @param user the user to delete
+     * @throws DataAccessException if there is an error accessing the data
+     */
     public void delete(User user) throws DataAccessException {
         final String method = "/api/delete-test-user-only";
         final String deleteApiKey = "delete-test-user-only";
@@ -20,6 +26,13 @@ public class LoginSignupTestDataAccessObject {
         response.getString("status_message");
     }
 
+    /**
+     * Creates a new test user in the system.
+     *
+     * @param user the user to create
+     * @return the status message from the API
+     * @throws DataAccessException if there is an error accessing the data
+     */
     public String create(User user) throws DataAccessException {
         final String method = "/api/signup";
         final String signupApiKey = "6C1BLovesCS";
