@@ -1,19 +1,18 @@
 package view.single;
 
-import javax.swing.*;
-
-import entity.DeckManagement.StudyDeck;
-
 import java.awt.*;
-import java.awt.event.ActionEvent;
+
+import javax.swing.*;
 import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import entity.DeckManagement.StudyDeck;
+
 public class SinglePlayerSelectSetPopup extends JDialog {
   private  JList<String> deckList;
-  private JButton confirmButton;
-  private StudyDeck selectedDeck = null;
+    private StudyDeck selectedDeck = null;
 
   public SinglePlayerSelectSetPopup(List<StudyDeck> decks) {
     setTitle("Select Deck");
@@ -34,7 +33,7 @@ public class SinglePlayerSelectSetPopup extends JDialog {
     add(scrollPane, BorderLayout.CENTER);
 
     // Confirm button
-    confirmButton = new JButton("Confirm");
+      JButton confirmButton = new JButton("Confirm");
     confirmButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
