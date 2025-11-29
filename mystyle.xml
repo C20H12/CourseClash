@@ -277,7 +277,6 @@
             <property name="option" value="text"/>
         </module>
         <module name="EmptyCatchBlock"/>
-        <module name="LeftCurly"/>
         <module name="NeedBraces"/>
         <module name="NeedBraces">
             <property name="tokens" value="LAMBDA"/>
@@ -288,19 +287,6 @@
             <property name="tokens" value="CTOR_DEF"/>
             <property name="tokens" value="CLASS_DEF"/>
             <property name="tokens" value="INSTANCE_INIT"/>
-            <property name="tokens" value="LITERAL_FOR"/>
-            <property name="tokens" value="STATIC_INIT"/>
-            <property name="tokens" value="LITERAL_WHILE"/>
-            <property name="tokens" value="LITERAL_CATCH"/>
-            <property name="tokens" value="LITERAL_ELSE"/>
-            <property name="tokens" value="LITERAL_FINALLY"/>
-            <property name="tokens" value="LITERAL_IF"/>
-            <property name="tokens" value="LITERAL_TRY"/>
-            <property name="tokens" value="LITERAL_SWITCH"/>
-            <property name="tokens" value="ANNOTATION_DEF"/>
-            <property name="tokens" value="ENUM_DEF"/>
-            <property name="tokens" value="RECORD_DEF"/>
-            <property name="tokens" value="COMPACT_CTOR_DEF"/>
             <property name="option" value="alone"/>
         </module>
         <module name="RightCurly">
@@ -535,16 +521,6 @@
         <module name="VariableDeclarationUsageDistance"/>
 
         <!-- Filters -->
-        <module name="SuppressionCommentFilter">
-            <!--
-              Use suppressions.xml for suppressions, this is only example.
-              checkFormat will prevent suppression comments from being valid.
-            -->
-            <property name="checkFormat" value="IGNORETHIS"/>
-            <property name="offCommentFormat" value="CSOFF\: .*"/>
-            <property name="onCommentFormat" value="CSON\: .*"/>
-        </module>
-
         <!-- Tone down the checking for test code -->
         <module name="SuppressionXpathSingleFilter">
             <property name="files" value="[\\/]internal[\\/].*[\\/]\w+Util\.java"/>
@@ -632,9 +608,6 @@
         <module name="JavadocMissingLeadingAsterisk"/>
         <module name="JavadocMissingWhitespaceAfterAsterisk"/>
         <module name="JavadocParagraph"/>
-        <module name="JavadocStyle">
-            <property name="scope" value="public"/>
-        </module>
         <module name="JavadocTagContinuationIndentation"/>
         <module name="JavadocType">
             <!-- avoid errors on tag '@noinspection' -->
@@ -648,7 +621,6 @@
         <module name="NonEmptyAtclauseDescription"/>
         <module name="SingleLineJavadoc"/>
         <module name="WriteTag"/>
-        <module name="SummaryJavadoc"/>
 
         <!-- Metrics -->
         <module name="BooleanExpressionComplexity">
@@ -669,31 +641,10 @@
                        UnsupportedEncodingException, BuildException, ConversionException,
                        FileNotFoundException, TestException"/>
         </module>
-        <module name="ClassFanOutComplexity">
-            <property name="max" value="25"/>
-            <!-- Default classes are also listed -->
-            <property name="excludedClasses"
-                      value="boolean, byte, char, double, float, int, long, short,
-                       void, Boolean, Byte, Character, Double, Float, Integer,
-                       Long, Short, Void, Object, Class, String, StringBuffer,
-                       StringBuilder, ArrayIndexOutOfBoundsException, Exception,
-                       RuntimeException, IllegalArgumentException, IllegalStateException,
-                       IndexOutOfBoundsException, NullPointerException, Throwable,
-                       SecurityException, UnsupportedOperationException, List, ArrayList,
-                       Deque, Queue, LinkedList, Set, HashSet, SortedSet, TreeSet, Map,
-                       HashMap, SortedMap, TreeMap, DetailsAST, CheckstyleException,
-                       UnsupportedEncodingException, BuildException, ConversionException,
-                       FileNotFoundException, TestException, Log, Sets, Multimap,
-                       TokenStreamRecognitionException, RecognitionException,
-                       TokenStreamException, IOException, Override, Deprecated, SafeVarargs,
-                       SuppressWarnings, FunctionalInterface, NoSuchMethodException,
-                       InvocationTargetException, IllegalAccessException"/>
-        </module>
         <module name="CyclomaticComplexity">
             <property name="switchBlockAsSingleDecisionPoint" value="true"/>
         </module>
         <module name="JavaNCSS"/>
-        <module name="NPathComplexity"/>
 
         <!-- Misc -->
         <module name="ArrayTypeStyle"/>
@@ -737,8 +688,7 @@
 
         <!-- Naming Conventions -->
         <module name="AbbreviationAsWordInName">
-            <property name="ignoreFinal" value="false"/>
-            <property name="allowedAbbreviationLength" value="0"/>
+            <property name="ignoreFinal" value="true"/>
             <property name="allowedAbbreviations" value="AST,HTML,ID,JSON"/>
         </module>
         <module name="AbstractClassName"/>
@@ -760,12 +710,6 @@
         <module name="ParameterName">
             <property name="format" value="^(id)|([a-z][a-z0-9][a-zA-Z0-9]+)$"/>
             <property name="ignoreOverridden" value="true"/>
-        </module>
-        <module name="LambdaParameterName">
-            <property name="format" value="^(id)|([a-z][a-z0-9][a-zA-Z0-9]+)$"/>
-        </module>
-        <module name="CatchParameterName">
-            <property name="format" value="^(ex|[a-z][a-z][a-zA-Z]+)$"/>
         </module>
         <module name="StaticVariableName">
             <property name="format" value="^(id)|([a-z][a-z0-9][a-zA-Z0-9]+)$"/>
