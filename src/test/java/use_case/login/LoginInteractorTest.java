@@ -47,6 +47,12 @@ class LoginInteractorTest {
             public void prepareFailView(String error) {
                 fail("Use case failure is unexpected.");
             }
+
+            @Override
+            public void switchToSignupView() {
+              // TODO Auto-generated method stub
+              throw new UnsupportedOperationException("Unimplemented method 'switchToSignupView'");
+            }
         };
         LoginInputData inputData = new LoginInputData(testUser.getUserName(), testUser.getPassword());
         LoginUserDataAccessInterface loginDAO = new LoginUserDataAccessObject();
@@ -76,6 +82,12 @@ class LoginInteractorTest {
             public void prepareFailView(String error) {
                 assertEquals("Incorrect password for \"" + testUser.getUserName() + "\".", error);
             }
+
+            @Override
+            public void switchToSignupView() {
+              // TODO Auto-generated method stub
+              throw new UnsupportedOperationException("Unimplemented method 'switchToSignupView'");
+            }
         };
 
         // Attempt login using the wrong password
@@ -102,6 +114,12 @@ class LoginInteractorTest {
             @Override
             public void prepareFailView(String error) {
                 assertEquals(testUser.getUserName() + ": Account does not exist.", error);
+            }
+
+            @Override
+            public void switchToSignupView() {
+              // TODO Auto-generated method stub
+              throw new UnsupportedOperationException("Unimplemented method 'switchToSignupView'");
             }
         };
 
