@@ -1,5 +1,6 @@
-// Class to manage WebRTC peer connections 
+// Class to manage WebRTC peer connections
 // author: Luhan
+
 package entity.peer;
 
 import java.io.IOException;
@@ -41,6 +42,8 @@ import dev.onvoid.webrtc.RTCSessionDescription;
 import dev.onvoid.webrtc.SetSessionDescriptionObserver;
 
 public class PeerConnection {
+  private static final int MQTTTIMEOUT = 10;
+
   private String uid;
 
   private RTCConfiguration config;
@@ -60,7 +63,8 @@ public class PeerConnection {
 
   /**
    * Creates a new PeerConnection with the specified ID.
-   * Initializes WebRTC configuration with ICE servers and connects to MQTT broker.
+   * Initializes WebRTC configuration with ICE servers and connects to MQTT
+   * broker.
    * 
    * @param id the unique identifier for this peer connection
    */
@@ -69,7 +73,7 @@ public class PeerConnection {
 
     // Configure ICE servers (STUN/TURN)
     config = new RTCConfiguration();
-    RTCIceServer iceServer = new RTCIceServer();
+    final RTCIceServer iceServer = new RTCIceServer();
     iceServer.urls.add("stun:stun.l.google.com:19302");
     iceServer.urls.add("stun:stun.l.google.com:19302");
     iceServer.urls.add("stun:stun.l.google.com:5349");
@@ -80,31 +84,33 @@ public class PeerConnection {
     factory = new PeerConnectionFactory();
 
     // connect to MQTT broker
-    String broker = "tcp://broker.emqx.io:1883";
-    String clientId = UUID.randomUUID().toString();
+    final String broker = "tcp://broker.emqx.io:1883";
+    final String clientId = UUID.randomUUID().toString();
     try {
       client = new MqttClient(broker, clientId, new MemoryPersistence());
-      MqttConnectOptions options = new MqttConnectOptions();
+      final MqttConnectOptions options = new MqttConnectOptions();
       options.setAutomaticReconnect(true);
       options.setCleanSession(true);
-      options.setConnectionTimeout(10);
+      options.setConnectionTimeout(MQTTTIMEOUT);
       client.connect(options);
-    } catch (MqttException e) {
+    }
+    catch (MqttException e) {
       e.printStackTrace();
     }
 
     logger = Logger.getLogger(PeerConnection.class.getName());
     logger.setUseParentHandlers(false);
-    FileHandler fh;
+    final FileHandler fh;
     try {
-      String path = "\\src\\main\\resources\\logs\\peer_connection_log.txt";
-      String pwd = Path.of("").toAbsolutePath().toString();
+      final String path = "\\src\\main\\resources\\logs\\peer_connection_log.txt";
+      final String pwd = Path.of("").toAbsolutePath().toString();
       fh = new FileHandler(pwd + path);
       logger.addHandler(fh);
-      SimpleFormatter formatter = new SimpleFormatter();
+      final SimpleFormatter formatter = new SimpleFormatter();
       fh.setFormatter(formatter);
-    } catch (SecurityException | IOException e) {
-      e.printStackTrace();
+    }
+    catch (SecurityException | IOException ex) {
+      ex.printStackTrace();
     }
   }
 
@@ -117,7 +123,8 @@ public class PeerConnection {
 
   /**
    * Creates a WebRTC offer for establishing a peer connection.
-   * Initializes the peer connection, creates a data channel, and generates ICE candidates.
+   * Initializes the peer connection, creates a data channel, and generates ICE
+   * candidates.
    */
   private void createOffer() {
     logPeerConncetionInfo("Creating offer...");
@@ -135,8 +142,8 @@ public class PeerConnection {
         if (!offerJsonObject.has("candidates")) {
           offerJsonObject.put("candidates", new JSONArray());
         }
-        JSONArray candidatesJsonArr = offerJsonObject.getJSONArray("candidates");
-        JSONObject candidateJsonObj = new JSONObject();
+        final JSONArray candidatesJsonArr = offerJsonObject.getJSONArray("candidates");
+        final JSONObject candidateJsonObj = new JSONObject();
         candidateJsonObj.put("sdpMid", candidate.sdpMid);
         candidateJsonObj.put("sdpMLineIndex", candidate.sdpMLineIndex);
         candidateJsonObj.put("sdp", candidate.sdp);
@@ -155,13 +162,13 @@ public class PeerConnection {
     logPeerConncetionInfo("Peer connection created");
 
     // step 2: Create a data channel to trigger ICE gathering
-    RTCDataChannelInit dataChannelInit = new RTCDataChannelInit();
+    final RTCDataChannelInit dataChannelInit = new RTCDataChannelInit();
     gDataChannel = peerConnection.createDataChannel("myDataChannel", dataChannelInit);
     gDataChannel.registerObserver(creatDataChannelObserver(gDataChannel));
     logPeerConncetionInfo("Data channel created: " + gDataChannel.getLabel());
 
     // step 3: Create an offer
-    RTCOfferOptions options = new RTCOfferOptions();
+    final RTCOfferOptions options = new RTCOfferOptions();
 
     peerConnection.createOffer(options, new CreateSessionDescriptionObserver() {
       @Override
@@ -192,10 +199,12 @@ public class PeerConnection {
 
   /**
    * Creates a WebRTC answer in response to an offer from another peer.
-   * Parses the offer, sets up the peer connection, and generates an answer with ICE candidates.
+   * Parses the offer, sets up the peer connection, and generates an answer with
+   * ICE candidates.
    * 
-   * @param offerJsonStr the JSON string containing the offer SDP and ICE candidates
-   * @param targetID the ID of the peer that sent the offer
+   * @param offerJsonStr the JSON string containing the offer SDP and ICE
+   *                     candidates
+   * @param targetID     the ID of the peer that sent the offer
    */
   private void createAnswer(String offerJsonStr, String targetID) {
     logPeerConncetionInfo("Creating answer...");
@@ -203,7 +212,7 @@ public class PeerConnection {
     answerJsonObject.clear();
 
     // step 0: Get the offer data
-    String offerData = offerJsonStr;
+    final String offerData = offerJsonStr;
 
     if (offerData.isEmpty()) {
       logPeerConncetionInfo("Error: Offer empty!");
@@ -211,21 +220,22 @@ public class PeerConnection {
     }
 
     // Parse the offer data
-    JSONObject offerJsonObj = new JSONObject(offerData);
-    String offerSdp = offerJsonObj.getString("sdp");
-    JSONArray candidateJsonArr = offerJsonObj.getJSONArray("candidates");
-    ArrayList<RTCIceCandidate> remoteCandidates = new ArrayList<>();
+    final JSONObject offerJsonObj = new JSONObject(offerData);
+    final String offerSdp = offerJsonObj.getString("sdp");
+    final JSONArray candidateJsonArr = offerJsonObj.getJSONArray("candidates");
+    final ArrayList<RTCIceCandidate> remoteCandidates = new ArrayList<>();
 
     for (int i = 0; i < candidateJsonArr.length(); i++) {
-      JSONObject candidateJsonObj = candidateJsonArr.getJSONObject(i);
-      String sdpMid = candidateJsonObj.getString("sdpMid");
-      int sdpMLineIndex = candidateJsonObj.getInt("sdpMLineIndex");
-      String sdp = candidateJsonObj.getString("sdp");
-      RTCIceCandidate candidate = new RTCIceCandidate(sdpMid, sdpMLineIndex, sdp);
+      final JSONObject candidateJsonObj = candidateJsonArr.getJSONObject(i);
+      final String sdpMid = candidateJsonObj.getString("sdpMid");
+      final int sdpMLineIndex = candidateJsonObj.getInt("sdpMLineIndex");
+      final String sdp = candidateJsonObj.getString("sdp");
+      final RTCIceCandidate candidate = new RTCIceCandidate(sdpMid, sdpMLineIndex, sdp);
       remoteCandidates.add(candidate);
     }
 
-    logPeerConncetionInfo("Parsed SDP (" + offerSdp.length() + " chars) and " + candidateJsonArr.length() + " candidates");
+    logPeerConncetionInfo(
+        "Parsed SDP (" + offerSdp.length() + " chars) and " + candidateJsonArr.length() + " candidates");
 
     // step 1: Create a peer connection with an observer to handle events
     peerConnection = factory.createPeerConnection(config, new PeerConnectionObserver() {
@@ -237,8 +247,8 @@ public class PeerConnection {
         if (!answerJsonObject.has("candidates")) {
           answerJsonObject.put("candidates", new JSONArray());
         }
-        JSONArray candidatesJsonArr = answerJsonObject.getJSONArray("candidates");
-        JSONObject candidateJsonObj = new JSONObject();
+        final JSONArray candidatesJsonArr = answerJsonObject.getJSONArray("candidates");
+        final JSONObject candidateJsonObj = new JSONObject();
         candidateJsonObj.put("sdpMid", candidate.sdpMid);
         candidateJsonObj.put("sdpMLineIndex", candidate.sdpMLineIndex);
         candidateJsonObj.put("sdp", candidate.sdp);
@@ -261,9 +271,9 @@ public class PeerConnection {
         logPeerConncetionInfo("ICE Gathering State: " + state);
 
         if (state == RTCIceGatheringState.COMPLETE) {
-          String targetConnectionId = targetID;
+          final String targetConnectionId = targetID;
           try {
-            MqttMessage answerMsg = new MqttMessage(answerJsonObject.toString().getBytes(StandardCharsets.UTF_8));
+            final MqttMessage answerMsg = new MqttMessage(answerJsonObject.toString().getBytes(StandardCharsets.UTF_8));
             answerMsg.setQos(2);
             client.publish(targetConnectionId + "/answer", answerMsg);
           } catch (MqttException e) {
@@ -277,7 +287,7 @@ public class PeerConnection {
 
     // also step 0: parsing the offer then Create RTCSessionDescription from the
     // offer
-    RTCSessionDescription offerDescription = new RTCSessionDescription(RTCSdpType.OFFER, offerSdp);
+    final RTCSessionDescription offerDescription = new RTCSessionDescription(RTCSdpType.OFFER, offerSdp);
 
     // step 2: Set the remote description (the offer)
     peerConnection.setRemoteDescription(offerDescription, new SetSessionDescriptionObserver() {
@@ -330,9 +340,11 @@ public class PeerConnection {
 
   /**
    * Establishes the connection by processing the answer from the remote peer.
-   * Parses the answer SDP and ICE candidates, then completes the connection setup.
+   * Parses the answer SDP and ICE candidates, then completes the connection
+   * setup.
    * 
-   * @param answerJsonStr the JSON string containing the answer SDP and ICE candidates
+   * @param answerJsonStr the JSON string containing the answer SDP and ICE
+   *                      candidates
    */
   private void connect(String answerJsonStr) {
     if (peerConnection == null) {
@@ -341,17 +353,17 @@ public class PeerConnection {
     }
 
     // parse the returned answer data
-    JSONObject answerJsonObj = new JSONObject(answerJsonStr);
-    String answerSdp = answerJsonObj.getString("sdp");
-    JSONArray candidateJsonArr = answerJsonObj.getJSONArray("candidates");
-    ArrayList<RTCIceCandidate> remoteCandidates = new ArrayList<>();
+    final JSONObject answerJsonObj = new JSONObject(answerJsonStr);
+    final String answerSdp = answerJsonObj.getString("sdp");
+    final JSONArray candidateJsonArr = answerJsonObj.getJSONArray("candidates");
+    final ArrayList<RTCIceCandidate> remoteCandidates = new ArrayList<>();
 
     for (int i = 0; i < candidateJsonArr.length(); i++) {
-      JSONObject candidateJsonObj = candidateJsonArr.getJSONObject(i);
-      String sdpMid = candidateJsonObj.getString("sdpMid");
-      int sdpMLineIndex = candidateJsonObj.getInt("sdpMLineIndex");
-      String sdp = candidateJsonObj.getString("sdp");
-      RTCIceCandidate candidate = new RTCIceCandidate(sdpMid, sdpMLineIndex, sdp);
+      final JSONObject candidateJsonObj = candidateJsonArr.getJSONObject(i);
+      final String sdpMid = candidateJsonObj.getString("sdpMid");
+      final int sdpMLineIndex = candidateJsonObj.getInt("sdpMLineIndex");
+      final String sdp = candidateJsonObj.getString("sdp");
+      final RTCIceCandidate candidate = new RTCIceCandidate(sdpMid, sdpMLineIndex, sdp);
       remoteCandidates.add(candidate);
       logPeerConncetionInfo("Parsed ICE candidate: " + candidate.sdpMid);
     }
@@ -359,7 +371,7 @@ public class PeerConnection {
     System.out
         .println("Parsed SDP (" + answerSdp.length() + " chars) and " + candidateJsonArr.length() + " candidates");
 
-    RTCSessionDescription answerDescription = new RTCSessionDescription(RTCSdpType.ANSWER, answerSdp);
+    final RTCSessionDescription answerDescription = new RTCSessionDescription(RTCSdpType.ANSWER, answerSdp);
     peerConnection.setRemoteDescription(answerDescription, new SetSessionDescriptionObserver() {
       @Override
       public void onSuccess() {
@@ -407,8 +419,8 @@ public class PeerConnection {
 
       @Override
       public void onMessage(RTCDataChannelBuffer buffer) {
-        ByteBuffer data = buffer.data;
-        byte[] textBytes;
+        final ByteBuffer data = buffer.data;
+        final byte[] textBytes;
 
         if (data.hasArray()) {
           textBytes = data.array();
@@ -417,7 +429,7 @@ public class PeerConnection {
           data.get(textBytes);
         }
 
-        String message = new String(textBytes, StandardCharsets.UTF_8);
+        final String message = new String(textBytes, StandardCharsets.UTF_8);
         dataCallback.onData(message);
       }
 
@@ -427,10 +439,10 @@ public class PeerConnection {
   /**
    * Registers a callback to be invoked when data is received from the peer.
    * 
-   * @param cb the callback to handle incoming data
+   * @param callBack the callback to handle incoming data
    */
-  public void onDataRecieved(PeerDataCallback cb) {
-    dataCallback = cb;
+  public void onDataRecieved(PeerDataCallback callBack) {
+    dataCallback = callBack;
   }
 
   /**
@@ -438,10 +450,10 @@ public class PeerConnection {
    * Subscribes to MQTT topics and requests an offer from the target peer.
    * 
    * @param targetId the unique identifier of the peer to connect to
-   * @param cb the callback to be invoked when the connection is established
+   * @param callBack       the callback to be invoked when the connection is established
    */
-  public void connectToPeer(String targetId, PeerConnectCallback cb) {
-    connectCallback = cb;
+  public void connectToPeer(String targetId, PeerConnectCallback callBack) {
+    connectCallback = callBack;
     try {
       // need to subscribe first or else the offer might return very fast
       client.subscribe(targetId + "/offer", 2, (topic, msg) -> {
@@ -449,7 +461,7 @@ public class PeerConnection {
         createAnswer(new String(msg.getPayload(), StandardCharsets.UTF_8), targetId);
       });
       logPeerConncetionInfo("getting offer");
-      MqttMessage reqMsg = new MqttMessage("req".getBytes(StandardCharsets.UTF_8));
+      final MqttMessage reqMsg = new MqttMessage("req".getBytes(StandardCharsets.UTF_8));
       reqMsg.setQos(2);
       client.publish(targetId + "/get_offer", reqMsg);
     } catch (MqttPersistenceException e) {
@@ -463,18 +475,19 @@ public class PeerConnection {
 
   /**
    * Sets up this peer as a host ready to accept incoming connections.
-   * Creates an offer and subscribes to MQTT topics for offer requests and answers.
+   * Creates an offer and subscribes to MQTT topics for offer requests and
+   * answers.
    * 
-   * @param cb the callback to be invoked when a peer connects
+   * @param callBack the callback to be invoked when a peer connects
    */
-  public void onConnection(PeerConnectCallback cb) {
-    connectCallback = cb;
+  public void onConnection(PeerConnectCallback callBack) {
+    connectCallback = callBack;
     createOffer();
     try {
       logPeerConncetionInfo("Host init finished, code: " + uid);
       client.subscribe(uid + "/get_offer", 2, (topic, msg) -> {
         logPeerConncetionInfo("got request for offer");
-        MqttMessage offerMsg = new MqttMessage(offerJsonObject.toString().getBytes(StandardCharsets.UTF_8));
+        final MqttMessage offerMsg = new MqttMessage(offerJsonObject.toString().getBytes(StandardCharsets.UTF_8));
         offerMsg.setQos(2);
         client.publish(uid + "/offer", offerMsg);
       });
@@ -482,12 +495,8 @@ public class PeerConnection {
         logPeerConncetionInfo("Received answer via MQTT");
         connect(new String(msg.getPayload(), StandardCharsets.UTF_8));
       });
-    } catch (MqttPersistenceException e) {
-      logPeerConncetionInfo("Error in auto-connect: " + e.getMessage());
-      e.printStackTrace();
     } catch (MqttException e) {
       logPeerConncetionInfo("Error in auto-connect: " + e.getMessage());
-      e.printStackTrace();
     }
   }
 
@@ -498,12 +507,14 @@ public class PeerConnection {
    */
   public void sendData(String message) {
     if (gDataChannel != null && gDataChannel.getState() == RTCDataChannelState.OPEN) {
-      ByteBuffer messaBuffer = ByteBuffer.wrap(message.getBytes(StandardCharsets.UTF_8));
-      RTCDataChannelBuffer messagDataChannelBuffer = new RTCDataChannelBuffer(messaBuffer, false);
+      final ByteBuffer messaBuffer = ByteBuffer.wrap(message.getBytes(StandardCharsets.UTF_8));
+      final RTCDataChannelBuffer messagDataChannelBuffer = new RTCDataChannelBuffer(messaBuffer, false);
       try {
         gDataChannel.send(messagDataChannelBuffer);
         logPeerConncetionInfo("Sent message over data channel: " + message);
+        //CHECKSTYLE:OFF
       } catch (Exception e) {
+        //CHECKSTYLE:ON
         logPeerConncetionInfo("Failed to send message over data channel: " + e.getMessage());
       }
     } else {
@@ -518,13 +529,15 @@ public class PeerConnection {
 
   /**
    * Gets the unique identifier of this peer connection.
+   * @return String uid
    */
   public String getUid() {
     return uid;
   }
 
   /**
-   * Cleans up resources by closing the peer connection and disconnecting from MQTT broker.
+   * Cleans up resources by closing the peer connection and disconnecting from
+   * MQTT broker.
    * Should be called when the connection is no longer needed.
    */
   public void dispose() {
@@ -542,24 +555,24 @@ public class PeerConnection {
   }
 
   // public static void main(String[] args) {
-  //   // test out this class
-  //   PeerConnection pc = new PeerConnection();
-  //   PeerConnection pc1 = new PeerConnection();
-  //   pc.onConnection(() -> {
-  //     logPeerConncetionInfo("----Connected to peer!");
-  //     pc.sendData("-------Hello from peer!");
-  //   });
-  //   pc.onDataRecieved((data) -> {
-  //     logPeerConncetionInfo("------Received data: " + data);
-  //   });
-  //   pc1.connectToPeer(pc.uid, () -> {
-  //     logPeerConncetionInfo("------Connected to peer 0!");
-  //     pc1.sendData("-------Hello from peer1!");
-  //   });
-  //   pc1.onDataRecieved((data) -> {
-  //     logPeerConncetionInfo("------Received data: " + data);
-  //   });
-  //   // pc.dispose();
-  //   // pc1.dispose();
+  // // test out this class
+  // PeerConnection pc = new PeerConnection();
+  // PeerConnection pc1 = new PeerConnection();
+  // pc.onConnection(() -> {
+  // logPeerConncetionInfo("----Connected to peer!");
+  // pc.sendData("-------Hello from peer!");
+  // });
+  // pc.onDataRecieved((data) -> {
+  // logPeerConncetionInfo("------Received data: " + data);
+  // });
+  // pc1.connectToPeer(pc.uid, () -> {
+  // logPeerConncetionInfo("------Connected to peer 0!");
+  // pc1.sendData("-------Hello from peer1!");
+  // });
+  // pc1.onDataRecieved((data) -> {
+  // logPeerConncetionInfo("------Received data: " + data);
+  // });
+  // // pc.dispose();
+  // // pc1.dispose();
   // }
 }
