@@ -21,7 +21,7 @@ public class LeaderboardAsChartInteractor implements LeaderboardAsChartInputBoun
     }
 
     @Override
-    public void execute() throws DataAccessException {
+    public void execute(LeaderboardAsChartInputData inputData) throws DataAccessException {
         // Get top users for all types
         Map<LeaderboardType, List<User>> chartData = new HashMap<>();
         for (LeaderboardType type : LeaderboardType.values()) {
