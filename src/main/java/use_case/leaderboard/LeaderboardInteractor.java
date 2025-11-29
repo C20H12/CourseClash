@@ -1,12 +1,10 @@
 package use_case.leaderboard;
 
-import entity.User;
-import use_case.DataAccessException;
-import use_case.registration.login.LoginOutputBoundary;
-import use_case.registration.login.LoginUserDataAccessInterface;
-
 import java.util.ArrayList;
 import java.util.Map;
+
+import entity.User;
+import use_case.DataAccessException;
 
 public class LeaderboardInteractor implements LeaderboardInputBoundary {
     private final LeaderboardUserDataAccessInterface userDataAccessObject;
