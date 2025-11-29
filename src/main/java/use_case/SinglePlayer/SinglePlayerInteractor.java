@@ -44,7 +44,7 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
         // First question
         final StudyCard first = cards.get(0);
         presenter.presentQuestion(new SinglePlayerOutputData(
-                first.getQuestion(), first.getAnswers(),
+                first.getQuestionTitle(), first.getOptions(),
                 1, cards.size(),
                 game.getScore(),
                 (game.getCorrectAnswers() * 100.0) / (idx + 1),
@@ -63,10 +63,10 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
 
         StudyCard currentCard = current;
         String correctAnswer;
-        if (currentCard.getSolutionId() < 0 || currentCard.getSolutionId() >= currentCard.getAnswers().size()) {
+        if (currentCard.getAnswerId() < 0 || currentCard.getAnswerId() >= currentCard.getOptions().size()) {
             correctAnswer = "";
         } else {
-            correctAnswer = currentCard.getAnswers().get(currentCard.getSolutionId());
+            correctAnswer = currentCard.getOptions().get(currentCard.getAnswerId());
         }
         boolean correct = correctAnswer.equalsIgnoreCase(answer);
         if (correct) {
@@ -98,7 +98,7 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
             double accuracy = (game.getCorrectAnswers() * 100.0) / (idx);
             final StudyCard next = cards.get(idx);
             presenter.presentQuestion(new SinglePlayerOutputData(
-                    next.getQuestion(), next.getAnswers(),
+                    next.getQuestionTitle(), next.getOptions(),
                     idx + 1, cards.size(),
                     game.getScore(),
                     accuracy,

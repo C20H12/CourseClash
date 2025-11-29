@@ -46,7 +46,7 @@ public class MultiPlayerInteractorTest {
     assertEquals(List.of("question"), firedEvents, "Start should emit a question event");
     MultiPlayerGameState state = viewModel.getState();
     assertNotNull(state.getCurrentCard(), "First card should be available");
-    assertEquals("What is the capital of France?", state.getCurrentCard().getQuestion());
+    assertEquals("What is the capital of France?", state.getCurrentCard().getQuestionTitle());
     assertEquals("Card 1 of 3", state.getMessage());
     assertFalse(state.isGameOver());
   }

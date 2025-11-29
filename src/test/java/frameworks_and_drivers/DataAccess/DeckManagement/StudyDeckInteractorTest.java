@@ -1,4 +1,4 @@
-// Comprehensive test suite for StudyDeckInteractor.
+// Comprehensive test suite for StudyDeckInteractor. Tests all public methods and edge cases.
 // Archie
 
 package frameworks_and_drivers.DataAccess.DeckManagement;
@@ -23,10 +23,6 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Comprehensive test suite for StudyDeckInteractor.
- * Tests all public methods and edge cases.
- */
 class StudyDeckInteractorTest {
 
     private InMemoryStudyDeckGateway gateway;

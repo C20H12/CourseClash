@@ -197,7 +197,7 @@ public class StudyDeckEditPopup extends JDialog {
 		row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
 		row.setBackground(id == selectedCardId ? SELECTED_CARD_COLOR : Color.WHITE);
 
-		JLabel questionLabel = new JLabel(state.getQuestion()); 
+		JLabel questionLabel = new JLabel(state.getQuestionTitle());
 		questionLabel.setFont(new Font("Helvetica", Font.PLAIN, 16));
 		questionLabel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		questionLabel.addMouseListener(new MouseAdapter() {
@@ -236,12 +236,12 @@ public class StudyDeckEditPopup extends JDialog {
 			return;
 		}
 		toggleCardFieldsEnable(true);
-		questionArea.setText(card.getQuestion());
-		for (int i = 0; i < card.getAnswers().size(); i++) {
-			answerFields.get(i).setText(card.getAnswers().get(i));
+		questionArea.setText(card.getQuestionTitle());
+		for (int i = 0; i < card.getOptions().size(); i++) {
+			answerFields.get(i).setText(card.getOptions().get(i));
 		}
-		if (card.getSolutionId() >= 0 && card.getSolutionId() < answerChoiceButtons.size()) {
-			answerChoiceButtons.get(card.getSolutionId()).setSelected(true);
+		if (card.getAnswerId() >= 0 && card.getAnswerId() < answerChoiceButtons.size()) {
+			answerChoiceButtons.get(card.getAnswerId()).setSelected(true);
 		} else {
 			answerButtonGroup.clearSelection();
 		}

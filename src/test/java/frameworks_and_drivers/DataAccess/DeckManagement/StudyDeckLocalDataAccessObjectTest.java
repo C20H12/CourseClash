@@ -1,3 +1,6 @@
+// Test suite for StudyDeckLocalDataAccessObject. Verifies file-based storage operations for StudyDeck objects.
+// Archie
+
 package frameworks_and_drivers.DataAccess.DeckManagement;
 
 import entity.DeckManagement.StudyCard;
@@ -12,10 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Test suite for StudyDeckLocalDataAccessObject.
- * Verifies file-based storage operations for StudyDeck objects.
- */
 class StudyDeckLocalDataAccessObjectTest {
 
     private StudyDeckLocalDataAccessObject manager;
@@ -34,9 +33,7 @@ class StudyDeckLocalDataAccessObjectTest {
         cleanupTestFiles();
     }
 
-    /**
-     * Helper method to clean up test JSON files.
-     */
+    // Helper method to clean up test JSON files.
     private void cleanupTestFiles() {
         File storageDir = new File(testStorageDir);
         File[] files = storageDir.listFiles();

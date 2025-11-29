@@ -1,8 +1,5 @@
 package use_case.MultiPlayer;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import entity.MultiPlayerGame;
 import entity.User;
 import entity.DeckManagement.StudyCard;
@@ -79,10 +76,10 @@ public class MultiPlayerInteractor implements MultiPlayerInputBoundary {
 
       StudyCard currentCard = game.getCurrentCard();
       String correctAnswer;
-      if (currentCard.getSolutionId() < 0 || currentCard.getSolutionId() >= currentCard.getAnswers().size()) {
+      if (currentCard.getAnswerId() < 0 || currentCard.getAnswerId() >= currentCard.getOptions().size()) {
         correctAnswer = "";
       } else {
-        correctAnswer = currentCard.getAnswers().get(currentCard.getSolutionId());
+        correctAnswer = currentCard.getOptions().get(currentCard.getAnswerId());
       }
 
       MultiPlayerOutputData data = new MultiPlayerOutputData();
