@@ -30,7 +30,7 @@ public class SinglePlayerInteractor implements SinglePlayerInputBoundary {
             presenter.presentError("Could not load deck: " + deckTitle);
             return;
         }
-        this.game = new SinglePlayerGame(player, deck, in.getTimerPerQuestion(), in.isShuffle());
+        this.game = new SinglePlayerGame(player, deck, in.isShuffle());
         this.game.startGame();
         this.idx = 0;
         this.cards = deck.getDeck();
