@@ -45,7 +45,7 @@ public class MultiPlayerPresenter implements MultiPlayerOutputBoundary {
     public void presentEndGame(MultiPlayerOutputData data) {
         MultiPlayerGameState state = ensureState();
         applyCommon(state, data);
-        state.setGameOver(true);
+        state.setGameOver(data.isGameOver());
         state.setCurrentCard(null);
         state.setCountdownSeconds(0);
         state.setRoundResult(defaultString(data.getRoundResult(), ""));
