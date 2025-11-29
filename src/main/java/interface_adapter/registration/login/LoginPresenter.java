@@ -53,4 +53,10 @@ public class LoginPresenter implements LoginOutputBoundary {
         loginState.setLoginError(error);
         loginViewModel.firePropertyChange();
     }
+
+    @Override
+    public void switchToSignupView() {
+        viewManagerModel.setState("sign up");
+        viewManagerModel.firePropertyChange();
+    }
 }
