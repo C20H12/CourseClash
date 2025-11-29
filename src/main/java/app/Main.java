@@ -3,6 +3,7 @@ package app;
 import use_case.DataAccessException;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class Main {
     public static void main(String[] args) throws DataAccessException {
@@ -11,6 +12,7 @@ public class Main {
                 .addLoginView()
                 .addSignupView()
                 .addMainScreenView()
+                .addLeaderboardChartView()
                 .addLoginUseCase()
                 .addSignupUseCase()
                 .addLeaderboardUseCase()
@@ -22,3 +24,4 @@ public class Main {
         application.setVisible(true);
     }
 }
+
