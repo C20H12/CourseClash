@@ -3,13 +3,13 @@
  * Description: The interactor for login actions.
  * Author: Albert and Daniel
  */
+
 package use_case.registration.login;
+
+import java.util.HashMap;
 
 import entity.User;
 import use_case.DataAccessException;
-
-import java.util.HashMap;
-import java.util.Objects;
 
 /**
  * The Login Interactor.
