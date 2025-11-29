@@ -1,24 +1,22 @@
 package view.single;
 
-// UI for single player
-import interface_adapter.SinglePlayer.SinglePlayerController;
-import interface_adapter.SinglePlayer.SinglePlayerState;
-import interface_adapter.SinglePlayer.SinglePlayerViewModel;
-import interface_adapter.user_session.UserSession;
-import interface_adapter.ViewManagerModel;
-import use_case.DataAccessException;
-import javax.swing.*;
-
-import entity.User;
-import entity.DeckManagement.StudyDeck;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
-import java.util.Map;
+
+import javax.swing.*;
+
+import entity.User;
+import entity.DeckManagement.StudyDeck;
+import interface_adapter.SinglePlayer.SinglePlayerController;
+import interface_adapter.SinglePlayer.SinglePlayerState;
+import interface_adapter.SinglePlayer.SinglePlayerViewModel;
+import interface_adapter.user_session.UserSession;
+import interface_adapter.ViewManagerModel;
+import use_case.DataAccessException;
 
 public class SinglePlayerView extends JPanel implements ActionListener, PropertyChangeListener {
 
@@ -33,7 +31,7 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
     // --- Top bar ---
     private final JLabel questionCounterLabel = new JLabel("Q 0/0");
     private final JLabel scoreLabel = new JLabel("0");
-    private final JLabel timerLabel = new JLabel("0");  // placeholder until real timer
+    private final JLabel timerLabel = new JLabel("0");
 
     // --- Center question/answers ---
     private final JTextArea questionTextArea = new JTextArea();
@@ -41,16 +39,15 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
     private final ButtonGroup optionsGroup = new ButtonGroup();
 
     // --- Bottom controls / feedback ---
-    private final JButton submitButton = new JButton("Submit");
-    private final JButton endGameButton = new JButton("End Game");
-    private final JLabel messageLabel = new JLabel(" ");
-    private final JLabel accuracyLabel = new JLabel(" ");
-    private final JLabel answerlabel = new JLabel(" ");
-    private final JLabel avgTimeLabel = new JLabel(" ");
     private static final int BASE_FONT_SIZE = 18;
     private static final Font TITLE_FONT = new Font("SansSerif", Font.BOLD, 22);
     private static final Font LABEL_FONT = new Font("SansSerif", Font.PLAIN, BASE_FONT_SIZE);
     private static final Font BUTTON_FONT = new Font("SansSerif", Font.BOLD, 16);
+    private final JButton submitButton = new JButton("Submit");
+    private final JButton endGameButton = new JButton("End Game");
+    private final JLabel messageLabel = new JLabel(" ");
+    private final JLabel accuracyLabel = new JLabel(" ");
+    private final JLabel avgTimeLabel = new JLabel(" ");
 
     public SinglePlayerView(SinglePlayerViewModel viewModel, ViewManagerModel viewManagerModel, UserSession session) {
         this.viewModel = viewModel;
@@ -141,20 +138,15 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
     private void buildBottomBar() {
             JPanel bottom = new JPanel(new BorderLayout());
             bottom.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
-
             JPanel buttonsPanel = new JPanel();
             submitButton.setFont(BUTTON_FONT);
             endGameButton.setFont(BUTTON_FONT);
-
             submitButton.setPreferredSize(new Dimension(120, 35));
             endGameButton.setPreferredSize(new Dimension(120, 35));
-
             buttonsPanel.add(submitButton);
             buttonsPanel.add(endGameButton);
-
             submitButton.addActionListener(this);
             endGameButton.addActionListener(this);
-
             JPanel statsPanel = new JPanel(new GridLayout(3, 1));
             statsPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
             messageLabel.setFont(LABEL_FONT);
@@ -180,7 +172,16 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
     }
 
     /**
-     * Called by MainScreen or BrowseStudySetView to start the game.
+     * Starts a single-player game session using the given configuration.
+     * Invoked by the UI when the user selects a deck and begins the game.
+     * Passes user information and gameplay settings to the controller.
+     *
+     * @param deckTitle the name of the deck to load
+     * @param user the logged-in user starting the game
+     * @param timerPerQuestion the time limit (in seconds) for each question
+     * @param shuffle true if the question order should be randomized
+     * @param numQuestions the number of questions to include in the session
+     * @throws DataAccessException if loading the deck or initializing the game fails
      */
     public void startGame(String deckTitle,
                           User user,
@@ -193,6 +194,14 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
         }
     }
 
+    /**
+     * Handles button click events for the single-player view. When the submit
+     * button is pressed, retrieves the selected answer and forwards it to the
+     * controller. Displays an error message if no option is selected or if a
+     * data access failure occurs.
+     *
+     * @param e the action event triggered by the user interface
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (controller == null) {
@@ -243,7 +252,6 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
             StudyDeck selectedDeck = popup.getSelectedDeck();
             if (selectedDeck != null) {
                 try {
-                    // start game with selected deck
                     startGame(selectedDeck.getTitle(), session.getUser(), 10, false, selectedDeck.getCardCount());
                 }
                 catch (DataAccessException e) {
@@ -278,7 +286,6 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
         messageLabel.setText(state.getMessage() != null ? state.getMessage() : " ");
 
         if (state.isGameOver()) {
-            answerlabel.setText(String.format("Correct Answers:", state.getCorrectAnswers()));
             accuracyLabel.setText(String.format("Accuracy: %.1f%%", state.getAccuracy()));
             avgTimeLabel.setText(String.format("Avg. response time: %.2f s", state.getAvgResponseTime()));
             submitButton.setEnabled(false);

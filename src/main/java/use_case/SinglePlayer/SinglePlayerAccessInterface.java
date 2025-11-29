@@ -13,20 +13,24 @@ import use_case.DataAccessException;
 public interface SinglePlayerAccessInterface {
 
     /**
-     * Returns true if a deck with this title exists.
-     */
-    boolean existsDeck(String deckTitle) throws DataAccessException;
-
-    /**
-     * Loads the deck with the given title.
-     * @return StudyDeck if found
-     * @throws DataAccessException if the deck cannot be read
+     * Loads and returns the deck associated with the given title.
+     *
+     * @param deckTitle the name of the deck to load
+     * @return the corresponding StudyDeck if found
+     * @throws DataAccessException if the deck cannot be accessed or read
      */
     StudyDeck loadDeck(String deckTitle) throws DataAccessException;
 
     /**
-     * Saves the user's single-player results.
-     * @throws DataAccessException if saving fails
+     * Saves the results of a completed single-player game session.
+     * Records score, timing information, and deck usage under the user profile.
+     *
+     * @param username the user whose results are being stored
+     * @param deckTitle the deck used in the game session
+     * @param score the final score achieved
+     * @param avgResponseTime the player's average answer response time
+     * @param accuracy the player's score accuracy
+     * @throws DataAccessException if storing the results fails
      */
     void saveSinglePlayerResult(
             String username,
@@ -38,7 +42,7 @@ public interface SinglePlayerAccessInterface {
 
     /**
      * gets a list of all the decks, for initalization
-     * @return
+     * @return none
      */
     List<StudyDeck> getAllDecks();
 }
