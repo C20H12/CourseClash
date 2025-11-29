@@ -1,11 +1,11 @@
 package interface_adapter.leaderboard_as_chart;
 
-import entity.User;
-import use_case.leaderboard.LeaderboardType;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import entity.User;
+import use_case.leaderboard.LeaderboardType;
 
 public class LeaderboardAsChartState {
     private Map<LeaderboardType, List<User>> scores;
