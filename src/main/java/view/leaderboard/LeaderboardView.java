@@ -227,7 +227,7 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
     }
 
     private void switchToLeaderboardChart() throws DataAccessException {
-        leaderboardChartController.requestChart();
+        leaderboardChartController.requestChart(50);
         viewManagerModel.setState(leaderboardChartViewName);
         viewManagerModel.firePropertyChange();
 
