@@ -69,7 +69,6 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
         backButton.addActionListener(e -> {
             switchToMainScreen();
         });
-        add(buttonPanel, BorderLayout.SOUTH);
 
         JButton chartButton = createStyledButton("Show as Chart");
         buttonPanel.add(chartButton);
