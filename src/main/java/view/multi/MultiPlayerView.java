@@ -1,9 +1,7 @@
 package view.multi;
 
-
 import javax.swing.*;
 
-import entity.User;
 import entity.DeckManagement.StudyCard;
 import entity.DeckManagement.StudyDeck;
 import entity.peer.PeerConnection;
@@ -178,7 +176,8 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
             player2ScoreLabel.setText(state.getPlayerB() + ": " + state.getScoreB());
             messageLabel.setText(state.getMessage());
             resultLabel.setText("");
-            startCountdownThread(secondsPerQuestion);;
+            startCountdownThread(secondsPerQuestion);
+            ;
         }
 
         if ("end".equals(evt.getPropertyName())) {
@@ -192,14 +191,12 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
                     SwingUtilities.getWindowAncestor(this),
                     "Game Over!\n" + state.getRoundResult(),
                     "Game Over",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
-            peerConnection.dispose();
+                    JOptionPane.INFORMATION_MESSAGE);
             viewManagerModel.setState("main screen");
             viewManagerModel.firePropertyChange();
         }
 
-        if ("update".equals(evt.getPropertyName())) {
+        if ("submitAnswer".equals(evt.getPropertyName())) {
             stopCountdownThread();
             player1ScoreLabel.setText(state.getPlayerA() + ": " + state.getScoreA());
             player2ScoreLabel.setText(state.getPlayerB() + ": " + state.getScoreB());
@@ -211,6 +208,11 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
             } else {
                 sendScoreUpdate(state.getScoreB());
             }
+        }
+
+        if ("updateScore".equals(evt.getPropertyName())) {
+            player1ScoreLabel.setText(state.getPlayerA() + ": " + state.getScoreA());
+            player2ScoreLabel.setText(state.getPlayerB() + ": " + state.getScoreB());
         }
 
     }
@@ -246,11 +248,15 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
             return;
         }
 
+        // Left over from prev session
+        if (peerConnection != null) {
+            peerConnection.dispose();
+        }
         peerConnection = popup.getPeerConnection();
         StudyDeck selectedDeck = popup.getSelectedDeck();
         Map<String, Object> popupSettings = popup.getSettings();
         secondsPerQuestion = extractSecondsPerQuestion(popupSettings);
-        
+
         hostMode = "host".equalsIgnoreCase(popup.getMode());
         advanceButton.setEnabled(hostMode);
         endGameButton.setEnabled(hostMode);
@@ -281,8 +287,8 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
             return;
         }
         stopCountdownThread();
-        multiPlayerController.endGame();
         sendPeerEvent(EVENT_END);
+        multiPlayerController.endGame();
     }
 
     private void handleRemoteAdvance() {
@@ -302,20 +308,17 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
 
     private void updatePeerScore(String scoreString) {
         String[] parts = scoreString.split(":", 2);
-        if (hostMode) {
-            String currText = player2ScoreLabel.getText();
-            player2ScoreLabel.setText(currText.split(":")[0] + ": " + parts[1]);
-        } else {
-            String currText = player1ScoreLabel.getText();
-            player1ScoreLabel.setText(currText.split(":")[0] + ": " + parts[1]);
-        }
         int score;
         try {
             score = Integer.parseInt(parts[1]);
         } catch (NumberFormatException e) {
             return;
         }
-        multiPlayerController.updateOtherPlayerScore(score, hostMode);
+        if (hostMode) {
+            multiPlayerController.updateScore(viewModel.getState().getScoreA(), score);
+            return;
+        }
+        multiPlayerController.updateScore(score, viewModel.getState().getScoreB());
     }
 
     // countdown
@@ -334,7 +337,7 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
                     final int value = remaining;
                     SwingUtilities.invokeLater(() -> {
                         countdownLabel.setText(formatCountdown(value));
-                        countdownProgress.setValue(seconds - value);  
+                        countdownProgress.setValue(seconds - value);
                     });
                 }
             } catch (InterruptedException ignored) {
@@ -379,7 +382,8 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
             return;
         }
 
-        if (hostMode) return;
+        if (hostMode)
+            return;
         // only guest needs these events
         switch (upper) {
             case EVENT_ADVANCE -> SwingUtilities.invokeLater(this::handleRemoteAdvance);
@@ -414,11 +418,11 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
         }
         Object value = settings.get("secondsPerQuestion");
         if (value instanceof Number) {
-            return Math.max(1, ((Number)value).intValue());
+            return Math.max(1, ((Number) value).intValue());
         }
         if (value instanceof String) {
             try {
-                return Math.max(1, Integer.parseInt((String)value));
+                return Math.max(1, Integer.parseInt((String) value));
             } catch (NumberFormatException ignored) {
             }
         }

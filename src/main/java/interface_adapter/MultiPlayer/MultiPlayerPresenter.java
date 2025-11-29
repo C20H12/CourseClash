@@ -43,11 +43,19 @@ public class MultiPlayerPresenter implements MultiPlayerOutputBoundary {
   }
 
   @Override
+  public void presentSubmitAnswer(MultiPlayerOutputData data) {
+    MultiPlayerGameState state = ensureState();
+    applyCommon(state, data);
+    viewModel.setState(state);
+    viewModel.firePropertyChange("submitAnswer");
+  }
+  
+  @Override
   public void presentUpdateScore(MultiPlayerOutputData data) {
     MultiPlayerGameState state = ensureState();
     applyCommon(state, data);
     viewModel.setState(state);
-    viewModel.firePropertyChange("update");
+    viewModel.firePropertyChange("updateScore");
   }
 
 	@Override

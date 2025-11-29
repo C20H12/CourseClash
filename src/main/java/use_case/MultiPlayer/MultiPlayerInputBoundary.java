@@ -9,5 +9,5 @@ public interface MultiPlayerInputBoundary {
   void showAllDecks();
   void startGame(StudyDeck selectedDeck, User host, User guest);
   void chooseAnswer(String option, boolean host);
-  void updateOtherPlayerScore(int score, boolean host);
+  void updateScore(int scoreHost, int scoreGuest);
 }

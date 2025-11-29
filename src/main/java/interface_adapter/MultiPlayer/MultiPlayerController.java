@@ -29,7 +29,7 @@ public class MultiPlayerController {
     interactor.chooseAnswer(option, host);
   }
 
-  public void updateOtherPlayerScore(int score, boolean host) {
-    interactor.updateOtherPlayerScore(score, host);
+  public void updateScore(int scoreHost, int scoreGuest) {
+    interactor.updateScore(scoreHost, scoreGuest);
   }
 }
