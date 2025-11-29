@@ -41,7 +41,7 @@ public class SinglePlayerOutputData {
      *
      * @return a list of answer choices
      */
-    public List<String> getOptions() { return options;}
+    public List<String> getOptions() { return options; }
 
     /**
      * Returns the index of the current question within the deck.
