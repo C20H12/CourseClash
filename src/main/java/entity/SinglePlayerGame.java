@@ -25,7 +25,6 @@ public class SinglePlayerGame {
         this.player = player;
         this.deck = studyDeck;
         this.questions = studyDeck.getDeck();
-        // this will come from StudyDeck file
        //  this.timerPerQuestion = timerPerQuestion;
         //  private final int timerPerQuestion; // seconds - not currently used anywhere
         this.totalQuestions = questions.size();
@@ -85,7 +84,6 @@ public class SinglePlayerGame {
         this.score += 5;
         this.correctAnswers += 1;
     }
-    public void decrementScore() {
-        this.score = Math.max(0, this.score - 5);
+
     }
-}
+

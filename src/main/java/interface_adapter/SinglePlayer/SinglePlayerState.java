@@ -23,7 +23,7 @@ public class SinglePlayerState {
     private int correctAnswers = 0;
 
     public int getCorrectAnswers() { return correctAnswers; }
-    public void setCorrectAnswers(int correctAnswers) { this.correctAnswers = correctAnswers; }
+    public void setCorrectAnswers(int correctAnswers) { this.correctAnswers += correctAnswers; }
 
     public SinglePlayerState() {}
 
