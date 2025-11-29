@@ -1,24 +1,37 @@
 package view.multi;
 
-
-import javax.swing.*;
-
-import entity.User;
-import entity.DeckManagement.StudyCard;
-import entity.DeckManagement.StudyDeck;
-import entity.peer.PeerConnection;
-import interface_adapter.ViewManagerModel;
-import interface_adapter.MultiPlayer.MultiPlayerController;
-import interface_adapter.MultiPlayer.MultiPlayerGameState;
-import interface_adapter.MultiPlayer.MultiPlayerViewModel;
-import interface_adapter.user_session.UserSession;
-
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Window;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+
+import entity.DeckManagement.StudyCard;
+import entity.DeckManagement.StudyDeck;
+import entity.peer.PeerConnection;
+import interface_adapter.MultiPlayer.MultiPlayerController;
+import interface_adapter.MultiPlayer.MultiPlayerGameState;
+import interface_adapter.MultiPlayer.MultiPlayerViewModel;
+import interface_adapter.ViewManagerModel;
+import interface_adapter.user_session.UserSession;
 
 public class MultiPlayerView extends JPanel implements PropertyChangeListener {
 
@@ -26,7 +39,7 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
     private static final String EVENT_END = "END";
     private static final String EVENT_SCORE = "SCORE";
 
-    public final String viewName = "multi player";
+    private String viewName = "multi player";
     private ViewManagerModel viewManagerModel;
     private final MultiPlayerViewModel viewModel;
     private MultiPlayerController multiPlayerController;
@@ -64,7 +77,8 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if (viewName.equals(evt.getNewValue())) {
-                    pregameFlowStarted = false; // allow pre-game dialog to show again next init
+                    // allow pre-game dialog to show again next init
+                    pregameFlowStarted = false;
                     // show a dialog with all the decks for selection
                     if (multiPlayerController != null) {
                         multiPlayerController.showAllDecks();
@@ -176,7 +190,7 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
             player2ScoreLabel.setText(state.getPlayerB() + ": " + state.getScoreB());
             messageLabel.setText(state.getMessage());
             resultLabel.setText("");
-            startCountdownThread(secondsPerQuestion);;
+            startCountdownThread(secondsPerQuestion);
         }
 
         if ("end".equals(evt.getPropertyName())) {
@@ -367,7 +381,9 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
             return;
         }
 
-        if (hostMode) return;
+        if (hostMode) {
+            return;
+        }
         // only guest needs these events
         switch (upper) {
             case EVENT_ADVANCE -> SwingUtilities.invokeLater(this::handleRemoteAdvance);
@@ -402,12 +418,13 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
         }
         Object value = settings.get("secondsPerQuestion");
         if (value instanceof Number) {
-            return Math.max(1, ((Number)value).intValue());
+            return Math.max(1, ((Number) value).intValue());
         }
         if (value instanceof String) {
             try {
-                return Math.max(1, Integer.parseInt((String)value));
+                return Math.max(1, Integer.parseInt((String) value));
             } catch (NumberFormatException ignored) {
+                ignored.printStackTrace();
             }
         }
         return 10;

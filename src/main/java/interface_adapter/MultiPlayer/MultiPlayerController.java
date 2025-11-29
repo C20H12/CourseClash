@@ -5,31 +5,33 @@ import entity.DeckManagement.StudyDeck;
 import use_case.MultiPlayer.MultiPlayerInputBoundary;
 
 public class MultiPlayerController {
-  final MultiPlayerInputBoundary interactor;
+    private final MultiPlayerInputBoundary interactor;
 
-  public MultiPlayerController(MultiPlayerInputBoundary interactor) {
-    this.interactor = interactor;
-  }
+    public MultiPlayerController(MultiPlayerInputBoundary interactor) {
+        this.interactor = interactor;
+    }
 
-  public void advance() {
-    interactor.advance();
-  }
-  public void endGame() {
-    interactor.endGame();
-  }
-  public void showAllDecks() {
-    interactor.showAllDecks();
-  }
+    public void advance() {
+        interactor.advance();
+    }
 
-  public void startGame(StudyDeck selectedDeck, User host, User guest) {
-    interactor.startGame(selectedDeck, host, guest);
-  }
+    public void endGame() {
+        interactor.endGame();
+    }
 
-  public void chooseAnswer(String option, boolean host) {
-    interactor.chooseAnswer(option, host);
-  }
+    public void showAllDecks() {
+        interactor.showAllDecks();
+    }
 
-  public void updateOtherPlayerScore(int score, boolean host) {
-    interactor.updateOtherPlayerScore(score, host);
-  }
+    public void startGame(StudyDeck selectedDeck, User host, User guest) {
+        interactor.startGame(selectedDeck, host, guest);
+    }
+
+    public void chooseAnswer(String option, boolean host) {
+        interactor.chooseAnswer(option, host);
+    }
+
+    public void updateOtherPlayerScore(int score, boolean host) {
+        interactor.updateOtherPlayerScore(score, host);
+    }
 }
