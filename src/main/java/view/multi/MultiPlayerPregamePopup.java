@@ -353,13 +353,13 @@ public class MultiPlayerPregamePopup extends JDialog {
         JSONArray cardArray = new JSONArray();
         for (StudyCard card : deck.getDeck()) {
             JSONArray answerArray = new JSONArray();
-            for (String answer : card.getAnswers()) {
+            for (String answer : card.getOptions()) {
                 answerArray.put(answer);
             }
             JSONObject cardEntry = new JSONObject();
-            cardEntry.put("question", card.getQuestion());
+            cardEntry.put("question", card.getQuestionTitle());
             cardEntry.put("answers", answerArray);
-            cardEntry.put("solutionId", card.getSolutionId());
+            cardEntry.put("solutionId", card.getAnswerId());
             cardArray.put(cardEntry);
         }
         return cardArray.toString();

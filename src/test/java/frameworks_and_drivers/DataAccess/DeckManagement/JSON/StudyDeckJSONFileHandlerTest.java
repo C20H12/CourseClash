@@ -35,9 +35,7 @@ class StudyDeckJSONFileHandlerTest {
         cleanupTestFiles();
     }
 
-    /**
-     * Helper method to clean up test JSON files.
-     */
+    // Helper method to clean up test JSON files.
     private void cleanupTestFiles() {
         File storageDir = new File(testStorageDir);
         File[] files = storageDir.listFiles();

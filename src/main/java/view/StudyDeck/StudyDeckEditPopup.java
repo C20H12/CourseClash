@@ -40,7 +40,7 @@ public class StudyDeckEditPopup extends JDialog {
 
 		List<StudyCard> deckCards = deck.getDeck();
 		for (StudyCard card : deckCards) {
-			addNewStudyCard(card.getQuestion(), card.getAnswers(), card.getSolutionId());
+			addNewStudyCard(card.getQuestionTitle(), card.getOptions(), card.getAnswerId());
 		}
     
     initUi();
@@ -202,7 +202,7 @@ public class StudyDeckEditPopup extends JDialog {
 		row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
 		row.setBackground(id == selectedCardId ? new Color(220, 235, 250) : Color.WHITE);
 
-		JLabel questionLabel = new JLabel(state.getQuestion()); 
+		JLabel questionLabel = new JLabel(state.getQuestionTitle());
 		questionLabel.setFont(new Font("Helvetica", Font.PLAIN, 16));
 		questionLabel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		questionLabel.addMouseListener(new MouseAdapter() {
@@ -244,12 +244,12 @@ public class StudyDeckEditPopup extends JDialog {
 			return;
 		}
 		toggleCardFieldsEnable(true);
-		questionArea.setText(state.getQuestion());
+		questionArea.setText(state.getQuestionTitle());
 		for (int i = 0; i < answerFields.size(); i++) {
-			answerFields.get(i).setText(state.getAnswers().get(i));
+			answerFields.get(i).setText(state.getOptions().get(i));
 		}
-		if (state.getSolutionId() >= 0 && state.getSolutionId() < answerChoiceButtons.size()) {
-			answerChoiceButtons.get(state.getSolutionId()).setSelected(true);
+		if (state.getAnswerId() >= 0 && state.getAnswerId() < answerChoiceButtons.size()) {
+			answerChoiceButtons.get(state.getAnswerId()).setSelected(true);
 		} else {
 			answerButtonGroup.clearSelection();
 		}
@@ -321,17 +321,17 @@ public class StudyDeckEditPopup extends JDialog {
 		ArrayList<StudyCard> newCards = new ArrayList<>();
 		for (StudyCard state : cardStateMap.values()) {
 			ArrayList<String> answersCopy = new ArrayList<>();
-      // ensure only non blank answers are added
-      for (String ans : state.getAnswers()) {
+      // ensure only non-blank answers are added
+      for (String ans : state.getOptions()) {
         if (ans.isBlank()) {
           continue;
         }
         answersCopy.add(ans);
       }
 			// Ensure there is always a selection
-			int solutionIndex = clampSolutionIndex(state.getSolutionId());
+			int solutionIndex = clampSolutionIndex(state.getAnswerId());
 
-			newCards.add(new StudyCard(state.getQuestion(), answersCopy, solutionIndex));
+			newCards.add(new StudyCard(state.getQuestionTitle(), answersCopy, solutionIndex));
 		}
 		return new StudyDeck(originalDeck.getTitle(), originalDeck.getDescription(), newCards, originalDeck.getId());
 	}
