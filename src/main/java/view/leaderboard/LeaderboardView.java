@@ -1,23 +1,36 @@
 package view.leaderboard;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
 import interface_adapter.ViewManagerModel;
 import interface_adapter.leaderboard.LeaderboardController;
 import interface_adapter.leaderboard.LeaderboardViewModel;
 import interface_adapter.main_screen.MainScreenViewModel;
 import use_case.DataAccessException;
 import use_case.leaderboard.LeaderboardType;
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 
 public class LeaderboardView extends JPanel implements ActionListener, PropertyChangeListener {
     private final LeaderboardViewModel leaderboardViewModel;
     private final ViewManagerModel viewManagerModel;
     private final MainScreenViewModel mainScreenViewModel;
-    private LeaderboardController leaderboardController = null;
+    private LeaderboardController leaderboardController;
 
     // Panels for leaderboards
     private final JTabbedPane tabbedPane = new JTabbedPane();
@@ -77,18 +90,18 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
         // set margin around leaderboardPanel
         leaderboardPanel.setLayout(new BorderLayout());
         leaderboardPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
+        String[] header = {"Rank", "Username", "Level",
+                "Experience Points", "Questions Answered", "Questions Correct"};
 
-        String[] header = { "Rank", "Username", "Level",
-                "Experience Points", "Questions Answered", "Questions Correct" };
-        DefaultTableModel leaderboardTableModel = new DefaultTableModel(header, 0) { // 0 = start with no data
+        DefaultTableModel leaderboardTableModel = new DefaultTableModel(header, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-        if (leaderboardController != null)
+        if (leaderboardController != null) {
             leaderboardController.loadLeaderboard(leaderboardViewModel.getLeaderboardEntryCount());
-        // get the leaderboard
+        }
         ArrayList<ArrayList<Object>> leaderboardAsArray = leaderboardViewModel.getLeaderboardByType(leaderboardType);
         for (ArrayList<Object> row : leaderboardAsArray) {
             leaderboardTableModel.addRow(row.toArray());
@@ -111,7 +124,7 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
     private JButton createStyledButton(String text) {
         JButton button = new JButton(text);
         button.setFont(new Font("Helvetica", Font.BOLD, 18));
-        button.setBackground(new Color(70, 130, 180)); // blue accent
+        button.setBackground(new Color(70, 130, 180));
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
