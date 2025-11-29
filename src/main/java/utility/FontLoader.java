@@ -7,7 +7,9 @@ import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import java.io.InputStream;
 
+//import javax.swing.*;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  * Utility class for loading and registering custom fonts,
@@ -43,7 +45,8 @@ public class FontLoader {
             UIManager.put("Button.contentAreaFilled", true);
             UIManager.put("Button.background", Color.GRAY);
             UIManager.put("Button.foreground", Color.WHITE);
-        } catch (IOException | FontFormatException e) {
+        } catch (ClassNotFoundException | InstantiationException |
+                 IllegalAccessException | UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }
     }
