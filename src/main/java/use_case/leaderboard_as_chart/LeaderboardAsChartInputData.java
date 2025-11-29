@@ -10,4 +10,8 @@ public class LeaderboardAsChartInputData {
     public String getRequestType() {
         return requestType;
     }
+    
+    public int getLeaderboardEntryCount() {
+        return leaderboardEntryCount;
+    }
 }
