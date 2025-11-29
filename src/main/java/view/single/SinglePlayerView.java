@@ -244,10 +244,8 @@ public class SinglePlayerView extends JPanel implements ActionListener, Property
             popup.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
-                    if (popup.getSelectedDeck() == null) {
-                      viewManagerModel.setState("main screen");
-                      viewManagerModel.firePropertyChange();
-                    }
+                    viewManagerModel.setState("main screen");
+                    viewManagerModel.firePropertyChange();
                 }
             });
             popup.setVisible(true);

@@ -2,9 +2,8 @@ package use_case.studyDeck;
 
 import entity.DeckManagement.StudyDeck;
 
-
 public class StudyDeckInputData {
-    private StudyDeck studyDeck;
+    private final StudyDeck studyDeck;
 
     public StudyDeckInputData(StudyDeck studyDeck) {
         this.studyDeck = studyDeck;

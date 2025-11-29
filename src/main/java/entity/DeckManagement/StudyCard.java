@@ -1,39 +1,40 @@
+// Entity for Study Cards
+// Archie
+
 package entity.DeckManagement;
 
 import java.util.ArrayList;
 
 public class StudyCard {
     private final String question;
-    private final ArrayList<String> answers;
-    private final int solutionId;
+    private final ArrayList<String> options;
+    private final int answerId;
 
-    public StudyCard(String question, ArrayList<String> answers,  int solutionId) {
+    // Defensive copying pattern from Clean Architecture
+    public StudyCard(String question, ArrayList<String> options, int answerId) {
         this.question = question;
-        this.answers = new ArrayList<>(answers);
-        this.solutionId = solutionId;
+        this.options = new ArrayList<>(options);
+        this.answerId = answerId;
     }
 
-    public String getQuestion() {
+    // Helper method to get question title.
+    // @param None
+    // @return String
+    public String getQuestionTitle() {
         return question;
     }
 
-    public ArrayList<String> getAnswers() {
-        return new ArrayList<>(answers);
+    // Helper method to get card options.
+    // @param None
+    // @return ArrayList<String>
+    public ArrayList<String> getOptions() {
+        return new ArrayList<>(options);
     }
 
-    public int getSolutionId() {
-        return solutionId;
-
-        // TODO merge the check into here from the getCorrectAnswer and straight up nuke it.
-    }
-
-    /**
-     * FIX: Returns the correct answer by indexing into the answers list.
-     */
-    public String getCorrectAnswer() {
-        if (answers != null && solutionId >= 0 && solutionId < answers.size()) {
-            return answers.get(solutionId);
-        }
-        return "ERROR: NO ANSWER DEFINED";
+    // Helper method to get answer ID.
+    // @param None
+    // @return int
+    public int getAnswerId() {
+        return answerId;
     }
 }

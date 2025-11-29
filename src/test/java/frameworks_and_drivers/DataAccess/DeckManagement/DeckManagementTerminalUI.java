@@ -9,7 +9,7 @@ import entity.DeckManagement.StudyDeck;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class DeckCreatorTest {
+public class DeckManagementTerminalUI {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 

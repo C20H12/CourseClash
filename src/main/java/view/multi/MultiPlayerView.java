@@ -3,7 +3,6 @@ package view.multi;
 
 import javax.swing.*;
 
-import entity.User;
 import entity.DeckManagement.StudyCard;
 import entity.DeckManagement.StudyDeck;
 import entity.peer.PeerConnection;
@@ -157,9 +156,9 @@ public class MultiPlayerView extends JPanel implements PropertyChangeListener {
         if ("question".equals(evt.getPropertyName())) {
             StudyCard currentCard = state.getCurrentCard();
             if (currentCard != null) {
-                cardLabel.setText("<html><center>" + currentCard.getQuestion() + "</center></html>");
+                cardLabel.setText("<html><center>" + currentCard.getQuestionTitle() + "</center></html>");
                 optionButtonPanel.removeAll();
-                for (String option : currentCard.getAnswers()) {
+                for (String option : currentCard.getOptions()) {
                     JButton btn = new JButton(option);
                     btn.setFont(new Font("Arial", Font.PLAIN, 16));
                     btn.setEnabled(true);
