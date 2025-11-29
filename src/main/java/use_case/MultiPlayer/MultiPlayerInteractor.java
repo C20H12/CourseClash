@@ -5,7 +5,6 @@ import entity.User;
 import entity.DeckManagement.StudyCard;
 import entity.DeckManagement.StudyDeck;
 
-
 public class MultiPlayerInteractor implements MultiPlayerInputBoundary {
 
     private final MultiPlayerOutputBoundary presenter;
