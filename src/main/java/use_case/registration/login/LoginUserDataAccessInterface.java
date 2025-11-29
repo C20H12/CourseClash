@@ -3,9 +3,12 @@
  * Description: Defines the data access interface for login actions.
  * Author: Albert and Daniel
  */
+
 package use_case.registration.login;
-import use_case.DataAccessException;
+
 import java.util.HashMap;
+
+import use_case.DataAccessException;
 
 /**
  * DAO interface for the Login Use Case.
