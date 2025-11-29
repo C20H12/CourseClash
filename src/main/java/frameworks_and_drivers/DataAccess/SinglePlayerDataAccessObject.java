@@ -1,36 +1,35 @@
-package frameworks_and_drivers.DataAccess;
-
-import entity.DeckManagement.StudyCard;
-import entity.DeckManagement.StudyDeck;
-import frameworks_and_drivers.DataAccess.DeckManagement.StudyDeckLocalDataAccessObject;
-import interface_adapter.user_session.UserSession;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import use_case.DataAccessException;
-import use_case.SinglePlayer.SinglePlayerAccessInterface;
-
-import java.util.*;
-
 /**
  * Data access object for Single Player mode.
  * Loads decks from backend and saves results to leaderboard.
  */
+
+package frameworks_and_drivers.DataAccess;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.json.JSONObject;
+
+import entity.DeckManagement.StudyDeck;
+import frameworks_and_drivers.DataAccess.DeckManagement.StudyDeckLocalDataAccessObject;
+import interface_adapter.user_session.UserSession;
+import use_case.DataAccessException;
+import use_case.SinglePlayer.SinglePlayerAccessInterface;
+
 import static frameworks_and_drivers.DataAccess.StaticMethods.makeApiRequest;
+
 
 public class SinglePlayerDataAccessObject implements SinglePlayerAccessInterface {
 
 
-    private UserSession session;   // set when user logs in
+    private UserSession session;
+    private StudyDeck testDeck;
 
     public SinglePlayerDataAccessObject(UserSession ses) {
         this.session = ses;
     }
 
-    // -----------------------------------------------------------
-    // 1. Check whether deck exists
-    // -----------------------------------------------------------
-    @Override
     public boolean existsDeck(String deckTitle) throws DataAccessException {
         final String method = "/api/exists-deck";
         Map<String, String> params = Map.of(
@@ -45,90 +44,18 @@ public class SinglePlayerDataAccessObject implements SinglePlayerAccessInterface
         return new StudyDeckLocalDataAccessObject().getAllDecks();
     }
 
-    // @Override
-    // public List<String> getAllDeckTitlesRemote() {
-    //     //  {
-    //     //   "decks": [
-    //     //     { "id": id, "title" : "name", "description":"..."},
-    //     //     { "id": id, "title": "name2", "description": "..."}
-    //     //   ]
-    //     // }
-    //     final String method = "/api/get-all-decks";
-    //     JSONObject response = makeApiRequest("GET", method, new HashMap<>(), session.getApiKey());
-    //     List<String> titles = new ArrayList<>();
-    //     JSONArray decks = response.getJSONArray("decks");
-    //     for (int i = 0; i < decks.length(); i++) {
-    //         JSONObject deck = decks.getJSONObject(i);
-    //         titles.add(deck.getString("title"));
-    //     }
-    //     return titles;
-    // }
-
-    // -----------------------------------------------------------
-    // 2. Load full StudyDeck from backend
-    // -----------------------------------------------------------
     @Override
     public StudyDeck loadDeck(String deckTitle) throws DataAccessException {
         if (testDeck != null && testDeck.getTitle().equals(deckTitle)) {
-            return testDeck;      // <-- use injected test deck
+            return testDeck;
         }
         return new StudyDeckLocalDataAccessObject().getDeck(deckTitle);
     }
-    // @Override
-    // public StudyDeck loadDeckRemote(String deckTitle) throws DataAccessException {
-    //     final String method = "/api/get-study-set";
-    //     Map<String, String> params = Map.of(
-    //             "title", deckTitle
-    //     );
 
-    //     JSONObject response = makeApiRequest("GET", method, params, session.getApiKey());
-
-    //     // Expected response format:
-    //     // {
-    //     //   "title": "...",
-    //     //   "description": "...",
-    //     //   "id": 12,
-    //     //   "cards": [
-    //     //       {
-    //     //          "question": "...",
-    //     //          "answers": ["A", "B", "C", "D"],
-    //     //          "solutionId": 2
-    //     //       }, ...
-    //     //   ]
-    //     // }
-
-    //     String title = response.getString("title");
-    //     String description = response.optString("description", "");
-    //     int id = response.optInt("id", 0);
-
-    //     JSONArray cardArray = response.getJSONArray("cards");
-    //     ArrayList<StudyCard> cards = new ArrayList<>();
-
-    //     for (int i = 0; i < cardArray.length(); i++) {
-    //         JSONObject c = cardArray.getJSONObject(i);
-
-    //         String question = c.getString("question");
-
-    //         JSONArray answersJSON = c.getJSONArray("answers");
-    //         ArrayList<String> answers = new ArrayList<>();
-    //         for (int j = 0; j < answersJSON.length(); j++) {
-    //             answers.add(answersJSON.getString(j));
-    //         }
-
-    //         int solutionId = c.getInt("solutionId");
-
-    //         cards.add(new StudyCard(question, answers, solutionId));
-    //     }
-
-    //     return new StudyDeck(title, description, cards, id);
-    // }
-
-    // -----------------------------------------------------------
-    // 3. Save single-player results to backend
-    // -----------------------------------------------------------
     public UserSession getSession() {
         return session;
     }
+
     @Override
     public void saveSinglePlayerResult(String username,
                                        String deckTitle,
@@ -150,7 +77,7 @@ public class SinglePlayerDataAccessObject implements SinglePlayerAccessInterface
 
         makeApiRequest("POST", method, params, session.getApiKey());
     }
-    private StudyDeck testDeck;
+
     public void setTestDeck(StudyDeck deck) {
         this.testDeck = deck;
     }
