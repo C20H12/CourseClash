@@ -1,15 +1,18 @@
 package frameworks_and_drivers.DataAccess;
 
-import okhttp3.*;
-import org.json.JSONException;
-import org.json.JSONObject;
-import use_case.DataAccessException;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static frameworks_and_drivers.DataAccess.Constants.*;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.FormBody;
+import okhttp3.Response;
+import use_case.DataAccessException;
 
 /**
  * Utility class for making HTTP requests to the API.
@@ -57,7 +60,7 @@ public class StaticMethods {
             }
 
             request = new Request.Builder()
-                    .url(API_URL + method + query)
+                    .url(Constants.API_URL + method + query)
                     .get()
                     .build();
 
@@ -76,7 +79,7 @@ public class StaticMethods {
             }
 
             request = new Request.Builder()
-                    .url(API_URL + method + query)
+                    .url(Constants.API_URL + method + query)
                     .post(formBody)
                     .build();
 
@@ -91,17 +94,17 @@ public class StaticMethods {
             int statusCode = response.code();
 
             // If Statement
-            if (statusCode == SUCCESS_CODE) {
+            if (statusCode == Constants.SUCCESS_CODE) {
                 return responseJSON;
-            } else if (statusCode == API_KEY_ERROR) {
+            } else if (statusCode == Constants.API_KEY_ERROR) {
                 throw new DataAccessException("API Key Error: " +
-                        responseJSON.optString(ERROR_MESSAGE, "Unknown key error"));
-            } else if (statusCode == BAD_REQUEST) {
+                        responseJSON.optString(Constants.ERROR_MESSAGE, "Unknown key error"));
+            } else if (statusCode == Constants.BAD_REQUEST) {
                 throw new DataAccessException("Bad Request: " +
-                        responseJSON.optString(ERROR_MESSAGE, "Unknown request error"));
+                        responseJSON.optString(Constants.ERROR_MESSAGE, "Unknown request error"));
             } else {
                 throw new DataAccessException("API error: " +
-                        responseJSON.optString(ERROR_MESSAGE, "Unknown API error"));
+                        responseJSON.optString(Constants.ERROR_MESSAGE, "Unknown API error"));
             }
         } catch (IOException | JSONException e) {
             throw new DataAccessException("Request failed: " + e.getMessage());
