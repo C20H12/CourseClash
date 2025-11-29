@@ -94,6 +94,7 @@ public class MultiPlayerPregamePopup extends JDialog {
     studySetModel.setRowCount(0);
     studyDecks.clear();
     studyDecks.addAll(allDecks);
+    studyDecks.removeIf(deck -> deck.getCardCount() == 0);
     for (StudyDeck set : studyDecks) {
       studySetModel.addRow(new Object[] { false, String.format("[%s] %s", set.getTitle(), set.getDescription()) });
     }
