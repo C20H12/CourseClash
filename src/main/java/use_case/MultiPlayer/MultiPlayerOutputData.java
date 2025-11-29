@@ -79,17 +79,4 @@ public class MultiPlayerOutputData {
 	public void setGameOver(boolean gameOver) {
 		this.gameOver = gameOver;
 	}
-
-	public String toString() {
-		return "MultiPlayerOutputData{" +
-				"playerA='" + playerA + '\'' +
-				", playerB='" + playerB + '\'' +
-				", scoreA=" + scoreA +
-				", scoreB=" + scoreB +
-				", message='" + message + '\'' +
-				", currentCard=" + currentCard +
-				", roundResult='" + roundResult + '\'' +
-				", gameOver=" + gameOver +
-				'}';
-	}
 }

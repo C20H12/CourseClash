@@ -12,17 +12,17 @@ import org.junit.jupiter.api.Test;
 import entity.User;
 import entity.DeckManagement.StudyCard;
 import entity.DeckManagement.StudyDeck;
-import frameworks_and_drivers.DataAccess.MultiPlayerDataAccessObject;
 import interface_adapter.MultiPlayer.MultiPlayerGameState;
 import interface_adapter.MultiPlayer.MultiPlayerPresenter;
 import interface_adapter.MultiPlayer.MultiPlayerViewModel;
 import interface_adapter.user_session.UserSession;
+import use_case.MultiPlayer.MultiPlayerAccessInterface;
 import use_case.MultiPlayer.MultiPlayerInteractor;
 
 
 public class MultiPlayerInteractorTest {
 
-  private MultiPlayerDataAccessObject dao;
+  private InMemoryMultiPlayerGateway gateway;
   private MultiPlayerViewModel viewModel;
   private MultiPlayerInteractor interactor;
   private List<String> firedEvents;
@@ -31,17 +31,17 @@ public class MultiPlayerInteractorTest {
   void setUp() {
     UserSession ses = new UserSession();
     ses.setUser(new User("e", "e"));
-    dao = new MultiPlayerDataAccessObject(ses);
+    gateway = new InMemoryMultiPlayerGateway(ses);
     viewModel = new MultiPlayerViewModel();
     MultiPlayerPresenter presenter = new MultiPlayerPresenter(viewModel);
-    interactor = new MultiPlayerInteractor(presenter, dao);
+    interactor = new MultiPlayerInteractor(presenter, gateway);
     firedEvents = new ArrayList<>();
     viewModel.addPropertyChangeListener(evt -> firedEvents.add(evt.getPropertyName()));
   }
 
   @Test
   void startGamePublishesFirstQuestion() {
-    interactor.startGame(firstDeck(), dao.getSession().getUser(), new User("f", "f"));
+    interactor.startGame(firstDeck(), gateway.getSession().getUser(), new User("f", "f"));
 
     assertEquals(List.of("question"), firedEvents, "Start should emit a question event");
     MultiPlayerGameState state = viewModel.getState();
@@ -53,7 +53,7 @@ public class MultiPlayerInteractorTest {
 
   @Test
   void choosingCorrectAnswerUpdatesHostScore() {
-    interactor.startGame(firstDeck(), dao.getSession().getUser(), new User("f", "f"));
+    interactor.startGame(firstDeck(), gateway.getSession().getUser(), new User("f", "f"));
     firedEvents.clear();
 
     interactor.chooseAnswer("Paris", true);
@@ -66,8 +66,32 @@ public class MultiPlayerInteractorTest {
   }
 
   @Test
+  void choosingCorrectAnswerAsGuestUpdatesGuestScore() {
+    interactor.startGame(firstDeck(), gateway.getSession().getUser(), new User("g", "g"));
+    firedEvents.clear();
+
+    interactor.chooseAnswer("Paris", false);
+
+    assertEquals(List.of("update"), firedEvents);
+    MultiPlayerGameState state = viewModel.getState();
+    assertEquals(0, state.getScoreA());
+    assertEquals(1, state.getScoreB());
+    assertEquals("Correct!", state.getRoundResult());
+  }
+
+  @Test
+  void choosingAnswerBeforeGameStartsDoesNothing() {
+    interactor.chooseAnswer("Paris", true);
+
+    assertTrue(firedEvents.isEmpty());
+    assertNull(viewModel.getState().getCurrentCard());
+    assertEquals(0, viewModel.getState().getScoreA());
+    assertEquals(0, viewModel.getState().getScoreB());
+  }
+
+  @Test
   void advancingPastDeckEndsGame() {
-    interactor.startGame(firstDeck(), dao.getSession().getUser(), new User("f", "f"));
+    interactor.startGame(firstDeck(), gateway.getSession().getUser(), new User("f", "f"));
     firedEvents.clear();
 
     interactor.advance();
@@ -87,6 +111,124 @@ public class MultiPlayerInteractorTest {
     assertEquals("Deck complete", state.getMessage());
   }
 
+  @Test
+  void chooseAnswerIgnoredWhenGameIsOver() {
+    interactor.startGame(firstDeck(), gateway.getSession().getUser(), new User("guest", "guest"));
+    // triggers end
+    for(int i = 0; i < firstDeck().getCardCount(); i++) {
+      interactor.advance();
+    }
+    assertTrue(viewModel.getState().isGameOver(), "Game should be over before retrying answer");
+    firedEvents.clear();
+
+    interactor.chooseAnswer("Paris", true);
+
+    assertTrue(firedEvents.isEmpty(), "No events should fire once the game is over");
+    assertEquals(0, viewModel.getState().getScoreA());
+    assertEquals(0, viewModel.getState().getScoreB());
+  }
+
+  @Test
+  void choosingAnswerDisplaysIncorrectWhenSolutionIndexOutOfBounds() {
+    interactor.startGame(invalidSolutionDeck(), gateway.getSession().getUser(), new User("guest", "guest"));
+    firedEvents.clear();
+
+    interactor.chooseAnswer("Any", true);
+
+    assertEquals(List.of("update"), firedEvents);
+    MultiPlayerGameState state = viewModel.getState();
+    assertEquals("Incorrect! The correct answer was: ", state.getRoundResult());
+    assertEquals(0, state.getScoreA());
+    assertEquals(0, state.getScoreB());
+
+    interactor.advance();
+    firedEvents.clear();
+    interactor.chooseAnswer("Any", true);
+    assertEquals(List.of("update"), firedEvents);
+    state = viewModel.getState();
+    assertEquals("Incorrect! The correct answer was: ", state.getRoundResult());
+    assertEquals(0, state.getScoreA());
+    assertEquals(0, state.getScoreB());
+  }
+
+  @Test
+  void updateOtherPlayerScoreWithGuestFlagSetsHostScore() {
+    interactor.startGame(firstDeck(), gateway.getSession().getUser(), new User("guest", "guest"));
+
+    interactor.updateOtherPlayerScore(5, false);
+    interactor.endGame();
+
+    assertEquals(5, viewModel.getState().getScoreA());
+    assertEquals(0, viewModel.getState().getScoreB());
+  }
+
+  @Test
+  void updateOtherPlayerScoreIgnoredWhenGameIsOver() {
+    interactor.startGame(firstDeck(), gateway.getSession().getUser(), new User("guest", "guest"));
+    interactor.advance();
+    interactor.advance();
+    interactor.advance(); // end game
+    assertTrue(viewModel.getState().isGameOver());
+
+    interactor.updateOtherPlayerScore(7, true);
+    interactor.endGame();
+
+    assertEquals(0, viewModel.getState().getScoreA());
+    assertEquals(0, viewModel.getState().getScoreB());
+  }
+
+  @Test
+  void updateOtherPlayerScoreBeforeGameStartsDoesNothing() {
+    interactor.updateOtherPlayerScore(4, true);
+
+    assertEquals(0, viewModel.getState().getScoreA());
+    assertEquals(0, viewModel.getState().getScoreB());
+  }
+
+  @Test
+  void endGameSignalsPresenterWithFinalScores() {
+    interactor.startGame(firstDeck(), gateway.getSession().getUser(), new User("guest", "guest"));
+    firedEvents.clear();
+
+    interactor.endGame();
+
+    assertEquals(List.of("end"), firedEvents);
+    MultiPlayerGameState state = viewModel.getState();
+    assertTrue(state.isGameOver(), "game ended");
+    assertEquals("Host ended the match.", state.getMessage());
+    assertEquals("Host ended the match.", state.getRoundResult());
+  }
+
+  @Test
+  void showAllDecksPublishesAvailableDecks() {
+    List<StudyDeck> decks = List.of(firstDeck(), singleCardDeck("Biology"));
+    gateway.setDecks(decks);
+    firedEvents.clear();
+
+    interactor.showAllDecks();
+
+    assertEquals(List.of("init"), firedEvents);
+    assertEquals(decks, viewModel.getState().getAvailableDecks());
+  }
+
+  @Test
+  void updateOtherPlayerScoreSynchronizesRemoteTotals() {
+    User host = gateway.getSession().getUser();
+    User guest = new User("guest", "guest");
+    interactor.startGame(firstDeck(), host, guest);
+
+    interactor.updateOtherPlayerScore(2, true);  // host tells guest score
+    interactor.updateOtherPlayerScore(3, false); // guest tells host score
+    firedEvents.clear();
+
+    interactor.endGame();
+
+    MultiPlayerGameState state = viewModel.getState();
+    assertEquals(List.of("end"), firedEvents);
+    assertEquals(3, state.getScoreA());
+    assertEquals(2, state.getScoreB());
+  }
+
   private StudyDeck firstDeck() {
     ArrayList<StudyCard> cards = new ArrayList<>();
     cards.add(new StudyCard("What is the capital of France?",
@@ -96,5 +238,44 @@ public class MultiPlayerInteractorTest {
     cards.add(new StudyCard("What is the capital of Japan?",
         new ArrayList<>(List.of("Osaka", "Seoul", "Kyoto", "Tokyo")), 3));
     return new StudyDeck("World Capitals", "Test your geography recall", cards, 999);
+  }
+
+  private StudyDeck singleCardDeck(String title) {
+    ArrayList<StudyCard> cards = new ArrayList<>();
+    cards.add(new StudyCard(title + " question",
+        new ArrayList<>(List.of("A", "B", "C", "D")), 1));
+    return new StudyDeck(title, "desc", cards, title.hashCode());
+  }
+
+  private StudyDeck invalidSolutionDeck() {
+    ArrayList<StudyCard> cards = new ArrayList<>();
+    cards.add(new StudyCard("Impossible question",
+        new ArrayList<>(List.of("Option")), 5));
+    cards.add(new StudyCard("Impossible question",
+        new ArrayList<>(List.of("Option")), -1));
+    return new StudyDeck("Invalid", "bad data", cards, 111);
+  }
+
+  private static class InMemoryMultiPlayerGateway implements MultiPlayerAccessInterface {
+    private final UserSession session;
+    private List<StudyDeck> decks = new ArrayList<>();
+
+    private InMemoryMultiPlayerGateway(UserSession session) {
+      this.session = session;
+    }
+
+    void setDecks(List<StudyDeck> decks) {
+      this.decks = decks;
+    }
+
+    @Override
+    public List<StudyDeck> getAllDecks() {
+      return decks;
+    }
+
+    @Override
+    public UserSession getSession() {
+      return session;
+    }
   }
 }

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.AfterEach;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,12 +21,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class SysFileHandlerTest {
 
     private StudyDeckJSONFileHandler handler;
-    private String testStorageDir = System.getProperty("user.home") + "/.CourseClash/local_storage";
+    private String testStorageDir = Path.of("").toAbsolutePath().toString() + "/src/test/java/frameworks_and_drivers/DataAccess/DeckManagement/JSON/testing_storage";
     private String testFileName = testStorageDir + "/Test_Deck.json";
 
     @BeforeEach
     void setUp() {
-        handler = new StudyDeckJSONFileHandler();
+        handler = new StudyDeckJSONFileHandler(testStorageDir);
         // Clean up all JSON files before each test
         File storageDir = new File(testStorageDir);
         File[] files = storageDir.listFiles();
