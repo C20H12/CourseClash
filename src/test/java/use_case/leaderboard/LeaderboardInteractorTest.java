@@ -33,8 +33,10 @@ class LeaderboardInteractorTest {
             public void presentLeaderboard(LeaderboardOutputData outputData) {
                 // Check if the output data contains the expected number of users
                 int expectedUserCount = 10; // Assuming we requested top 10 users
-                int actualUserCount = outputData.getLeaderboard().get(LeaderboardType.LEVEL).size();
-                Assertions.assertEquals(expectedUserCount, actualUserCount);
+                for (LeaderboardType type : LeaderboardType.values()) {
+                    int actualUserCount = outputData.getLeaderboard().get(type).size();
+                    Assertions.assertEquals(expectedUserCount, actualUserCount);
+                }
             }
         };
         LeaderboardInputBoundary leaderboardInteractor = new LeaderboardInteractor(leaderboardDAO, leaderboardPresenter);
@@ -45,7 +47,8 @@ class LeaderboardInteractorTest {
     // it will return all users' information instead.
     @Test
     void testGetLeaderboardExceedingUserCount() throws DataAccessException {
-        LeaderboardInputData leaderboardInputData = new LeaderboardInputData(Integer.MAX_VALUE);
+        int totalUsers = new LeaderboardUserDataAccessObject(session).getTotalUserCount() + 1;
+        LeaderboardInputData leaderboardInputData = new LeaderboardInputData(totalUsers);
         // Assuming there are fewer users than Integer.MAX_VALUE in the database
         LeaderboardUserDataAccessInterface leaderboardDAO = new LeaderboardUserDataAccessObject(session);
         LeaderboardOutputBoundary leaderboardPresenter = new LeaderboardPresenter(new LeaderboardViewModel(),
@@ -78,24 +81,8 @@ class LeaderboardInteractorTest {
             ArrayList<ArrayList<Object>> leaderboardArray = leaderboardViewModel.getLeaderboardByType(leaderboardType);
             // Check if it is correctly ordered by each type
             for (int i = 1; i < leaderboardArray.size(); i++) {
-                switch (leaderboardType) {
-                    case LEVEL:
-                        Assertions.assertTrue((Integer) leaderboardArray.get(i - 1).get(2) >=
-                                ((Integer) leaderboardArray.get(i).get(2)));
-                        break;
-                    case EXPERIENCE_POINTS:
-                        Assertions.assertTrue((Integer) leaderboardArray.get(i - 1).get(3) >=
-                                ((Integer) leaderboardArray.get(i).get(3)));
-                        break;
-                    case QUESTIONS_ANSWERED:
-                        Assertions.assertTrue((Integer) leaderboardArray.get(i - 1).get(4) >=
-                                ((Integer) leaderboardArray.get(i).get(4)));
-                        break;
-                    case QUESTIONS_CORRECT:
-                        Assertions.assertTrue((Integer) leaderboardArray.get(i - 1).get(5) >=
-                                ((Integer) leaderboardArray.get(i).get(5)));
-                        break;
-                }
+                Assertions.assertTrue((Integer) leaderboardArray.get(i - 1).get(leaderboardType.getColNumber()) >=
+                        ((Integer) leaderboardArray.get(i).get(leaderboardType.getColNumber())));
             }
         }
     }

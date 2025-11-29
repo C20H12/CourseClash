@@ -21,7 +21,7 @@ public class LeaderboardViewModel extends ViewModel<LeaderboardState> {
         this.leaderboard = leaderboard;
     }
 
-    public static final int LEADERBOARD_ENTRY_COUNT = 5;
+    private static final int LEADERBOARD_ENTRY_COUNT = 50;
 
     public ArrayList<ArrayList<Object>> getLeaderboardByType(LeaderboardType leaderboardType) {
         Map<LeaderboardType, ArrayList<ArrayList<Object>>> converted = new HashMap<>();
@@ -44,5 +44,9 @@ public class LeaderboardViewModel extends ViewModel<LeaderboardState> {
             converted.put(t, rows);
         }
         return converted.get(leaderboardType);
+    }
+
+    public int getLeaderboardEntryCount() {
+        return LEADERBOARD_ENTRY_COUNT;
     }
 }

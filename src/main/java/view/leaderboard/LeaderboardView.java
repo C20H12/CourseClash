@@ -1,15 +1,11 @@
 package view.leaderboard;
 
-import entity.User;
-import entity.UserFactory;
-import frameworks_and_drivers.DataAccess.LeaderboardUserDataAccessObject;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.leaderboard.LeaderboardController;
 import interface_adapter.leaderboard.LeaderboardViewModel;
 import interface_adapter.main_screen.MainScreenViewModel;
 import use_case.DataAccessException;
 import use_case.leaderboard.LeaderboardType;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -18,7 +14,6 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 public class LeaderboardView extends JPanel implements ActionListener, PropertyChangeListener {
-    private final String viewName = "leaderboard";
     private final LeaderboardViewModel leaderboardViewModel;
     private final ViewManagerModel viewManagerModel;
     private final MainScreenViewModel mainScreenViewModel;
@@ -40,13 +35,6 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
         // because back button goes to main screen
 
         setLayout(new BorderLayout());
-        // levelLeaderboardPanel = createContainerPanel(LeaderboardType.LEVEL);
-        // experiencePointsLeaderboardPanel =
-        // createContainerPanel(LeaderboardType.EXPERIENCE_POINTS);
-        // questionsAnsweredLeaderboardPanel =
-        // createContainerPanel(LeaderboardType.QUESTIONS_ANSWERED);
-        // questionsCorrectLeaderboardPanel =
-        // createContainerPanel(LeaderboardType.QUESTIONS_CORRECT);
 
         // adding tabs for different leaderboards
         tabbedPane.addTab("levelLeaderboard", levelLeaderboardPanel);
@@ -99,7 +87,7 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
             }
         };
         if (leaderboardController != null)
-            leaderboardController.loadLeaderboard(leaderboardViewModel.LEADERBOARD_ENTRY_COUNT);
+            leaderboardController.loadLeaderboard(leaderboardViewModel.getLeaderboardEntryCount());
         // get the leaderboard
         ArrayList<ArrayList<Object>> leaderboardAsArray = leaderboardViewModel.getLeaderboardByType(leaderboardType);
         for (ArrayList<Object> row : leaderboardAsArray) {
@@ -112,22 +100,6 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
         leaderboardTable.setRowHeight(50);
         leaderboardPanel.add(leaderboardTableScrollPane, BorderLayout.CENTER);
         leaderboardPanel.setMinimumSize(new Dimension(leaderboardPanel.getWidth(), 400));
-
-        // populate myRankPanel
-        // myRankPanel.setLayout(new BorderLayout());
-        // myRankPanel.setBorder(BorderFactory.createEmptyBorder(50,50,50,50));
-        // DefaultTableModel myRankTableModel = new DefaultTableModel(0,6);
-        // ArrayList<Object> myRankAsArray =
-        // leaderboardViewModel.getMyRankInfo(leaderboardType);
-        // myRankTableModel.addRow(myRankAsArray.toArray());
-        // JTable myRankTable = new JTable(myRankTableModel);
-        // JScrollPane myRankTableScrollPane = new JScrollPane(myRankTable);
-        // myRankTable.setTableHeader(null);
-        // myRankTable.setFont(new Font("Helvetica", Font.PLAIN, 30));
-        // myRankTable.setRowHeight(50);
-        // myRankPanel.add(myRankTableScrollPane, BorderLayout.CENTER);
-        // myRankPanel.setMinimumSize(new Dimension(myRankPanel.getWidth(), 50));
-        // myRankPanel.setMaximumSize(new Dimension(myRankPanel.getWidth(), 50));
 
         // populate containerPanel
         containerPanel.add(leaderboardPanel);
@@ -173,6 +145,7 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
     }
 
     public String getViewName() {
+        String viewName = "leaderboard";
         return viewName;
     }
 
@@ -200,7 +173,11 @@ public class LeaderboardView extends JPanel implements ActionListener, PropertyC
         }
     }
 
-    public void setLeaderboardController(LeaderboardController leaderboardController) throws DataAccessException {
+    /**
+     * Sets the controller for the leaderboard view.
+     * @param leaderboardController the LeaderboardController to be set
+     */
+    public void setLeaderboardController(LeaderboardController leaderboardController) {
         // Set the controller for the leaderboard view
         this.leaderboardController = leaderboardController;
     }
