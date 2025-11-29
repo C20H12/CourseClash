@@ -18,7 +18,7 @@ import static frameworks_and_drivers.DataAccess.Constants.*;
  */
 public class StaticMethods {
 
-    private static final OkHttpClient client = new OkHttpClient();
+    private static final OkHttpClient CLIENT = new OkHttpClient();
 
     /**
      * Make a request to the API using GET or POST.
@@ -26,20 +26,23 @@ public class StaticMethods {
      *
      * @param requestType "GET" or "POST"
      * @param method      The endpoint path (e.g., "/test-api")
-     * @param params      Map of request parameters (key-value pairs), can be null
+     * @param parameters      Map of request parameters (key-value pairs), can be null
      * @param apiKey      The API key for authentication
      * @return JSONObject parsed from the API response
      * @throws DataAccessException if request fails or API returns an error
+     * @throws IllegalArgumentException if request type is illegal
      */
     public static JSONObject makeApiRequest(
             String requestType,
             String method,
-            Map<String, String> params,
+            Map<String, String> parameters,
             String apiKey
     ) throws DataAccessException {
-
+        Map<String, String> params = parameters;
         // Ensure params map exists and includes API key
-        if (params == null) params = new HashMap<>();
+        if (params == null) {
+            params = new HashMap<>();
+        }
         params.put("key", apiKey);
 
         Request request;
@@ -50,7 +53,7 @@ public class StaticMethods {
             if (!params.isEmpty()) {
                 query.append("?");
                 params.forEach((k, v) -> query.append(k).append("=").append(v).append("&"));
-                query.setLength(query.length() - 1); // remove trailing &
+                query.setLength(query.length() - 1);
             }
 
             request = new Request.Builder()
@@ -69,9 +72,8 @@ public class StaticMethods {
             if (!params.isEmpty()) {
                 query.append("?");
                 params.forEach((k, v) -> query.append(k).append("=").append(v).append("&"));
-                query.setLength(query.length() - 1); // remove trailing &
+                query.setLength(query.length() - 1);
             }
-
 
             request = new Request.Builder()
                     .url(API_URL + method + query)
@@ -83,7 +85,7 @@ public class StaticMethods {
         }
 
         // Execute request
-        try (Response response = client.newCall(request).execute()) {
+        try (Response response = CLIENT.newCall(request).execute()) {
             String responseBody = response.body().string();
             JSONObject responseJSON = new JSONObject(responseBody);
             int statusCode = response.code();
