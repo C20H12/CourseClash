@@ -29,4 +29,10 @@ public interface MultiPlayerOutputBoundary {
      * @param data The output data containing the updated scores and result message.
      */
     void presentUpdateScore(MultiPlayerOutputData data);
+    
+    /**
+     * Prepares the view to update the displayed scores and round results after a turn.
+     * @param data The output data containing the updated scores and result message.
+     */
+    void presentSubmitAnswer(MultiPlayerOutputData data);
 }

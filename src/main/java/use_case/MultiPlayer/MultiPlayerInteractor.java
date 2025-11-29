@@ -133,7 +133,7 @@ public class MultiPlayerInteractor implements MultiPlayerInputBoundary {
         data.setScoreA(game.getHostScore());
         data.setScoreB(game.getGuestScore());
 
-        presenter.presentUpdateScore(data);
+        presenter.presentSubmitAnswer(data);
     }
 
     /**
@@ -141,15 +141,17 @@ public class MultiPlayerInteractor implements MultiPlayerInputBoundary {
      * @param score The new score to set.
      * @param host True if updating the guest's score (as host), false otherwise.
      */
+
     @Override
-    public void updateOtherPlayerScore(int score, boolean host) {
+    public void updateScore(int scoreHost, int scoreGuest) {
         if (game == null || game.isGameOver()) {
             return;
         }
-        if (host) {
-            game.setGuestScore(score);
-        } else {
-            game.setHostScore(score);
-        }
+        game.setHostScore(scoreHost);
+        game.setGuestScore(scoreGuest);
+        MultiPlayerOutputData data = new MultiPlayerOutputData();
+        data.setScoreA(game.getHostScore());
+        data.setScoreB(game.getGuestScore());
+        presenter.presentUpdateScore(data);
     }
 }
