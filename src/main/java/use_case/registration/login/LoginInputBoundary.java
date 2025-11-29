@@ -17,4 +17,9 @@ public interface LoginInputBoundary {
      * @param loginInputData the input data
      */
     void execute(LoginInputData loginInputData) throws DataAccessException;
+
+    /**
+     * Executes the switch to signup view use case.
+     */
+    void switchToSignupView();
 }
