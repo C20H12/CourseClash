@@ -1,8 +1,8 @@
 // Core entity representing a collection of study cards
 // Archie
+
 package entity.DeckManagement;
 
-import entity.DeckManagement.StudyCard;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,19 +31,28 @@ public class StudyDeck {
         return id;
     }
 
+    // Helper method to output decks.
+    // @param None
+    // @return List<StudyCard>
     public List<StudyCard> getDeck() {
-        ArrayList<StudyCard> deckCopy = new ArrayList<>();
+        final ArrayList<StudyCard> deckCopy = new ArrayList<>();
         for (StudyCard card : this.deck) {
             deckCopy.add(card);
         }
         return deckCopy;
     }
 
+    // Helper method to get card count.
+    // @param None
+    // @return int Number of cards in current deck.
     public int getCardCount() {
         return this.deck.size();
     }
 
-    public boolean isEmpty(){
+    // Helper method to check if deck is empty.
+    // @param None
+    // @return bool True if its empty.
+    public boolean isEmpty() {
         return this.deck.isEmpty();
     }
 }
