@@ -1,14 +1,14 @@
 package use_case.leaderboard_as_chart;
 
-import entity.User;
-import frameworks_and_drivers.DataAccess.LeaderboardUserDataAccessObject;
-import use_case.DataAccessException;
-import use_case.leaderboard.LeaderboardType;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import entity.User;
+import frameworks_and_drivers.DataAccess.LeaderboardUserDataAccessObject;
+import use_case.DataAccessException;
+import use_case.leaderboard.LeaderboardType;
 
 public class LeaderboardAsChartInteractor implements LeaderboardAsChartInputBoundary {
 
