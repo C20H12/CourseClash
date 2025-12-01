@@ -40,5 +40,5 @@ public interface MultiPlayerInputBoundary {
      * @param score The score to update.
      * @param host True if the update is for the guest (context dependent), false otherwise.
      */
-    void updateOtherPlayerScore(int score, boolean host);
+    void updateScore(int scoreHost, int scoreGuest);
 }

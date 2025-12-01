@@ -27,10 +27,10 @@ Frameworks & Drivers (Swing UI, Data Access, API Clients)
 - Status: Completed
 - Description: Basic account & session management
 
-2- As a user, I want to browse and select study decks.
-- Responsible: Arche
+2- As a user, I want to browse/create/edit/delete study decks.
+- Responsible: Archie
 - Status: Completed
-- Description: Deck selection, filtering, retrieval
+- Description: Deck selection, filtering, retrieval, creation, manipulation, and deletion.
 
 3 - As a user, I want to play Single Player mode.
 - Responsible: Huzaifa

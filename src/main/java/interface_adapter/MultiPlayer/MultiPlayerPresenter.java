@@ -45,7 +45,7 @@ public class MultiPlayerPresenter implements MultiPlayerOutputBoundary {
     public void presentEndGame(MultiPlayerOutputData data) {
         MultiPlayerGameState state = ensureState();
         applyCommon(state, data);
-        state.setGameOver(true);
+        state.setGameOver(data.isGameOver());
         state.setCurrentCard(null);
         state.setCountdownSeconds(0);
         state.setRoundResult(defaultString(data.getRoundResult(), ""));
@@ -58,11 +58,23 @@ public class MultiPlayerPresenter implements MultiPlayerOutputBoundary {
      * @param data The output data containing the updated scores.
      */
     @Override
+    public void presentSubmitAnswer(MultiPlayerOutputData data) {
+        MultiPlayerGameState state = ensureState();
+        applyCommon(state, data);
+        viewModel.setState(state);
+        viewModel.firePropertyChange("submitAnswer");
+    }
+
+    /**
+     * Updates the view model with new scores after a round or action.
+     * @param data The output data containing the updated scores.
+     */
+    @Override
     public void presentUpdateScore(MultiPlayerOutputData data) {
         MultiPlayerGameState state = ensureState();
         applyCommon(state, data);
         viewModel.setState(state);
-        viewModel.firePropertyChange("update");
+        viewModel.firePropertyChange("updateScore");    
     }
 
     /**

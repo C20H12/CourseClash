@@ -94,6 +94,7 @@ public class MultiPlayerPregamePopup extends JDialog {
         studySetModel.setRowCount(0);
         studyDecks.clear();
         studyDecks.addAll(allDecks);
+        studyDecks.removeIf(deck -> deck.getCardCount() == 0);
         for (StudyDeck set : studyDecks) {
             studySetModel.addRow(new Object[] {false, String.format("[%s] %s", set.getTitle(), set.getDescription()) });
         }
@@ -353,13 +354,13 @@ public class MultiPlayerPregamePopup extends JDialog {
         JSONArray cardArray = new JSONArray();
         for (StudyCard card : deck.getDeck()) {
             JSONArray answerArray = new JSONArray();
-            for (String answer : card.getAnswers()) {
+            for (String answer : card.getOptions()) {
                 answerArray.put(answer);
             }
             JSONObject cardEntry = new JSONObject();
-            cardEntry.put("question", card.getQuestion());
+            cardEntry.put("question", card.getQuestionTitle());
             cardEntry.put("answers", answerArray);
-            cardEntry.put("solutionId", card.getSolutionId());
+            cardEntry.put("solutionId", card.getAnswerId());
             cardArray.put(cardEntry);
         }
         return cardArray.toString();

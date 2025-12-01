@@ -61,10 +61,10 @@ public class MultiPlayerController {
 
     /**
      * Updates the score of the other player for synchronization.
-     * @param score The new score to set.
-     * @param host True if the update is for the guest's score (by host), false otherwise.
+     * @param scoreHost The new score to set.
+     * @param scoreGuest The new score to set
      */
-    public void updateOtherPlayerScore(int score, boolean host) {
-        interactor.updateOtherPlayerScore(score, host);
+    public void updateScore(int scoreHost, int scoreGuest) {
+        interactor.updateScore(scoreHost, scoreGuest);
     }
 }
