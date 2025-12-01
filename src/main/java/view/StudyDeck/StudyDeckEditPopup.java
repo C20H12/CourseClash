@@ -237,6 +237,9 @@ public class StudyDeckEditPopup extends JDialog {
 		}
 		toggleCardFieldsEnable(true);
 		questionArea.setText(card.getQuestionTitle());
+    for (int i = 0; i < answerFields.size(); i++) {
+      answerFields.get(i).setText("");
+    }
 		for (int i = 0; i < card.getOptions().size(); i++) {
 			answerFields.get(i).setText(card.getOptions().get(i));
 		}
