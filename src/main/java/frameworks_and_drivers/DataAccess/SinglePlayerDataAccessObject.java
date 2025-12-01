@@ -38,9 +38,17 @@ public class SinglePlayerDataAccessObject implements SinglePlayerAccessInterface
         JSONObject response = makeApiRequest("GET", method, params, session.getApiKey());
         return response.optBoolean("exists", false);
     }
+    private List<StudyDeck> testDeckList;
+
+    public void setTestDeckList(List<StudyDeck> decks) {
+        this.testDeckList = decks;
+    }
 
     @Override
     public List<StudyDeck> getAllDecks() {
+        if (testDeckList != null) {
+            return testDeckList;
+        }
         return new StudyDeckLocalDataAccessObject().getAllDecks();
     }
 
@@ -81,4 +89,5 @@ public class SinglePlayerDataAccessObject implements SinglePlayerAccessInterface
     public void setTestDeck(StudyDeck deck) {
         this.testDeck = deck;
     }
+
 }
