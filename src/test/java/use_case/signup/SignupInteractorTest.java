@@ -1,14 +1,15 @@
 package use_case.signup;
 
+import entity.User;
 import entity.UserFactory;
 import frameworks_and_drivers.DataAccess.LoginSignupTestDataAccessObject;
 import frameworks_and_drivers.DataAccess.SignupUserDataAccessObject;
 import org.junit.jupiter.api.AfterEach;
-import use_case.DataAccessException;
-import use_case.registration.login.*;
-import entity.User;
 import org.junit.jupiter.api.Test;
+import use_case.DataAccessException;
 import use_case.registration.signup.*;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -143,5 +144,60 @@ class SignupInteractorTest {
         interactor.execute(inputData);
     }
 
+    @Test
+    void failureUnknownErrorTest() throws DataAccessException {
+        // Custom DAO that simulates unknown error
+        SignupUserDataAccessInterface unknownErrorDAO = new SignupUserDataAccessInterface() {
+            @Override
+            public String create(User user) {
+                return "some unexpected error";
+            }
+        };
 
+        User testUser = userFactory.create(System.currentTimeMillis() + "_unknown_error_user", "123");
+
+        SignupOutputBoundary unknownErrorPresenter = new SignupOutputBoundary() {
+            @Override
+            public void prepareSuccessView(SignupOutputData outputData) {
+                fail("Should not succeed in unknown error test.");
+            }
+
+            @Override
+            public void prepareFailView(String error) {
+                assertEquals("Unknown error when creating new user.", error);
+            }
+
+            @Override
+            public void switchToLoginView() {
+                throw new UnsupportedOperationException("Unimplemented method");
+            }
+        };
+
+        SignupInputData inputData = new SignupInputData(testUser.getUserName(), testUser.getPassword(), testUser.getPassword());
+        SignupInputBoundary interactor = new SignupInteractor(unknownErrorDAO, unknownErrorPresenter, userFactory);
+        interactor.execute(inputData);
+    }
+
+    @Test
+    void switchToLoginViewTest() {
+        AtomicBoolean switched = new AtomicBoolean(false);
+
+        SignupOutputBoundary presenter = new SignupOutputBoundary() {
+            @Override
+            public void prepareSuccessView(SignupOutputData outputData) {}
+
+            @Override
+            public void prepareFailView(String error) {}
+
+            @Override
+            public void switchToLoginView() {
+                switched.set(true);
+            }
+        };
+
+        SignupInteractor interactor = new SignupInteractor(new SignupUserDataAccessObject(), presenter, userFactory);
+        interactor.switchToLoginView();
+
+        assertTrue(switched.get(), "switchToLoginView should trigger presenter.");
+    }
 }

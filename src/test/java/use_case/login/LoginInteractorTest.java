@@ -10,6 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterEach;
 import use_case.registration.signup.SignupUserDataAccessInterface;
 
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class LoginInteractorTest {
@@ -50,7 +53,7 @@ class LoginInteractorTest {
 
             @Override
             public void switchToSignupView() {
-              // TODO Auto-generated method stub
+              // Auto-generated method stub
               throw new UnsupportedOperationException("Unimplemented method 'switchToSignupView'");
             }
         };
@@ -85,7 +88,7 @@ class LoginInteractorTest {
 
             @Override
             public void switchToSignupView() {
-              // TODO Auto-generated method stub
+              // Auto-generated method stub
               throw new UnsupportedOperationException("Unimplemented method 'switchToSignupView'");
             }
         };
@@ -118,7 +121,7 @@ class LoginInteractorTest {
 
             @Override
             public void switchToSignupView() {
-              // TODO Auto-generated method stub
+              // Auto-generated method stub
               throw new UnsupportedOperationException("Unimplemented method 'switchToSignupView'");
             }
         };
@@ -129,4 +132,63 @@ class LoginInteractorTest {
         LoginInputBoundary interactor = new LoginInteractor(loginDAO, failurePresenter);
         interactor.execute(inputData);
     }
+
+    @Test
+    void failureUnknownErrorTest() throws DataAccessException {
+        // Create a test user
+        User testUser = new User(System.currentTimeMillis() + "_login_unknown_error", "123");
+
+        // Custom DAO that simulates unknown error
+        LoginUserDataAccessInterface unknownErrorDAO = new LoginUserDataAccessInterface() {
+            @Override
+            public Map<String, Object> login(String username, String password) {
+                return Map.of("status", false, "status_message", "some unexpected error");
+            }
+        };
+
+        LoginOutputBoundary unknownErrorPresenter = new LoginOutputBoundary() {
+            @Override
+            public void prepareSuccessView(LoginOutputData outputData) {
+                fail("Should not succeed in unknown error test.");
+            }
+
+            @Override
+            public void prepareFailView(String error) {
+                assertEquals("Unknown login error!", error);
+            }
+
+            @Override
+            public void switchToSignupView() {
+                throw new UnsupportedOperationException("Unimplemented method");
+            }
+        };
+
+        LoginInputData inputData = new LoginInputData(testUser.getUserName(), testUser.getPassword());
+        LoginInputBoundary interactor = new LoginInteractor(unknownErrorDAO, unknownErrorPresenter);
+        interactor.execute(inputData);
+    }
+
+    @Test
+    void switchToSignupViewTest() {
+        AtomicBoolean switched = new AtomicBoolean(false);
+
+        LoginOutputBoundary presenter = new LoginOutputBoundary() {
+            @Override
+            public void prepareSuccessView(LoginOutputData outputData) {}
+
+            @Override
+            public void prepareFailView(String error) {}
+
+            @Override
+            public void switchToSignupView() {
+                switched.set(true);
+            }
+        };
+
+        LoginInteractor interactor = new LoginInteractor(new LoginUserDataAccessObject(), presenter);
+        interactor.switchToSignupView();
+
+        assertTrue(switched.get(), "switchToSignupView should trigger presenter.");
+    }
+
 }
