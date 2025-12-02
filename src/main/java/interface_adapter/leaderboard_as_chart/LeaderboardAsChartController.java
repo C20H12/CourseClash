@@ -13,7 +13,7 @@ public class LeaderboardAsChartController {
     }
 
     public void requestChart(int leaderboardEntryCount) throws DataAccessException {
-        LeaderboardAsChartInputData inputData = new LeaderboardAsChartInputData("chart", leaderboardEntryCount);
+        LeaderboardAsChartInputData inputData = new LeaderboardAsChartInputData(leaderboardEntryCount);
         interactor.execute(inputData);
     }
 }
