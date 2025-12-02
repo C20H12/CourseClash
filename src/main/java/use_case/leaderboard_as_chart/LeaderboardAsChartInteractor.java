@@ -6,16 +6,16 @@ import java.util.List;
 import java.util.Map;
 
 import entity.User;
-import frameworks_and_drivers.DataAccess.LeaderboardUserDataAccessObject;
 import use_case.DataAccessException;
 import use_case.leaderboard.LeaderboardType;
+import use_case.leaderboard.LeaderboardUserDataAccessInterface;
 
 public class LeaderboardAsChartInteractor implements LeaderboardAsChartInputBoundary {
 
-    private final LeaderboardUserDataAccessObject dao;
+    private final LeaderboardUserDataAccessInterface dao;
     private final LeaderboardAsChartOutputBoundary presenter;
 
-    public LeaderboardAsChartInteractor(LeaderboardUserDataAccessObject dao, LeaderboardAsChartOutputBoundary presenter) {
+    public LeaderboardAsChartInteractor(LeaderboardUserDataAccessInterface dao, LeaderboardAsChartOutputBoundary presenter) {
         this.dao = dao;
         this.presenter = presenter;
     }
