@@ -21,7 +21,12 @@ import use_case.DataAccessException;
  */
 public class StaticMethods {
 
-    private static final OkHttpClient CLIENT = new OkHttpClient();
+  public native static String jsMakeRequest(
+      String requestType,
+      String url
+  );
+
+    // private static final OkHttpClient CLIENT = new OkHttpClient();
 
     /**
      * Make a request to the API using GET or POST.
@@ -48,7 +53,8 @@ public class StaticMethods {
         }
         params.put("key", apiKey);
 
-        Request request;
+        // Request request;
+        String requestStr;
 
         if ("GET".equalsIgnoreCase(requestType)) {
             // Build query string
@@ -59,16 +65,17 @@ public class StaticMethods {
                 query.setLength(query.length() - 1);
             }
 
-            request = new Request.Builder()
-                    .url(Constants.API_URL + method + query)
-                    .get()
-                    .build();
+            // request = new Request.Builder()
+            //         .url(Constants.API_URL + method + query)
+            //         .get()
+            //         .build();
+            requestStr = Constants.API_URL + method + query.toString();
 
         } else if ("POST".equalsIgnoreCase(requestType)) {
             // Build form body for POST
-            FormBody.Builder formBuilder = new FormBody.Builder();
-            params.forEach(formBuilder::add);
-            RequestBody formBody = formBuilder.build();
+            // FormBody.Builder formBuilder = new FormBody.Builder();
+            // params.forEach(formBuilder::add);
+            // RequestBody formBody = formBuilder.build();
 
             // Build form body for POST
             StringBuilder query = new StringBuilder();
@@ -78,20 +85,23 @@ public class StaticMethods {
                 query.setLength(query.length() - 1);
             }
 
-            request = new Request.Builder()
-                    .url(Constants.API_URL + method + query)
-                    .post(formBody)
-                    .build();
+            // request = new Request.Builder()
+            //         .url(Constants.API_URL + method + query)
+            //         .post(formBody)
+            //         .build();
+            requestStr = Constants.API_URL + method + query.toString();
 
         } else {
             throw new IllegalArgumentException("Unsupported request type: " + requestType);
         }
 
         // Execute request
-        try (Response response = CLIENT.newCall(request).execute()) {
-            String responseBody = response.body().string();
+        // try (Response response = CLIENT.newCall(request).execute()) {
+            // String responseBody = response.body().string();
+            String responseBody = jsMakeRequest(requestType, requestStr);
             JSONObject responseJSON = new JSONObject(responseBody);
-            int statusCode = response.code();
+            // int statusCode = response.code();
+            int statusCode = responseJSON.getInt("httpcode");
 
             // If Statement
             if (statusCode == Constants.SUCCESS_CODE) {
@@ -106,8 +116,8 @@ public class StaticMethods {
                 throw new DataAccessException("API error: " +
                         responseJSON.optString(Constants.ERROR_MESSAGE, "Unknown API error"));
             }
-        } catch (IOException | JSONException e) {
-            throw new DataAccessException("Request failed: " + e.getMessage());
-        }
+        // } catch (IOException | JSONException e) {
+        //     throw new DataAccessException("Request failed: " + e.getMessage());
+        // }
     }
 }

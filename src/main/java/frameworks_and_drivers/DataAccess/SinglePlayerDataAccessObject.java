@@ -74,16 +74,16 @@ public class SinglePlayerDataAccessObject implements SinglePlayerAccessInterface
             return;
         }
 
-        // final String method = "/api/save-singleplayer-result";
+        final String method = "/api/save-singleplayer-result";
 
-        // Map<String, String> params = new HashMap<>();
-        // params.put("username", username);
-        // params.put("deckTitle", deckTitle);
-        // params.put("score", String.valueOf(score));
-        // params.put("accuracy", String.valueOf(accuracy));
-        // params.put("avgTime", String.valueOf(avgResponseTime));
+        Map<String, String> params = new HashMap<>();
+        params.put("username", username);
+        params.put("deckTitle", deckTitle);
+        params.put("score", String.valueOf(score));
+        params.put("accuracy", String.valueOf(accuracy));
+        params.put("avgTime", String.valueOf(avgResponseTime));
 
-        // makeApiRequest("POST", method, params, session.getApiKey());
+        makeApiRequest("POST", method, params, session.getApiKey());
     }
 
     public void setTestDeck(StudyDeck deck) {

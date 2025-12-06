@@ -1,5 +1,4 @@
 package app;
-import entity.User;
 import entity.UserFactory;
 import interface_adapter.*;
 import interface_adapter.MultiPlayer.MultiPlayerController;
@@ -24,11 +23,10 @@ import interface_adapter.studyDeck.StudyDeckPresenter;
 import interface_adapter.studyDeck.StudyDeckViewModel;
 import interface_adapter.user_session.UserSession;
 import use_case.DataAccessException;
+import use_case.SinglePlayer.SinglePlayerInteractor;
 import use_case.leaderboard.LeaderboardInputBoundary;
 import use_case.leaderboard.LeaderboardInteractor;
 import use_case.leaderboard.LeaderboardOutputBoundary;
-import use_case.leaderboard.LeaderboardType;
-import use_case.leaderboard.LeaderboardUserDataAccessInterface;
 import use_case.leaderboard_as_chart.*;
 import use_case.registration.login.*;
 import use_case.registration.signup.SignupInputBoundary;
@@ -38,6 +36,7 @@ import use_case.studyDeck.StudyDeckInputBoundary;
 import use_case.studyDeck.StudyDeckInteractor;
 import use_case.studyDeck.StudyDeckOutputBoundary;
 import view.single.SinglePlayerView;
+import frameworks_and_drivers.DataAccess.SinglePlayerDataAccessObject;
 import frameworks_and_drivers.DataAccess.DeckManagement.StudyDeckLocalDataAccessObject;
 import view.leaderboard.LeaderboardView;
 import view.leaderboard_as_chart.LeaderboardChartView;
@@ -55,8 +54,6 @@ import view.StudyDeck.StudyDeckView;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class AppBuilder {
     private final UserSession session = new UserSession();
@@ -141,24 +138,7 @@ public class AppBuilder {
     public AppBuilder addLeaderboardChartView() {
         leaderboardChartViewModel = new interface_adapter.leaderboard_as_chart.LeaderboardAsChartViewModel();
         LeaderboardAsChartPresenter chartPresenter = new LeaderboardAsChartPresenter(leaderboardChartViewModel);
-        HashMap<LeaderboardType, ArrayList<User>> fakeData = new HashMap<>();
-
-        // Create fake user data for all leaderboard types
-        for (LeaderboardType type : LeaderboardType.values()) {
-            ArrayList<User> users = new ArrayList<>();
-
-            // Add predictable descending users User3, User2, User1
-            for (int i = 3; i >= 1; i--) {
-                User u = new User("User" + i, null);
-                u.setLevel(i);
-                u.setExperiencePoints(i * 100);
-                u.setQuestionsAnswered(i * 10);
-                u.setQuestionsCorrect(i * 5);
-                users.add(u);
-            }
-            fakeData.put(type, users);
-        }
-        LeaderboardUserDataAccessInterface leaderboardDAO = new LeaderboardAsChartTestDataAccessObject(fakeData);
+        LeaderboardUserDataAccessObject leaderboardDAO = new LeaderboardUserDataAccessObject(session);
         LeaderboardAsChartInteractor chartInteractor = new LeaderboardAsChartInteractor(leaderboardDAO, chartPresenter);
         leaderboardChartController = new interface_adapter.leaderboard_as_chart.LeaderboardAsChartController(chartInteractor);
         leaderboardView.setLeaderboardChartController(leaderboardChartController);
@@ -201,24 +181,7 @@ public class AppBuilder {
     }
 
     public AppBuilder addLeaderboardUseCase() throws DataAccessException {
-        HashMap<LeaderboardType, ArrayList<User>> fakeData = new HashMap<>();
-
-        // Create fake user data for all leaderboard types
-        for (LeaderboardType type : LeaderboardType.values()) {
-            ArrayList<User> users = new ArrayList<>();
-
-            // Add predictable descending users User3, User2, User1
-            for (int i = 3; i >= 1; i--) {
-                User u = new User("User" + i, null);
-                u.setLevel(i);
-                u.setExperiencePoints(i * 100);
-                u.setQuestionsAnswered(i * 10);
-                u.setQuestionsCorrect(i * 5);
-                users.add(u);
-            }
-            fakeData.put(type, users);
-        }
-        final LeaderboardUserDataAccessInterface userDataAccessObject = new LeaderboardAsChartTestDataAccessObject(fakeData);
+        final LeaderboardUserDataAccessObject userDataAccessObject = new LeaderboardUserDataAccessObject(session);
         final LeaderboardOutputBoundary leaderboardOutputBoundary = new LeaderboardPresenter(leaderboardViewModel,
                 viewManagerModel);
         final LeaderboardInputBoundary leaderboardInteractor = new LeaderboardInteractor(

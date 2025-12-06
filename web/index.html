@@ -9,6 +9,7 @@
 </head>
 <body>
   <script src="./js/peer-connection-client.js"></script>
+  <script src="./js/api.js"></script>
   <script>
     (async function () {
       await cheerpjInit({
@@ -18,7 +19,8 @@
           Java_entity_peer_PeerConnection_jsCreatePeer,
           Java_entity_peer_PeerConnection_jsSendData,
           Java_entity_peer_PeerConnection_jsConnectToPeer,
-          Java_entity_peer_PeerConnection_jsDisposePeer
+          Java_entity_peer_PeerConnection_jsDisposePeer,
+          Java_frameworks_and_drivers_DataAccess_StaticMethods_jsMakeRequest
         },
         clipboardMode: "system"
       });
