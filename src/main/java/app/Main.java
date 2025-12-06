@@ -16,6 +16,10 @@ public class Main {
      * @throws DataAccessException if application initialization fails due to data access issues
      */
     public static void main(String[] args) throws DataAccessException {
+      System.out.println(System.getProperty("os.name"));
+      System.out.println(System.getProperty("os.arch"));
+
+
         AppBuilder appBuilder = new AppBuilder();
         JFrame application = appBuilder
                 .addLoginView()
@@ -31,6 +35,8 @@ public class Main {
                 .build();
         application.setLocationRelativeTo(null);
         application.setVisible(true);
+
+
     }
 }
 

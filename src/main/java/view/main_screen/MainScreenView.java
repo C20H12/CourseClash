@@ -47,7 +47,7 @@ public class MainScreenView extends JPanel implements ActionListener, PropertyCh
         this.setLayout(new BorderLayout(10, 10));
 
         // ---------- Title Image ----------
-        ImageIcon originalTitleImage = new ImageIcon("images/TitleImage.png");
+        ImageIcon originalTitleImage = new ImageIcon(getClass().getResource("/images/TitleImage.png"));
         int titleImageWidth = originalTitleImage.getIconWidth();
         int titleImageHeight = originalTitleImage.getIconHeight();
         Image titleImage = originalTitleImage.getImage()

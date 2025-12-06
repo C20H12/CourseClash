@@ -18,34 +18,42 @@ public class LoginUserDataAccessObject implements LoginUserDataAccessInterface {
 
     @Override
     public Map<String, Object> login(String username, String password) throws DataAccessException {
-        final String method = "/api/login";
-        final String loginApiKey = "6C1BLoves207";
+        // final String method = "/api/login";
+        // final String loginApiKey = "6C1BLoves207";
 
-        Map<String, String> params = new java.util.LinkedHashMap<>();
-        params.put("username", username);
-        params.put("password", password);
+        // Map<String, String> params = new java.util.LinkedHashMap<>();
+        // params.put("username", username);
+        // params.put("password", password);
 
-        JSONObject response = StaticMethods.makeApiRequest("GET", method, params, loginApiKey);
-        // sample response: {"isloggedIn", "status_message", "level", "points", "answered", "correct"}
+        // JSONObject response = StaticMethods.makeApiRequest("GET", method, params, loginApiKey);
+        // // sample response: {"isloggedIn", "status_message", "level", "points", "answered", "correct"}
 
-        boolean isLoggedIn = response.optBoolean("isloggedIn", false);
-        String statusMessage = response.optString("status_message", "");
-        String apiKey = response.optString("apiKey", "");
-        int level = response.optInt("level", 0);
-        int points = response.optInt("points", 0);
-        int answered = response.optInt("answered", 0);
-        int correct = response.optInt("correct", 0);
+        // boolean isLoggedIn = response.optBoolean("isloggedIn", false);
+        // String statusMessage = response.optString("status_message", "");
+        // String apiKey = response.optString("apiKey", "");
+        // int level = response.optInt("level", 0);
+        // int points = response.optInt("points", 0);
+        // int answered = response.optInt("answered", 0);
+        // int correct = response.optInt("correct", 0);
 
         User loggedInUser = new User(username, password);
-        loggedInUser.setLevel(level);
-        loggedInUser.setExperiencePoints(points);
-        loggedInUser.setQuestionsAnswered(answered);
-        loggedInUser.setQuestionsCorrect(correct);
+        // loggedInUser.setLevel(level);
+        // loggedInUser.setExperiencePoints(points);
+        // loggedInUser.setQuestionsAnswered(answered);
+        // loggedInUser.setQuestionsCorrect(correct);
+        loggedInUser.setLevel(0);
+        loggedInUser.setExperiencePoints(0);
+        loggedInUser.setQuestionsAnswered(0);
+        loggedInUser.setQuestionsCorrect(0);
 
         Map<String, Object> result = new java.util.LinkedHashMap<>();
-        result.put("status", isLoggedIn);
-        result.put("status_message", statusMessage);
-        result.put("apiKey", apiKey);
+        // result.put("status", isLoggedIn);
+        // result.put("status_message", statusMessage);
+        // result.put("apiKey", apiKey);
+        // result.put("user", loggedInUser);
+        result.put("status", true);
+        result.put("status_message", "");
+        result.put("apiKey", "");
         result.put("user", loggedInUser);
 
         return result;

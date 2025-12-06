@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
+  <script src="https://cjrtnc.leaningtech.com/4.2/loader.js"></script>
+</head>
+<body>
+  <script src="./js/peer-connection-client.js"></script>
+  <script>
+    (async function () {
+      await cheerpjInit({
+        version: 17,
+        natives: {
+          Java_entity_peer_PeerConnection_nativeSetApplication,
+          Java_entity_peer_PeerConnection_jsCreatePeer,
+          Java_entity_peer_PeerConnection_jsSendData,
+          Java_entity_peer_PeerConnection_jsConnectToPeer,
+          Java_entity_peer_PeerConnection_jsDisposePeer
+        },
+        clipboardMode: "system"
+      });
+      cheerpjCreateDisplay(window.innerWidth, window.innerHeight);
+      const status = await cheerpjRunJar("/app/TeamProject-1.0-SNAPSHOT-jar-with-dependencies.jar");
+      console.log(status);
+      
+    })();
+  </script>
+</body>
+</html>
