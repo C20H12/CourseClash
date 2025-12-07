@@ -12,6 +12,7 @@ let peer;
 let ID;
 let g_conn;
 const msgQ = [];
+const msgQRecQ = [];
 let dataCbReady = false;
 let interval = 0;
 
@@ -21,22 +22,36 @@ async function Java_entity_peer_PeerConnection_jsCreatePeer(lib, self, p1) {
   peer.on('connection', async function(conn) {
     g_conn = conn;
     g_conn.on('open', async function() {
-      console.log("recieved connected");
-      await (await myApplication.getConnectCallback()).onConnect();
-      console.log(111);
-      dataCbReady = true;
       // Receive messages
       g_conn.on('data', async function(data) {
         console.log('1223 Received', data);
+        if (!dataCbReady) {
+          msgQRecQ.push(data);
+          return;
+        }
+        dataCbReady = false;
         await (await myApplication.getDataCallback()).onData(data);
+        dataCbReady = true;
       });
+      console.log("recieved connected");
+      dataCbReady = false;
+      await (await myApplication.getConnectCallback()).onConnect();
+      dataCbReady = true;
+      console.log(111);
     });
   });
   
-  interval = setInterval(() => {
+  interval = setInterval(async () => {
+    if (!dataCbReady) return;
     while (msgQ.length > 0) {
       const msg = msgQ.shift();
       g_conn.send(msg);
+    }
+    while (msgQRecQ.length > 0) {
+      const msg = msgQRecQ.shift();
+      dataCbReady = false;
+      await (await myApplication.getDataCallback()).onData(msg);
+      dataCbReady = true;
     }
   }, 500);
 }
@@ -48,15 +63,22 @@ async function Java_entity_peer_PeerConnection_jsConnectToPeer(lib, self, p1) {
   
   g_conn = peer.connect(p1);
   g_conn.on('open', async function() {
-    console.log("connected");
-    await (await myApplication.getConnectCallback()).onConnect();
-    console.log(111);
-    dataCbReady = true;
     // Receive messages
     g_conn.on('data', async function(data) {
       console.log('host Received', data);
+      if (!dataCbReady) {
+        msgQRecQ.push(data);
+        return;
+      }
+      dataCbReady = false;
       await (await myApplication.getDataCallback()).onData(data);
+      dataCbReady = true;
     });
+    console.log("connected");
+    dataCbReady = false;
+    await (await myApplication.getConnectCallback()).onConnect();
+    dataCbReady = true;
+    console.log(111);
   });
 }
 
